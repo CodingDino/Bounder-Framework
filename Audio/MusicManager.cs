@@ -31,22 +31,15 @@ public class MusicManager : Singleton<MusicManager> {
     // ********************************************************************
 	[SerializeField]
 	private FadeAudio m_fadeAudio;
-	private AudioClip m_nextClip;
 
 
 	// ********************************************************************
-	public static void FadeOut()
-	{
-		instance.m_fadeAudio.FadeOut();
-	}
+	public static void FadeOut() { instance.m_fadeAudio.FadeOut(); }
 	// ********************************************************************
 
 
 	// ********************************************************************
-	public static void FadeIn()
-	{
-		instance.m_fadeAudio.FadeIn();
-	}
+	public static void FadeIn() { instance.m_fadeAudio.FadeIn(); }
 	// ********************************************************************
 	
 	
@@ -59,33 +52,16 @@ public class MusicManager : Singleton<MusicManager> {
 
 
     // ********************************************************************
-	public static void PlayMusic(AudioClip clip) {
+	public static IEnumerator PlayMusic(AudioClip clip) {
 		Debug.Log ("Queuing clip "+clip.name);
 		// fade current audio out if clip does not match, then when faded out, switch clips and fade back in
 		if (instance.m_fadeAudio.audioSource.clip != clip)
 		{
-			instance.m_fadeAudio.FadeOut();
-			instance.m_nextClip = clip;
-		}
-	}
-	// ********************************************************************
+			yield return instance.m_fadeAudio.FadeOut();
 
-	
-	// ********************************************************************
-	void Update()
-	{
-		if (instance != this)
-		{
-			Destroy(gameObject);
-			return;
-		}
-
-		if (m_nextClip != null && m_fadeAudio.isInaudible)
-		{
-			Debug.Log ("Playing clip "+m_nextClip.name);
-			instance.m_fadeAudio.audioSource.clip = m_nextClip;
+			Debug.Log ("Playing clip "+clip.name);
+			instance.m_fadeAudio.audioSource.clip = clip;
 			instance.m_fadeAudio.audioSource.Play();
-			m_nextClip = null;
 			instance.m_fadeAudio.FadeIn();
 		}
 	}
