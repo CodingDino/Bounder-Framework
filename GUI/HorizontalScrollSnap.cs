@@ -42,10 +42,6 @@ public class HorizontalScrollSnap : MonoBehaviour
 	[SerializeField]
 	private bool m_allowDragOff = false;
 	[SerializeField]
-	private float m_dragThresholdX = 5.0f;
-	[SerializeField]
-	private float m_dragThresholdY = 5.0f;
-	[SerializeField]
 	private int m_startingScreen = 0;
 
 	
@@ -271,6 +267,8 @@ public class HorizontalScrollSnap : MonoBehaviour
 	// ********************************************************************
 	public void OnBeginDrag(PointerEventData eventData)
 	{
+		if (OnDragStart != null) OnDragStart(gameObject);
+
 		m_currentlyDragging = true;
 		m_ignoringThisDrag = false;
 		m_allowingThisDrag = false;
@@ -342,36 +340,19 @@ public class HorizontalScrollSnap : MonoBehaviour
 				Vector3 dragDistance = currentScreenPoint - m_touchStartPoint;
 				dragDistance = new Vector3(Mathf.Abs(dragDistance.x), Mathf.Abs(dragDistance.y), 0);
 
-				// TODO: TEMP!
-				// we've reached the threshold in the wrong direction, so we ignore this drag
-//				if (dragDistance.x >= m_dragThresholdX)
-//				{
-//					//Debug.Log("HorizontalScrollSnap --- DRAG IN X DIRECTION - ALLOWING DRAG");
-//					if (OnDragStart != null) OnDragStart(gameObject);
-//					m_allowingThisDrag = true;
-//				}
-//				// we reached the threshold in the right direction, start dragging
-//				else if (dragDistance.y >= m_dragThresholdY)
-//				{
-					//Debug.Log("HorizontalScrollSnap --- DRAG IN Y DIRECTION - IGNORING DRAG ON SCROLLER");
-					if (OnDragIgnore != null) OnDragIgnore(gameObject);
-					m_ignoringThisDrag = true;
-					
-					// Check children for draggable objects, manually start drag for whicherever one original touch was on
-					for (int i = 0; i < m_screensContainer.transform.childCount; i++)
+				if (OnDragIgnore != null) OnDragIgnore(gameObject);
+				m_ignoringThisDrag = true;
+				
+				// Check children for draggable objects, manually start drag for whicherever one original touch was on
+				for (int i = 0; i < m_screensContainer.transform.childCount; i++)
+				{
+					RectTransform childRect = m_screensContainer.transform.GetChild(i).GetChild(0).GetComponent<RectTransform>();
+					if (childRect.rect.Contains(Input.mousePosition - childRect.position))
 					{
-						RectTransform childRect = m_screensContainer.transform.GetChild(i).GetChild(0).GetComponent<RectTransform>();
-						//Debug.Log ("HorizontalScrollSnap --- ChildRect "+childRect.rect);
-						//Debug.Log ("HorizontalScrollSnap --- Input Position "+(Input.mousePosition - childRect.position));
-						if (childRect.rect.Contains(Input.mousePosition - childRect.position))
-						{
-							//Debug.Log ("HorizontalScrollSnap --- FOUND DRAGGED OFF ITEM! "+childRect.gameObject.name);
-							if (OnDragOff != null) OnDragOff(gameObject, m_screensContainer.transform.GetChild(i).gameObject);
-							break;
-						}
+						if (OnDragOff != null) OnDragOff(gameObject, m_screensContainer.transform.GetChild(i).gameObject);
+						break;
 					}
-
-//				}
+				}
 			}
 		}
 	}
