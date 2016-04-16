@@ -11,6 +11,7 @@
 // Imports 
 // ************************************************************************ 
 using UnityEngine;
+using System;
 using System.Collections;
 
 
@@ -103,4 +104,12 @@ public static class ExtensionMethods {
 		while(!finished)
 			finished = !_coroutine.MoveNext();
 	}
+
+
+	// ********************************************************************
+	public static bool NullOrEmpty(this string _string)
+	{
+		return String.IsNullOrEmpty(_string);
+	}
+	// ********************************************************************
 }
