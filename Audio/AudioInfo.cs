@@ -40,7 +40,9 @@ namespace BounderFramework
 		// ****************************************************************
 		#region Public Methods
 		// ****************************************************************
+		public AudioInfo() { }
 		// ****************************************************************
+		public AudioInfo(AudioCategory _category) 
 		{ 
 			category = _category;
 		}

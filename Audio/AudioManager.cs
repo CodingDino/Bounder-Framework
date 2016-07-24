@@ -145,12 +145,26 @@ namespace BounderFramework
 		}
 		// ****************************************************************
 
+//
 //		// ****************************************************************
 //		public static void FadeOut() { instance.m_fadeAudio.FadeOut(); }
 //		// ****************************************************************
+//
+//
 //		// ****************************************************************
 //		public static void FadeIn() { instance.m_fadeAudio.FadeIn(); }
 //		// ****************************************************************
+//
+//
+//		// ****************************************************************
+//		public static void PlayMusic(string clipResourceLocation) 
+//		{
+//			AudioClip clip = (AudioClip) Resources.Load(instance.m_audioFolder+"/"+clipResourceLocation);
+//			PlayMusic(clip);
+//		}
+//		// ****************************************************************
+//
+//
 //		// ****************************************************************
 //		public static IEnumerator PlayMusic(AudioClip clip) 
 //		{
@@ -165,6 +179,16 @@ namespace BounderFramework
 //				instance.m_fadeAudio.audioSource.Play();
 //				instance.m_fadeAudio.FadeIn();
 //			}
+//		}
+//		// ****************************************************************
+//
+//
+//		// ****************************************************************
+//		public static void SetVolume(float _volume) 
+//		{
+//			if (instance.m_fadeAudio.isFullyAudible)
+//				instance.m_fadeAudio.audioSource.volume = _volume;
+//			instance.m_fadeAudio.maxVolume = _volume;
 //		}
 //		// ****************************************************************
 
