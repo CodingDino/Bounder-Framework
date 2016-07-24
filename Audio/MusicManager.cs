@@ -57,7 +57,7 @@ namespace BounderFramework
 		// ****************************************************************
 		public static void PlayMusic(string clipResourceLocation) 
 		{
-			AudioClip clip = (AudioClip) Resources.Load(m_musicFolder+"/"+clipResourceLocation);
+			AudioClip clip = (AudioClip) Resources.Load(instance.m_musicFolder+"/"+clipResourceLocation);
 			PlayMusic(clip);
 		}
 		// ****************************************************************
