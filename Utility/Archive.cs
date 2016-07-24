@@ -445,8 +445,30 @@ namespace BounderFramework {
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator(); // Just return the generic version
-        }
+		}
 
-    }
+		// ****************************************************************
+
+		public int Count {
+			get {
+				List<object> dataList = data as List<object>;
+				Dictionary<string, object> dataDic = data as Dictionary<string, object>;
+				if (valid && dataList != null)
+				{
+					return dataList.Count;
+				}
+				else if (valid && dataDic != null)
+				{
+					return dataDic.Count;
+				}
+				else
+				{
+					//Debug.LogError("JSON Count failed for object " + path);
+					return 0;
+				}
+			}
+		}
+
+	}
 
 }
