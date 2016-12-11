@@ -305,7 +305,7 @@ public class Entity : MonoBehaviour {
 		Vector2 positionThisFrame = transform.position;
 		float distanceTraveled = 
 			(positionThisFrame-m_positionLastFrame).magnitude;
-		if (distanceTraveled > distanceToTarget)
+		if (distanceTraveled >= distanceToTarget)
 		{
 			m_moveTargetPossessed = false;
 			m_moveTargetNotifyArrival = true;
