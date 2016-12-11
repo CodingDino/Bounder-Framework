@@ -38,6 +38,8 @@ public class InputPlatformMovement2D : MonoBehaviour {
 	[SerializeField]
 	private string m_axisHorizontal = "Horizontal";
 	[SerializeField]
+	private bool m_allowJump = false;
+	[SerializeField]
 	private string m_buttonJump = "Jump";
 	[SerializeField]
 	private float m_jumpVelocity = 100;
@@ -67,14 +69,14 @@ public class InputPlatformMovement2D : MonoBehaviour {
 		
 		// Get input from controller/keyboard
 		float right = Input.GetAxis(m_axisHorizontal);
-		bool jump = Input.GetButtonDown (m_buttonJump);
+		bool jump = m_allowJump ? Input.GetButtonDown (m_buttonJump) : false;
 		
 		// Build direction vector based on input
 		Vector3 direction = new Vector3(right, 0.0f, 0.0f);
 		
 		// Move in the set direction
 		m_entity.MoveX(direction.x);
-		if (jump && m_groundTrigger != null && m_groundTrigger.isColliding)
+		if (jump && (m_groundTrigger == null || m_groundTrigger.isColliding))
 			m_entity.MoveY(1.0f,m_jumpVelocity);
 		
 		// Set facing
