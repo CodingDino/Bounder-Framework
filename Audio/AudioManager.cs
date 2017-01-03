@@ -117,6 +117,11 @@ namespace BounderFramework
 			return true;
 		}
 		// ****************************************************************
+		public static bool Play(string _track, AudioCategory _category, bool _overrideChannelLimit = false)
+		{
+			return Play(_track, new AudioInfo(_category), _overrideChannelLimit);
+		}
+		// ****************************************************************
 		public static bool Play(string _track, AudioInfo _info, bool _overrideChannelLimit = false)
 		{
 			if (!_overrideChannelLimit && !ChannelAvailable(_info.category))
@@ -127,14 +132,21 @@ namespace BounderFramework
 			return Play(clip,_info,_overrideChannelLimit);
 		}
 		// ****************************************************************
+		public static bool Play(AudioClip _clip, AudioCategory _category, bool _overrideChannelLimit = false)
+		{
+			return Play(_clip, new AudioInfo(_category), _overrideChannelLimit);
+		}
+		// ****************************************************************
 		public static bool Play(AudioClip _clip, AudioInfo _info, bool _overrideChannelLimit = false)
 		{
 			if (!_overrideChannelLimit && !ChannelAvailable(_info.category))
 				return false;
-			
+
+			// TODO: USE OBJECT POOLING - THIS WILL MAKE UNLIMITED AUDIO OBJECTS!
 			GameObject audioGameObject = GameObject.Instantiate(instance.m_audioObjectPrefab.gameObject);
 			AudioObject audioObject = audioGameObject.GetComponent<AudioObject>();
 			audioObject.audioInfo = _info;
+			audioObject.audioClip = _clip;
 
 			return Play(audioObject, _overrideChannelLimit);
 		}
