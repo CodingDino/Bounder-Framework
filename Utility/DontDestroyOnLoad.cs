@@ -29,6 +29,7 @@ public class DontDestroyOnLoad : MonoBehaviour {
 	// Purpose:		Run when new instance of the object is created.
     // ********************************************************************
 	void Awake () {
+		Debug.Log("DontDestroyOnLoad called for "+gameObject.name+" "+gameObject.GetInstanceID());
 		DontDestroyOnLoad(gameObject);
 	}
 
