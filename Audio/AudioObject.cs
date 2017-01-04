@@ -11,6 +11,7 @@
 #region Imports
 // ************************************************************************
 using UnityEngine;
+using UnityEngine.Audio;
 using BounderFramework;
 #endregion
 // ************************************************************************
@@ -75,10 +76,9 @@ namespace BounderFramework
 				m_audioSource.loop = m_audioInfo.shouldLoop;
 			}
 
-			// Apply Category Settings
+			// Apply Audio Mixer
 			AudioCategorySettings settings = AudioManager.GetAudioSettings(m_audioInfo.category);
-			m_audioSource.volume *= settings.volume;
-			m_audioSource.pitch *= settings.pitch;
+			m_audioSource.outputAudioMixerGroup = settings.group;
 		}
 		// ****************************************************************
 		#endregion

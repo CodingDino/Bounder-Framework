@@ -11,6 +11,7 @@
 #region Imports
 // ************************************************************************
 using UnityEngine;
+using UnityEngine.Audio;
 using System.Collections;
 using System.Collections.Generic;
 using BounderFramework;
@@ -28,9 +29,10 @@ namespace BounderFramework
 	{
 		INVALID = -1,
 		// ---
-		EFFECTS = 0,
+		Master = 0, // NOTE: Must be camel case for Unity interaction
+		EFFECTS,
 		MUSIC,
-		DIALOG,
+		DIALOGUE,
 		// ---
 		NUM
 	}
@@ -45,9 +47,8 @@ namespace BounderFramework
 	public class AudioCategorySettings
 	{
 		public AudioCategory category;
+		public AudioMixerGroup group;
 		public int numChannels;
-		public float volume;
-		public float pitch;
 	}
 	#endregion
 	// ********************************************************************
@@ -90,6 +91,7 @@ namespace BounderFramework
 			for (int i = 0; i < m_audioCategorySettings.Length; ++i)
 			{
 				m_audioCategorySettings_Internal[m_audioCategorySettings[i].category] = m_audioCategorySettings[i];
+				m_audioObjects[m_audioCategorySettings[i].category] = new List<AudioObject>();
 			}
 		}
 		// ****************************************************************
