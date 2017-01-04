@@ -5,19 +5,15 @@ using System.Collections;
 public class HorizontalFOV : MonoBehaviour
 {
 	public float orthoSize = 5;
-	public float defaultAspectRatio = 1.765f;
-    public float positionScale = 5;
     public Camera FOVCamera;
 
     void Update()
     {
+		if (FOVCamera.pixelHeight == 0 || FOVCamera.pixelWidth == 0)
+			return;
+		
         float aspectRatio = ((float)FOVCamera.pixelWidth) / ((float)FOVCamera.pixelHeight);
 
         FOVCamera.orthographicSize = orthoSize / aspectRatio;
-
-        float positionAdjust = (defaultAspectRatio - aspectRatio) * positionScale;
-        FOVCamera.transform.position = new Vector3(FOVCamera.transform.position.x,
-                                                     positionAdjust,
-                                                     FOVCamera.transform.position.z);
     }
 }
