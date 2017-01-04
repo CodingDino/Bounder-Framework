@@ -72,6 +72,18 @@ public class ObjectPool : IncrementalLoader
 		m_inUse.Add(_object);
 	}
 
+
+	// ********************************************************************
+	// Function:	ObjectDestroyed()
+	// Purpose:		Removes object from all pools
+	// ********************************************************************
+	public void ObjectDestroyed (ObjectPoolObject _object) 
+	{
+		Debug.Log ("object destroyed: "+_object.name);
+		m_available.Remove(_object);
+		m_inUse.Remove(_object);
+	}
+
 	
 	// ********************************************************************
 	// Function:	RequestObject()

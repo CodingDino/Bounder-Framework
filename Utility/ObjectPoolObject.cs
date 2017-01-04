@@ -71,4 +71,16 @@ public class ObjectPoolObject : MonoBehaviour
 	{
 		Recycle();
 	}
+
+
+	// ********************************************************************
+	// Function:	OnDestroy()
+	// Purpose:		Warn that object has been destroyed, and deregister it
+	// ********************************************************************
+	void OnDestroy () 
+	{
+		Debug.LogWarning("ObjectPoolObject destroyed - should simply disable so it can be reused!");
+		if (m_pool != null)
+			m_pool.ObjectDestroyed(this);
+	}
 }
