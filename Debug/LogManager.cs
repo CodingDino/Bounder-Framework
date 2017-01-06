@@ -154,7 +154,8 @@ public class LogManager : Singleton<LogManager>
 	public static void Log(string _message,
 	                       LogCategory _category = LogCategory.UNCATEGORISED, 
 	                       LogSeverity _severity = LogSeverity.LOG, 
-	                       string _tag = "")
+	                       string _tag = "",
+	                       Object _object = null)
 	{
 		if (instance == null)
 		{
@@ -173,19 +174,23 @@ public class LogManager : Singleton<LogManager>
 
 		LogCategorySettings settings = instance.m_logCategorySettings[_category];
 
-		string output = "<color="+settings.color.ToHex()+"><b>"+_category.ToString()+":</b></color> <i>"+_tag+"</i> - "+_message;
+		string objectID = _object == null ? "" : " ("+_object.name+""+_object.GetInstanceID()+")";
+
+		string output = "<color="+settings.color.ToHex()+"><b>"+_category+":</b></color> ";
+		output += "<i>"+_tag+objectID+"</i> - ";
+		output += _message;
 
 		if (_severity >= LogSeverity.ERROR)
 		{
-			Debug.LogError(output);
+			Debug.LogError(output, _object);
 		}
 		else if (_severity >= LogSeverity.WARNING)
 		{
-			Debug.LogWarning(output);
+			Debug.LogWarning(output, _object);
 		}
 		else
 		{
-			Debug.Log(output);
+			Debug.Log(output, _object);
 		}
 	}
 	// ****************************************************************
