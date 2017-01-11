@@ -24,7 +24,7 @@ namespace BounderFramework
 { 
 	// ********************************************************************
 	#region Enum: AudioType
-	// ************************************************************************
+	// ********************************************************************
 	public enum AudioCategory
 	{
 		INVALID = -1,
@@ -42,7 +42,7 @@ namespace BounderFramework
 
 	// ********************************************************************
 	#region Class: AudioCategorySettings
-	// ************************************************************************
+	// ********************************************************************
 	[System.Serializable]
 	public class AudioCategorySettings
 	{
@@ -83,10 +83,9 @@ namespace BounderFramework
 
 
 		// ****************************************************************
-		#region Unity Methods
+		#region MonoBehaviour Methods
 		// ****************************************************************
 		void Start()
-		// ****************************************************************
 		{
 			for (int i = 0; i < m_audioCategorySettings.Length; ++i)
 			{
@@ -107,7 +106,8 @@ namespace BounderFramework
 			return instance.m_audioCategorySettings_Internal[_category];
 		}
 		// ****************************************************************
-		public static bool Play(AudioObject _audioObject, bool _overrideChannelLimit = false)
+		public static bool Play(AudioObject _audioObject, 
+	                            bool _overrideChannelLimit = false)
 		{
 			if (!_overrideChannelLimit && !ChannelAvailable(_audioObject.audioInfo.category))
 				return false;
@@ -119,12 +119,16 @@ namespace BounderFramework
 			return true;
 		}
 		// ****************************************************************
-		public static bool Play(string _track, AudioCategory _category, bool _overrideChannelLimit = false)
+		public static bool Play(string _track, 
+	                            AudioCategory _category, 
+	                            bool _overrideChannelLimit = false)
 		{
 			return Play(_track, new AudioInfo(_category), _overrideChannelLimit);
 		}
 		// ****************************************************************
-		public static bool Play(string _track, AudioInfo _info, bool _overrideChannelLimit = false)
+		public static bool Play(string _track, 
+	                            AudioInfo _info,
+	                            bool _overrideChannelLimit = false)
 		{
 			if (!_overrideChannelLimit && !ChannelAvailable(_info.category))
 				return false;
@@ -134,12 +138,16 @@ namespace BounderFramework
 			return Play(clip,_info,_overrideChannelLimit);
 		}
 		// ****************************************************************
-		public static bool Play(AudioClip _clip, AudioCategory _category, bool _overrideChannelLimit = false)
+		public static bool Play(AudioClip _clip, 
+	                            AudioCategory _category,
+	                            bool _overrideChannelLimit = false)
 		{
 			return Play(_clip, new AudioInfo(_category), _overrideChannelLimit);
 		}
 		// ****************************************************************
-		public static bool Play(AudioClip _clip, AudioInfo _info, bool _overrideChannelLimit = false)
+		public static bool Play(AudioClip _clip, 
+	                            AudioInfo _info, 
+	                            bool _overrideChannelLimit = false)
 		{
 			if (!_overrideChannelLimit && !ChannelAvailable(_info.category))
 				return false;
