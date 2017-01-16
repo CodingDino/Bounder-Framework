@@ -156,6 +156,12 @@ public class DebugMenu : Singleton<DebugMenu>
             m_timeScale = Time.timeScale;
             Time.timeScale = oldTimeScale;
         }
+
+		// Debug pause
+		if (Input.GetKey(KeyCode.P))
+		{
+			Debug.Break();
+		}
     }
 
 
