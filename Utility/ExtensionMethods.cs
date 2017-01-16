@@ -187,4 +187,22 @@ public static class ExtensionMethods {
 		}
 		return z;
 	}
+
+
+	// ********************************************************************
+	// Function:	GetPath()
+	// Purpose:		Returns object Hierarchy path as string
+	// ********************************************************************
+	public static string GetPath(this GameObject _object)
+	{
+		string path = _object.name;
+		Transform transform = _object.transform;
+		while (transform.parent != null)
+		{
+			transform = transform.parent;
+			path = transform.name + "/" + path;
+		}
+
+		return path;
+	}
 }
