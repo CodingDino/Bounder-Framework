@@ -155,7 +155,7 @@ public class LogManager : Singleton<LogManager>
 	                       LogCategory _category = LogCategory.UNCATEGORISED, 
 	                       LogSeverity _severity = LogSeverity.LOG, 
 	                       string _tag = "",
-	                       Object _object = null)
+	                       GameObject _object = null)
 	{
 		if (instance == null)
 		{
@@ -174,7 +174,7 @@ public class LogManager : Singleton<LogManager>
 
 		LogCategorySettings settings = instance.m_logCategorySettings[_category];
 
-		string objectID = _object == null ? "" : " ("+_object.name+""+_object.GetInstanceID()+")";
+		string objectID = _object == null ? "" : " ("+_object.GetPath()+""+_object.GetInstanceID()+")";
 
 		string output = "<color="+settings.color.ToHex()+"><b>"+_category+":</b></color> ";
 		output += "<i>"+_tag+objectID+"</i> - ";
