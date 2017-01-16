@@ -13,6 +13,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using BounderFramework;
 
 
 // ************************************************************************ 
@@ -45,6 +46,12 @@ public class MoveToTarget : MonoBehaviour {
 
 
 	// ********************************************************************
+	// Properties 
+	// ********************************************************************
+	public Vector3 targetPoint { get { return m_targetPoint; } }
+
+
+	// ********************************************************************
 	// Function:	Start()
 	// Purpose:		Run when new instance of the object is created.
 	// ********************************************************************
@@ -73,6 +80,10 @@ public class MoveToTarget : MonoBehaviour {
 	// ********************************************************************
 	private void SetTarget(Vector3 _target) 
 	{ 
+		if (m_moving && _target == m_targetPoint)
+			return;
+		if (!m_moving && _target == m_transform.position)
+			return;
 		m_originPoint = m_transform.position;
 		m_targetPoint = _target;
 		m_diff = m_targetPoint - m_originPoint;
@@ -86,19 +97,18 @@ public class MoveToTarget : MonoBehaviour {
 	// Function:	Move()
 	// Purpose:		Handles movement towards an object
 	// ********************************************************************
-	IEnumerator Move() {
+	IEnumerator Move() 
+	{
 		m_moving = true;
 		while (m_moving)
 		{
-
 			float currentTime = Time.time - m_startTime;
 			if (currentTime >= m_duration)
 			{
 				m_transform.position = m_targetPoint;
+				m_moving = false;
 				if (m_targetQueue.Count > 0)
 					SetTarget(m_targetQueue.Dequeue());
-				else
-					m_moving = false;
 			}
 			else
 			{
