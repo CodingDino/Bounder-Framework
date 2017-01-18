@@ -359,6 +359,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 		adjustedPos += m_dragPointOffset;
 
 		// Check Bounds
+		if (m_clamp)
 		{
 			Vector3 oldPoint = m_transform.position;
 			Vector3 currentPoint = adjustedPos;
@@ -384,7 +385,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
 			// Check Bounds
 			if (!bounds.Contains(currentPoint))
-				currentPoint = oldPoint;
+				currentPoint = oldPoint; // TODO: Instead, allow movement along non-bounded axis!
 
 			adjustedPos = currentPoint;
 		}
