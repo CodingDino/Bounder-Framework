@@ -78,7 +78,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 	public static event DragEnd OnDragEnd;
 	public delegate void DragIgnore(GameObject _callingObject);
 	public static event DragIgnore OnDragIgnore;
-	public delegate void DragOff(GameObject _callingObject, GameObject _draggedOff);
+	public delegate void DragOff(GameObject _callingObject, GameObject _draggedOff, PointerEventData _eventData);
 	public static event DragOff OnDragOff;
 
 	
@@ -269,6 +269,8 @@ public class HorizontalScrollSnap : MonoBehaviour
 	{
 		if (OnDragStart != null) OnDragStart(gameObject);
 
+		Debug.Log("Drag started!");
+
 		m_currentlyDragging = true;
 		m_ignoringThisDrag = false;
 		m_allowingThisDrag = false;
@@ -285,6 +287,8 @@ public class HorizontalScrollSnap : MonoBehaviour
 	public void OnEndDrag(PointerEventData eventData)
 	{
 		if (OnDragEnd != null) OnDragEnd(gameObject);
+
+		Debug.Log("Drag ended!");
 
 		if (m_scrollRect.horizontal && !m_ignoringThisDrag)
 	    {
@@ -324,6 +328,8 @@ public class HorizontalScrollSnap : MonoBehaviour
 	// ********************************************************************
 	public void OnDrag(PointerEventData eventData)
 	{
+		Debug.Log("Dragging!");
+
 		if (m_lerp)
 		{
 			//Debug.LogWarning("LERP STOPPED");
@@ -349,7 +355,8 @@ public class HorizontalScrollSnap : MonoBehaviour
 					RectTransform childRect = m_screensContainer.transform.GetChild(i).GetChild(0).GetComponent<RectTransform>();
 					if (childRect.rect.Contains(Input.mousePosition - childRect.position))
 					{
-						if (OnDragOff != null) OnDragOff(gameObject, m_screensContainer.transform.GetChild(i).gameObject);
+						if (OnDragOff != null) 
+							OnDragOff(gameObject, m_screensContainer.transform.GetChild(i).gameObject, eventData);
 						break;
 					}
 				}
