@@ -31,6 +31,7 @@ public class ColliderList : MonoBehaviour {
 	// Private Data Members 
 	// ********************************************************************
 	private List<Collider2D> m_colliders = new List<Collider2D>();
+	private List<Collision2D> m_collisions = new List<Collision2D>();
 
 
 	// ********************************************************************
@@ -43,6 +44,48 @@ public class ColliderList : MonoBehaviour {
 		get { if (m_colliders.Count > 0) return true; else return false; }
 	}
 
+	public bool IsCollidingWithTag(string _tag)
+	{
+		if (!isColliding)
+			return false;
+
+		for (int i = 0; i < m_colliders.Count; ++i)
+		{
+			if (m_colliders[i].gameObject.tag == _tag )
+				return true;
+		}
+
+		return false;
+	}
+
+	public GameObject GetColliderWithTag(string _tag)
+	{
+		if (!isColliding)
+			return null;
+
+		for (int i = 0; i < m_colliders.Count; ++i)
+		{
+			if (m_colliders[i].gameObject.tag == _tag )
+				return m_colliders[i].gameObject;
+		}
+
+		return null;
+	}
+
+	public Collision2D GetCollisionWithTag(string _tag)
+	{
+		if (!isColliding)
+			return null;
+
+		for (int i = 0; i < m_collisions.Count; ++i)
+		{
+			if (m_collisions[i].collider.gameObject.tag == _tag )
+				return m_collisions[i];
+		}
+
+		return null;
+	}
+
 	
 	// ********************************************************************
 	// Function:	LateUpdate()
@@ -50,55 +93,8 @@ public class ColliderList : MonoBehaviour {
 	// ********************************************************************
 	void LateUpdate () {
 		m_colliders = new List<Collider2D>();
+		m_collisions = new List<Collision2D>();
 	}
-
-	
-//	// ********************************************************************
-//	// Function:	OnCollisionEnter2D()
-//	// Purpose:		Called when this collider encounters another.
-//	// ********************************************************************
-//	void OnCollisionEnter2D(Collision2D collision) {
-//		if (!m_colliders.Contains(collision.collider))
-//		{
-//			m_colliders.Add (collision.collider);
-//		}
-//	}
-	
-	
-//	// ********************************************************************
-//	// Function:	OnTriggerEnter2D()
-//	// Purpose:		Called when this collider encounters another.
-//	// ********************************************************************
-//	void OnTriggerEnter2D(Collider2D otherCollider) {
-//		if (!m_colliders.Contains(otherCollider))
-//		{
-//			m_colliders.Add (otherCollider);
-//		}
-//	}
-//	
-//	
-//	// ********************************************************************
-//	// Function:	OnCollisionExit2D()
-//	// Purpose:		Called a collider stops colliding with this one.
-//	// ********************************************************************
-//	void OnCollisionExit2D(Collision2D collision) {
-//		if (m_colliders.Contains(collision.collider))
-//		{
-//			m_colliders.Remove(collision.collider);
-//		}
-//	}
-//	
-//	
-//	// ********************************************************************
-//	// Function:	OnTriggerExit2D()
-//	// Purpose:		Called a collider stops colliding with this one.
-//	// ********************************************************************
-//	void OnTriggerExit2D(Collider2D otherCollider) {
-//		if (m_colliders.Contains(otherCollider))
-//		{
-//			m_colliders.Remove(otherCollider);
-//		}
-//	}
 	
 	
 	// ********************************************************************
@@ -109,6 +105,7 @@ public class ColliderList : MonoBehaviour {
 		if (!m_colliders.Contains(collision.collider))
 		{
 			m_colliders.Add (collision.collider);
+			m_collisions.Add (collision);
 		}
 	}
 	
