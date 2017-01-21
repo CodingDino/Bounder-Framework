@@ -49,6 +49,7 @@ public class MoveToTarget : MonoBehaviour {
 	// Properties 
 	// ********************************************************************
 	public Vector3 targetPoint { get { return m_targetPoint; } }
+	public bool hasTarget { get { return m_moving; } }
 
 
 	// ********************************************************************
