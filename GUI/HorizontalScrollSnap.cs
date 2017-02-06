@@ -15,6 +15,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using BounderFramework;
 
 
 // ************************************************************************ 
@@ -269,7 +270,11 @@ public class HorizontalScrollSnap : MonoBehaviour
 	{
 		if (OnDragStart != null) OnDragStart(gameObject);
 
-		Debug.Log("Drag started!");
+		LogManager.Log("OnBeginDrag()",
+		               LogCategory.INPUT,
+		               LogSeverity.LOG, 
+		               "HorizontalScrollSnap",
+		               gameObject);
 
 		m_currentlyDragging = true;
 		m_ignoringThisDrag = false;
@@ -288,7 +293,11 @@ public class HorizontalScrollSnap : MonoBehaviour
 	{
 		if (OnDragEnd != null) OnDragEnd(gameObject);
 
-		Debug.Log("Drag ended!");
+		LogManager.Log("OnEndDrag()",
+		               LogCategory.INPUT,
+		               LogSeverity.LOG, 
+		               "HorizontalScrollSnap",
+		               gameObject);
 
 		if (m_scrollRect.horizontal && !m_ignoringThisDrag)
 	    {
@@ -328,7 +337,11 @@ public class HorizontalScrollSnap : MonoBehaviour
 	// ********************************************************************
 	public void OnDrag(PointerEventData eventData)
 	{
-		Debug.Log("Dragging!");
+		LogManager.Log("OnDrag()",
+		               LogCategory.INPUT,
+		               LogSeverity.LOG, 
+		               "HorizontalScrollSnap",
+		               gameObject);
 
 		if (m_lerp)
 		{

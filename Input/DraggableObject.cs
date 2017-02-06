@@ -44,6 +44,9 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 	[SerializeField]
 	[Tooltip("Distance drag needed to start the object dragging")]
 	private float m_dragStartThreshold = 5.0f;
+	[SerializeField]
+	[Tooltip("Distance drag needed in wrong direction to ignore the drag. 0 = same as Drag Start Threshold.")]
+	private float m_dragIgnoreThreshold = 0.0f;
 	// ********************************************************************
 	[Header("Clamp")]
 	[SerializeField]
@@ -129,6 +132,8 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 		if (m_transform == null)
 			m_transform = transform;
 		m_canvas = GetComponentInParent<Canvas>();
+		if (m_dragIgnoreThreshold == 0)
+			m_dragIgnoreThreshold = m_dragStartThreshold;
 	}
 	// ********************************************************************
 	void LateUpdate () 
@@ -195,7 +200,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
 			if (!m_allowDragStartDirection.x)
 			{
-				if (dragScreenDistance.x >= m_dragStartThreshold)
+				if (dragScreenDistance.x >= m_dragIgnoreThreshold)
 				{
 					m_ignoringThisDrag = true;
 				}
@@ -204,7 +209,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
 			if (!m_allowDragStartDirection.y)
 			{
-				if (dragScreenDistance.y >= m_dragStartThreshold)
+				if (dragScreenDistance.y >= m_dragIgnoreThreshold)
 				{
 					m_ignoringThisDrag = true;
 				}
