@@ -85,6 +85,14 @@ public class DebugMenu : Singleton<DebugMenu>
 	private Transform m_buttonGrid;
 	[SerializeField]
 	private int m_numLogsKept = 100;
+	[SerializeField]
+	private bool m_demoMode = true;
+	[SerializeField]
+	private Text m_versionText;
+	[SerializeField]
+	private bool m_showVersionText = true;
+	[SerializeField]
+	private string m_versionNumber;
 
 
     // ********************************************************************
@@ -100,6 +108,82 @@ public class DebugMenu : Singleton<DebugMenu>
     private List<GameObject> m_debugButtons = new List<GameObject>();
     private List<DebugButtonCallback> m_debugButtonCallbacks = new List<DebugButtonCallback>();
     private float m_last4FingerTouch = 0;
+	private GameObject m_demoButton;
+
+
+	// ********************************************************************
+	// Properties 
+	// ********************************************************************
+	public static bool demoMode { get { return instance.m_demoMode; } }
+
+
+	// ********************************************************************
+	// Delegates 
+	// ********************************************************************
+	public delegate void DemoModeToggle(bool _demoActive);
+	public static event DemoModeToggle OnDemoModeToggle;
+
+
+	// ********************************************************************
+	// Function:	Start()
+	// ********************************************************************
+	void Start()
+	{
+		// Create demo button
+		m_demoButton = AddButton("demo", "Demo", DemoButtonPressed);
+		m_demoButton.GetComponent<Image>().color = m_demoMode ? Color.green : Color.red;
+
+		// TODO: Create reset button
+		AddButton("reset", "Reset", ResetButtonPressed);
+
+		// Setup Version Text
+		m_versionText.text = "v" + m_versionNumber;
+		if (m_demoMode)
+			m_versionText.text += " DEMO";
+		m_versionText.enabled = m_showVersionText;
+	}
+
+
+	// ********************************************************************
+	// Function:	DemoButtonPressed()
+	// ********************************************************************
+	private void DemoButtonPressed(string _id, GameObject _button)
+	{
+		m_demoMode = !m_demoMode;
+		m_demoButton.GetComponent<Image>().color = m_demoMode ? Color.green : Color.red;
+		m_versionText.text = "v" + m_versionNumber;
+		if (m_demoMode)
+			m_versionText.text += " DEMO";
+
+		// Perform game-specific actions on demo mode toggle
+		if (OnDemoModeToggle)
+			OnDemoModeToggle();
+
+		ResetButtonPressed(_id, _button);
+	}
+
+
+	// ********************************************************************
+	// Function:	ResetButtonPressed()
+	// ********************************************************************
+	private void ResetButtonPressed(string _id, GameObject _button)
+	{
+		// Reset to title screen
+		LoadingSceneManager.LoadTitle();
+		ToggleVisibility();
+
+		// Remove all non-default buttons
+		for (int i = 0; i < instance.m_debugButtons.Count; ++i)
+		{
+			if (instance.m_debugButtons[i].name != "demo" && instance.m_debugButtons[i].name != "reset" )
+			{
+				GameObject button = instance.m_debugButtons[i];
+				instance.m_debugButtons.RemoveAt(i);
+				instance.m_debugButtonCallbacks.RemoveAt(i);
+				GameObject.Destroy(button);
+			}
+		}
+	}
 
 
     // ********************************************************************
@@ -149,12 +233,7 @@ public class DebugMenu : Singleton<DebugMenu>
 
             m_last4FingerTouch = Time.realtimeSinceStartup;
 
-            m_visibleElements.SetActive(!m_visibleElements.activeSelf);
-            UpdateTextBox();
-
-            float oldTimeScale = m_timeScale;
-            m_timeScale = Time.timeScale;
-            Time.timeScale = oldTimeScale;
+			ToggleVisibility();
         }
 
 		// Debug pause
@@ -174,11 +253,11 @@ public class DebugMenu : Singleton<DebugMenu>
 		if (instance == null) return null;
 
         GameObject prototype = _prototype == null ? instance.m_buttonPrototype : _prototype;
-        GameObject newButton = GameObject.Instantiate(prototype) as GameObject;
+		GameObject newButton = GameObject.Instantiate(prototype,instance.m_buttonGrid) as GameObject;
+		newButton.transform.localScale = Vector3.one;
         newButton.name = _id;
         newButton.GetComponentInChildren<Text>().text = _name;
         newButton.GetComponent<Button>().onClick.AddListener(delegate { ButtonPressed(_id); });
-        newButton.transform.SetParent(instance.m_buttonGrid);
         instance.m_debugButtons.Add(newButton);
         instance.m_debugButtonCallbacks.Add(_callback);
 
@@ -334,7 +413,21 @@ public class DebugMenu : Singleton<DebugMenu>
     {
         m_jumpToBottomButton.GetComponent<Image>().color = m_jumpToBottom ? new Color(0.75f, 0.75f, 0.75f) : new Color(1.0f, 1.0f, 1.0f);
         m_jumpToBottom = !m_jumpToBottom;
-    }
+	}
+
+	// ********************************************************************
+	// Function:	ToggleVisibility()
+	// Purpose:		Changes between visible and invisible debug
+	// ********************************************************************
+	public void ToggleVisibility()
+	{
+		m_visibleElements.SetActive(!m_visibleElements.activeSelf);
+		UpdateTextBox();
+
+		float oldTimeScale = m_timeScale;
+		m_timeScale = Time.timeScale;
+		Time.timeScale = oldTimeScale;
+	}
 
 
 }
