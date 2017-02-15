@@ -156,8 +156,8 @@ public class DebugMenu : Singleton<DebugMenu>
 			m_versionText.text += " DEMO";
 
 		// Perform game-specific actions on demo mode toggle
-		if (OnDemoModeToggle)
-			OnDemoModeToggle();
+		if (OnDemoModeToggle != null)
+			OnDemoModeToggle(m_demoMode);
 
 		ResetButtonPressed(_id, _button);
 	}
