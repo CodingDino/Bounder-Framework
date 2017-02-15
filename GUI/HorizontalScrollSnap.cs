@@ -37,13 +37,20 @@ public class HorizontalScrollSnap : MonoBehaviour
 	// Serialized Data Members 
 	// ********************************************************************	
 	[SerializeField]
+	[Tooltip("Layout group being controlled by scroller, used for pagination.")]
 	private HorizontalLayoutGroup m_layoutGroup;
 	[SerializeField]
+	[Tooltip("Deceleration for the scroller, applied after the scroller is released.")]
 	private float m_deceleration = 0.001f;
 	[SerializeField]
+	[Tooltip("Whether we allow objects to be dragged off the scroller")]
 	private bool m_allowDragOff = false;
 	[SerializeField]
-	private int m_startingScreen = 0;
+	[Tooltip("Distance drag needed to drag an object off the scroller")]
+	private float m_dragOffThreshold = 5;
+	[SerializeField]
+	[Tooltip("Page of the layout group to start on.")]
+	private int m_startingPage = 0;
 
 	
 	// ********************************************************************
@@ -67,7 +74,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 	// Properties 
 	// ********************************************************************
 	public bool isStopped { get { return m_momentumEffectivelyStopped; } }
-	public int startingScreen { set {m_startingScreen = value; } }
+	public int startingPage { set {m_startingPage = value; } }
 	
 	
 	// ********************************************************************
@@ -123,9 +130,9 @@ public class HorizontalScrollSnap : MonoBehaviour
 				xPos -= spacing;
 			}
 
-			if (m_startingScreen >= m_positions.Count)
-				m_startingScreen = m_positions.Count - 1;
-			m_screensContainer.localPosition = m_positions[m_startingScreen];
+			if (m_startingPage >= m_positions.Count)
+				m_startingPage = m_positions.Count - 1;
+			m_screensContainer.localPosition = m_positions[m_startingPage];
 		}
 	}
 
@@ -356,21 +363,41 @@ public class HorizontalScrollSnap : MonoBehaviour
 			
 			if (!m_allowingThisDrag && !m_ignoringThisDrag)
 			{
-				Vector3 dragDistance = currentScreenPoint - m_touchStartPoint;
-				dragDistance = new Vector3(Mathf.Abs(dragDistance.x), Mathf.Abs(dragDistance.y), 0);
+				Vector2 dragScreenDistance = currentScreenPoint - m_touchStartPoint;
+				dragScreenDistance = new Vector3(Mathf.Abs(dragScreenDistance.x), Mathf.Abs(dragScreenDistance.y), 0);
 
-				if (OnDragIgnore != null) OnDragIgnore(gameObject);
-				m_ignoringThisDrag = true;
-				
-				// Check children for draggable objects, manually start drag for whicherever one original touch was on
-				for (int i = 0; i < m_screensContainer.transform.childCount; i++)
+				if (dragScreenDistance.y >= m_dragOffThreshold)
 				{
-					RectTransform childRect = m_screensContainer.transform.GetChild(i).GetChild(0).GetComponent<RectTransform>();
-					if (childRect.rect.Contains(Input.mousePosition - childRect.position))
+					m_ignoringThisDrag = true;
+				}
+				else if (dragScreenDistance.x >= m_dragOffThreshold)
+				{
+					m_allowingThisDrag = true;
+				}
+
+				if (m_ignoringThisDrag)
+				{
+					LogManager.Log("Ignoring drag",
+					   LogCategory.INPUT,
+					   LogSeverity.LOG, 
+					   "HorizontalScrollSnap",
+					   gameObject);
+					
+					if (OnDragIgnore != null) 
+						OnDragIgnore(gameObject);
+
+					// Check children for draggable objects, manually start drag for whicherever one original touch was on
+					for (int i = 0; i < m_screensContainer.transform.childCount; i++)
 					{
-						if (OnDragOff != null) 
-							OnDragOff(gameObject, m_screensContainer.transform.GetChild(i).gameObject, eventData);
-						break;
+						RectTransform childTransform = m_screensContainer.transform.GetChild(i).GetChild(0).GetComponent<RectTransform>();
+						Rect childRect = childTransform.rect;
+						Vector2 touchStartPointLocal = m_touchStartPoint - (Vector2)Camera.main.WorldToScreenPoint(childTransform.position);
+						if (childRect.Contains(touchStartPointLocal))
+						{
+							if (OnDragOff != null) 
+								OnDragOff(gameObject, m_screensContainer.transform.GetChild(i).gameObject, eventData);
+							break;
+						}
 					}
 				}
 			}
