@@ -114,7 +114,20 @@ public class DebugMenu : Singleton<DebugMenu>
 	// ********************************************************************
 	// Properties 
 	// ********************************************************************
-	public static bool demoMode { get { return instance.m_demoMode; } }
+	public static bool demoMode 
+	{
+		get 
+		{ 
+			if (instance == null)
+			{
+				LogManager.Log("Attempt to access property while uninitialised.",
+				               LogCategory.INPUT,
+				               LogSeverity.ERROR, 
+				               "DebugMenu");
+			}
+			return instance != null ? instance.m_demoMode : false; 
+		} 
+	}
 
 
 	// ********************************************************************
