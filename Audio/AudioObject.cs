@@ -10,6 +10,7 @@
 // ************************************************************************ 
 #region Imports
 // ************************************************************************
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
 using BounderFramework;
@@ -21,72 +22,132 @@ using BounderFramework;
 namespace BounderFramework 
 { 
 
+// ************************************************************************
+#region Class: AudioObject
+// ************************************************************************
+[RequireComponent(typeof(AudioSource))]
+public class AudioObject : MonoBehaviour 
+{
+
 	// ********************************************************************
-	#region Class: AudioObject
+	#region Exposed Data Members
 	// ********************************************************************
-	public class AudioObject : MonoBehaviour 
-	{
-
-		// ****************************************************************
-		#region Exposed Data Members
-		// ****************************************************************
-		[SerializeField]
-		private AudioSource m_audioSource;
-		[SerializeField]
-		private AudioClip m_audioClip;
-		[SerializeField]
-		private AudioInfo m_audioInfo = new AudioInfo();
-		#endregion
-		// ****************************************************************
+	[SerializeField]
+	private AudioClip m_audioClip;
+	[SerializeField]
+	private AudioInfo m_audioInfo = new AudioInfo();
+	#endregion
+	// ********************************************************************
 
 
-		// ****************************************************************
-		#region Properties
-		// ****************************************************************
-		public AudioSource audioSource {
-			get { return m_audioSource; }
-			set { m_audioSource = value; }
-		}
-		// ****************************************************************
-		public AudioClip audioClip {
-			get { return m_audioClip; }
-			set { m_audioClip = value; }
-		}
-		// ****************************************************************
-		public AudioInfo audioInfo {
-			get { return m_audioInfo; }
-			set { m_audioInfo = value; }
-		}
-		#endregion
-		// ****************************************************************
+	// ********************************************************************
+	#region Private Data Members
+	// ********************************************************************
+	private AudioSource m_audioSource;
+	private bool m_fading;
+	#endregion
+	// ********************************************************************
 
 
-		// ****************************************************************
-		#region Public Methods
-		// ****************************************************************
-		public void Apply()
-		{
-			m_audioSource.clip = m_audioClip;
-
-			// Apply Info
-			if (m_audioInfo != null)
-			{
-				m_audioSource.volume = m_audioInfo.volume + Random.Range(-m_audioInfo.volumeFuzz,m_audioInfo.volumeFuzz);
-				m_audioSource.pitch = m_audioInfo.pitch + Random.Range(-m_audioInfo.pitchFuzz,m_audioInfo.pitchFuzz);
-				m_audioSource.loop = m_audioInfo.shouldLoop;
-			}
-
-			// Apply Audio Mixer
-			AudioCategorySettings settings = AudioManager.GetAudioSettings(m_audioInfo.category);
-			m_audioSource.outputAudioMixerGroup = settings.group;
-		}
-		// ****************************************************************
-		#endregion
-		// ****************************************************************
-
+	// ********************************************************************
+	#region Properties
+	// ********************************************************************
+	public AudioSource audioSource {
+		get { return m_audioSource; }
+		set { m_audioSource = value; }
+	}
+	// ********************************************************************
+	public AudioClip audioClip {
+		get { return m_audioClip; }
+		set { m_audioClip = value; }
+	}
+	// ********************************************************************
+	public AudioInfo audioInfo {
+		get { return m_audioInfo; }
+		set { m_audioInfo = value; }
 	}
 	#endregion
 	// ********************************************************************
+
+
+	// ****************************************************************
+	#region MonoBehaviour Methods
+	// ****************************************************************
+	void Awake()
+	{
+		m_audioSource = GetComponent<AudioSource>();
+	}
+	// ****************************************************************
+	void Update()
+	{
+		if (!m_audioSource.isPlaying)
+			gameObject.SetActive(false); // Triggers object pool to recycle
+	}
+	// ****************************************************************
+	#endregion
+	// ****************************************************************
+
+
+	// ********************************************************************
+	#region Public Methods
+	// ********************************************************************
+	public void Apply()
+	{
+		m_audioSource.clip = m_audioClip;
+
+		// Apply Info
+		if (m_audioInfo != null)
+		{
+			m_audioSource.volume = m_audioInfo.volume + Random.Range(-m_audioInfo.volumeFuzz,m_audioInfo.volumeFuzz);
+			m_audioSource.pitch = m_audioInfo.pitch + Random.Range(-m_audioInfo.pitchFuzz,m_audioInfo.pitchFuzz);
+			m_audioSource.loop = m_audioInfo.shouldLoop;
+		}
+
+		// Apply Audio Mixer
+		AudioCategorySettings settings = AudioManager.GetAudioSettings(m_audioInfo.category);
+		m_audioSource.outputAudioMixerGroup = settings.group;
+	}
+	// ********************************************************************
+	public Coroutine Fade(bool _on) { return StartCoroutine(_Fade(_on)); }
+	public IEnumerator _Fade(bool _on)
+	{
+		if (m_fading)
+			yield break;
+		m_fading = true;
+
+		float targetVolume = _on ? m_audioInfo.volume + Random.Range(-m_audioInfo.volumeFuzz,m_audioInfo.volumeFuzz) : 0;
+
+		if (_on)
+		{
+			while (m_audioSource.volume < m_audioInfo.volume)
+			{
+				yield return null;
+				m_audioSource.volume += m_audioInfo.fadeSpeed * Time.deltaTime;
+			}
+		}
+		else
+		{
+			while (m_audioSource.volume > m_audioInfo.volume)
+			{
+				yield return null;
+				m_audioSource.volume -= m_audioInfo.fadeSpeed * Time.deltaTime;
+			}
+		}
+
+		m_audioSource.volume = targetVolume;
+		if (targetVolume == 0)
+			m_audioSource.Stop();
+
+		m_fading = false;
+	}
+	// ********************************************************************
+
+	#endregion
+	// ********************************************************************
+
+}
+#endregion
+// ************************************************************************
 
 }
 // ************************************************************************

@@ -19,6 +19,7 @@ using System.Collections;
 // ************************************************************************ 
 // Class: ObjectPool
 // ************************************************************************
+[System.Serializable]
 public class ObjectPool : IncrementalLoader
 {
 
@@ -29,6 +30,15 @@ public class ObjectPool : IncrementalLoader
 	private List<ObjectPoolObject> m_available = new List<ObjectPoolObject>();
 	private List<ObjectPoolObject> m_inUse = new List<ObjectPoolObject>();
 	private GameObject m_prefab;
+
+
+	// ****************************************************************
+	#region Properties
+	// ****************************************************************
+	public int Count { get { return m_inUse.Count; } }
+	public ObjectPoolObject FirstActive { get { return Count > 0 ? m_inUse[0] : null; } }
+	#endregion
+	// ****************************************************************
 
 
 	// ********************************************************************

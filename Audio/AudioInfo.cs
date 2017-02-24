@@ -34,6 +34,7 @@ namespace BounderFramework
 		public float pitch = 1.0f;
 		public float pitchFuzz = 0.0f;
 		public bool shouldLoop = false;
+		public float fadeSpeed = 1.0f;
 		#endregion
 		// ****************************************************************
 
