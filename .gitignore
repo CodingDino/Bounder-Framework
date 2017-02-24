@@ -7,7 +7,6 @@
 [Ll]ibrary/
 sysinfo.txt
 Builds/*
-*.meta
  
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
