@@ -87,6 +87,19 @@ public enum EasingFunction
 /// </summary>
 public static class Easing
 {
+
+	/// <summary>
+	/// Apply easing for the given function.
+	/// </summary>
+	/// <param name="t">Current time in seconds.</param>
+	/// <param name="b">Starting value.</param>
+	/// <param name="c">Final value.</param>
+	/// <param name="d">Duration of animation.</param>
+	/// <returns>The correct value.</returns>
+	public static float Apply(EasingFunction function,float t, float b, float c, float d)
+	{
+		return GetFunc(function)(t,b,c,d);
+	}
 	
 	/// <summary>
 	/// Converts an EasingFunction enum to the corresponding function.
