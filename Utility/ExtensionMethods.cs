@@ -205,4 +205,24 @@ public static class ExtensionMethods {
 
 		return path;
 	}
+
+
+	// ********************************************************************
+	// Function:	HasParameterOfType()
+	// Purpose:		Checks if the animator has the provided parameter
+	// ********************************************************************
+	public static bool HasParameterOfType(this Animator _self, string _name, AnimatorControllerParameterType _type)
+	{
+		var parameters = _self.parameters;
+		for (int i = 0; i < parameters.Length; ++i)
+		{
+			if (parameters[i].type == _type && parameters[i].name == _name)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+
 }
