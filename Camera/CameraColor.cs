@@ -1,6 +1,6 @@
 ﻿// ************************************************************************ 
-// File Name:   CameraColour.cs 
-// Purpose:    	Change the colour of the camera.
+// File Name:   CameraColor.cs 
+// Purpose:    	Change the color of the camera.
 // Project:		Armoured Engines
 // Author:      Sarah Herzog  
 // Copyright: 	2015 Bounder Games
@@ -21,9 +21,9 @@ using System.Collections;
 
 
 // ************************************************************************ 
-// Class: CameraColour
+// Class: CameraColor
 // ************************************************************************
-public class CameraColour : MonoBehaviour {
+public class CameraColor : MonoBehaviour {
 	
 	// ********************************************************************
 	// Private Data Members 
@@ -42,51 +42,51 @@ public class CameraColour : MonoBehaviour {
 	
 	
 	// ********************************************************************
-	// Function:	ChangeColour()
-	// Purpose:		Changes the colour over time.
+	// Function:	ChangeColor()
+	// Purpose:		Changes the color over time.
 	// ********************************************************************
-	public void ChangeColour (Color _newColour, float _transitionTime = 0) 
+	public void ChangeColor (Color _newColor, float _transitionTime = 0) 
 	{
 		if (thisCamera == null)
 		{
-			Debug.LogError("CameraColour - attempt to change camera before initialization.");
+			Debug.LogError("CameraColor - attempt to change camera before initialization.");
 			return;
 		}
 
 		if (_transitionTime == 0)
 		{
-			thisCamera.backgroundColor = _newColour;
+			thisCamera.backgroundColor = _newColor;
 		}
 		else
 		{
-			StartCoroutine(ChangeColourOverTime(_newColour, _transitionTime));
+			StartCoroutine(ChangeColorOverTime(_newColor, _transitionTime));
 		}
 	}
 	
 	
 	// ********************************************************************
-	// Function:	ChangeColour()
-	// Purpose:		Changes the colour over time.
+	// Function:	ChangeColor()
+	// Purpose:		Changes the color over time.
 	// ********************************************************************
-	public IEnumerator ChangeColourOverTime (Color _newColour, float _transitionTime) 
+	public IEnumerator ChangeColorOverTime (Color _newColor, float _transitionTime) 
 	{
 		if (thisCamera == null)
 		{
-			Debug.LogError("CameraColour - attempt to change camera before initialization.");
+			Debug.LogError("CameraColor - attempt to change camera before initialization.");
 			yield break;
 		}
 
 		float startTime = Time.time;
-		Color originalColour = thisCamera.backgroundColor;
-		Color colorDiff = _newColour - originalColour;
+		Color originalColor = thisCamera.backgroundColor;
+		Color colorDiff = _newColor - originalColor;
 		while (Time.time < startTime + _transitionTime)
 		{
 			float timePassed = Time.time - startTime;
 			Color colorChange = colorDiff * (timePassed / _transitionTime);
-			thisCamera.backgroundColor = originalColour + colorChange;
+			thisCamera.backgroundColor = originalColor + colorChange;
 			yield return null;
 		}
-		thisCamera.backgroundColor = _newColour;
+		thisCamera.backgroundColor = _newColor;
 
 	}
 }
