@@ -124,17 +124,15 @@ namespace BounderFramework
 		}
 		// ****************************************************************
 		public static AudioObject Play(string _track, 
-	                                   AudioCategory _category, 
-	                                   AudioChannelOverride _overrideChannelLimit = AudioChannelOverride.NONE)
+	                                   AudioCategory _category)
 		{
-			return Play(_track, new AudioInfo(_category), _overrideChannelLimit);
+			return Play(_track, new AudioInfo(_category));
 		}
 		// ****************************************************************
 		public static AudioObject Play(string _track, 
-	                                   AudioInfo _info,
-	                                   AudioChannelOverride _overrideChannelLimit = AudioChannelOverride.NONE)
+	                                   AudioInfo _info)
 		{
-			if (_overrideChannelLimit == AudioChannelOverride.NONE && !ChannelAvailable(_info.category))
+			if (_info.overrideChannelLimit == AudioChannelOverride.NONE && !ChannelAvailable(_info.category))
 				return null;
 
 			string filepath = instance.m_audioFolder+_info.category.ToString()+"/"+_track;
@@ -146,24 +144,22 @@ namespace BounderFramework
 				return null;
 			}
 
-			return Play(clip,_info,_overrideChannelLimit);
+			return Play(clip,_info);
 		}
 		// ****************************************************************
 		public static AudioObject Play(AudioClip _clip, 
-	                                   AudioCategory _category,
-	                                   AudioChannelOverride _overrideChannelLimit = AudioChannelOverride.NONE)
+	                                   AudioCategory _category)
 		{
-			return Play(_clip, new AudioInfo(_category), _overrideChannelLimit);
+			return Play(_clip, new AudioInfo(_category));
 		}
 		// ****************************************************************
 		public static AudioObject Play(AudioClip _clip, 
-	                                   AudioInfo _info, 
-	                                   AudioChannelOverride _overrideChannelLimit = AudioChannelOverride.NONE)
+	                                   AudioInfo _info)
 		{
-			if (_overrideChannelLimit == AudioChannelOverride.NONE && !ChannelAvailable(_info.category))
+			if (_info.overrideChannelLimit == AudioChannelOverride.NONE && !ChannelAvailable(_info.category))
 				return null;
 
-			bool replacing = !ChannelAvailable(_info.category) && _overrideChannelLimit == AudioChannelOverride.REPLACE;
+			bool replacing = !ChannelAvailable(_info.category) && _info.overrideChannelLimit == AudioChannelOverride.REPLACE;
 			if (replacing)
 			{
 				AudioObject oldObject = instance.m_audioObjects[_info.category].FirstActive.GetComponent<AudioObject>();

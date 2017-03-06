@@ -30,6 +30,7 @@ namespace BounderFramework
 		#region Public Data Members
 		// ****************************************************************
 		public AudioCategory category = AudioCategory.EFFECTS;
+		public AudioChannelOverride overrideChannelLimit = AudioChannelOverride.NONE;
 		public float volume = 1.0f;
 		public float volumeFuzz = 0.0f;
 		public float pitch = 1.0f;
@@ -48,6 +49,7 @@ namespace BounderFramework
 			bool success = true;
 
 			success &= _JSON["category"].GetEnum<AudioCategory>(ref category);
+			success &= _JSON["override"].GetEnum<AudioChannelOverride>(ref overrideChannelLimit);
 			success &= _JSON["volume"].Get(ref volume);
 			success &= _JSON["volumeFuzz"].Get(ref volumeFuzz);
 			success &= _JSON["pitch"].Get(ref pitch);
@@ -63,6 +65,7 @@ namespace BounderFramework
 			JSON save = new JSON();
 
 			save["category"].data = category.ToString();
+			save["override"].data = overrideChannelLimit.ToString();
 			save["volume"].data = volume;
 			save["volumeFuzz"].data = volumeFuzz;
 			save["pitch"].data = pitch;
