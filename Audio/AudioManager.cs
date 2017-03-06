@@ -179,7 +179,7 @@ namespace BounderFramework
 			audioObject.Apply();
 			audioObject.audioSource.Play();
 
-			if (replacing)
+			if (_info.fadeDuration != 0)
 			{
 				audioObject.audioSource.volume=0;
 				audioObject.Fade(true);
