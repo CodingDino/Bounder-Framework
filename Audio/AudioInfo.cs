@@ -23,7 +23,8 @@ namespace BounderFramework
 	#region Class: AudioInfo
 	// ********************************************************************
 	[System.Serializable]
-	public class AudioInfo {
+	public class AudioInfo : Archive 
+	{
 		
 		// ****************************************************************
 		#region Public Data Members
@@ -37,6 +38,44 @@ namespace BounderFramework
 		public float fadeSpeed = 1.0f;
 		#endregion
 		// ****************************************************************
+
+
+		// ****************************************************************
+		#region Archive Methods
+		// ****************************************************************
+		public virtual bool Load(JSON _JSON)
+		{
+			bool success = true;
+
+			success &= _JSON["category"].GetEnum<AudioCategory>(ref category);
+			success &= _JSON["volume"].Get(ref volume);
+			success &= _JSON["volumeFuzz"].Get(ref volumeFuzz);
+			success &= _JSON["pitch"].Get(ref pitch);
+			success &= _JSON["pitchFuzz"].Get(ref pitchFuzz);
+			success &= _JSON["shouldLoop"].Get(ref shouldLoop);
+			success &= _JSON["fadeSpeed"].Get(ref fadeSpeed);
+
+			return success;
+		}
+		// ****************************************************************
+		public virtual JSON Save()
+		{
+			JSON save = new JSON();
+
+			save["category"].data = category.ToString();
+			save["volume"].data = volume;
+			save["volumeFuzz"].data = volumeFuzz;
+			save["pitch"].data = pitch;
+			save["pitchFuzz"].data = pitchFuzz;
+			save["shouldLoop"].data = shouldLoop;
+			save["fadeSpeed"].data = fadeSpeed;
+
+			return save;
+		}
+		// ****************************************************************
+		#endregion
+		// ****************************************************************
+
 
 		// ****************************************************************
 		#region Public Methods
