@@ -100,7 +100,7 @@ public class AudioObject : MonoBehaviour
 		{
 			m_audioSource.volume = m_audioInfo.volume + Random.Range(-m_audioInfo.volumeFuzz,m_audioInfo.volumeFuzz);
 			m_audioSource.pitch = m_audioInfo.pitch + Random.Range(-m_audioInfo.pitchFuzz,m_audioInfo.pitchFuzz);
-			m_audioSource.loop = m_audioInfo.shouldLoop;
+			m_audioSource.loop = m_audioInfo.loop;
 		}
 
 		// Apply Audio Mixer

@@ -34,7 +34,7 @@ namespace BounderFramework
 		public float volumeFuzz = 0.0f;
 		public float pitch = 1.0f;
 		public float pitchFuzz = 0.0f;
-		public bool shouldLoop = false;
+		public bool loop = false;
 		public float fadeSpeed = 1.0f;
 		#endregion
 		// ****************************************************************
@@ -52,7 +52,7 @@ namespace BounderFramework
 			success &= _JSON["volumeFuzz"].Get(ref volumeFuzz);
 			success &= _JSON["pitch"].Get(ref pitch);
 			success &= _JSON["pitchFuzz"].Get(ref pitchFuzz);
-			success &= _JSON["shouldLoop"].Get(ref shouldLoop);
+			success &= _JSON["loop"].Get(ref loop);
 			success &= _JSON["fadeSpeed"].Get(ref fadeSpeed);
 
 			return success;
@@ -67,7 +67,7 @@ namespace BounderFramework
 			save["volumeFuzz"].data = volumeFuzz;
 			save["pitch"].data = pitch;
 			save["pitchFuzz"].data = pitchFuzz;
-			save["shouldLoop"].data = shouldLoop;
+			save["shouldLoop"].data = loop;
 			save["fadeSpeed"].data = fadeSpeed;
 
 			return save;
