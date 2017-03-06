@@ -116,31 +116,21 @@ public class AudioObject : MonoBehaviour
 		m_fading = true;
 
 		float targetVolume = _on ? m_audioInfo.volume + Random.Range(-m_audioInfo.volumeFuzz,m_audioInfo.volumeFuzz) : 0;
+		float startVolume = m_audioSource.volume;
+		float startTime = Time.time;
 
-		if (_on)
+		while (Time.time < startTime + m_audioInfo.fadeDuration)
 		{
-			while (m_audioSource.volume < targetVolume)
-			{
-				yield return null;
-				m_audioSource.volume += m_audioInfo.fadeSpeed * Time.deltaTime;
-			}
-		}
-		else
-		{
-			while (m_audioSource.volume > targetVolume)
-			{
-				yield return null;
-				m_audioSource.volume -= m_audioInfo.fadeSpeed * Time.deltaTime;
-			}
+			m_audioSource.volume = Mathf.Lerp(startVolume, targetVolume, (Time.time - startTime)/ m_audioInfo.fadeDuration);
+			yield return null;
 		}
 
 		m_audioSource.volume = targetVolume;
+
 		if (targetVolume == 0)
 			m_audioSource.Stop();
 
 		m_fading = false;
-		if (!_on)
-			gameObject.SetActive(false); // Triggers object pool to recycle
 	}
 	// ********************************************************************
 
