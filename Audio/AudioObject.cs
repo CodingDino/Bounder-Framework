@@ -119,7 +119,7 @@ public class AudioObject : MonoBehaviour
 
 		if (_on)
 		{
-			while (m_audioSource.volume < m_audioInfo.volume)
+			while (m_audioSource.volume < targetVolume)
 			{
 				yield return null;
 				m_audioSource.volume += m_audioInfo.fadeSpeed * Time.deltaTime;
@@ -127,7 +127,7 @@ public class AudioObject : MonoBehaviour
 		}
 		else
 		{
-			while (m_audioSource.volume > m_audioInfo.volume)
+			while (m_audioSource.volume > targetVolume)
 			{
 				yield return null;
 				m_audioSource.volume -= m_audioInfo.fadeSpeed * Time.deltaTime;
@@ -139,6 +139,8 @@ public class AudioObject : MonoBehaviour
 			m_audioSource.Stop();
 
 		m_fading = false;
+		if (!_on)
+			gameObject.SetActive(false); // Triggers object pool to recycle
 	}
 	// ********************************************************************
 
