@@ -17,7 +17,7 @@ public class DestroyIfExists : MonoBehaviour {
 
 	private static List<string> s_ExistingIDs = new List<string>();
 
-	void Start () {
+	void Awake () {
 		if (s_ExistingIDs.Contains(m_ID))
 		{
 			Debug.Log("DestroyIfExists: Destroying "+gameObject.name + " " + gameObject.GetInstanceID() +" - ID " + m_ID + " already exists.");
