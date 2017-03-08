@@ -65,7 +65,7 @@ public class ObjectPool : IncrementalLoader
 	// ********************************************************************
 	public void ObjectBecameAvailable (ObjectPoolObject _object) 
 	{
-		Debug.Log ("object became available: "+_object.name);
+//		Debug.Log ("object became available: "+_object.name);
 		m_inUse.Remove(_object);
 		m_available.Add(_object);
 	}
@@ -77,7 +77,7 @@ public class ObjectPool : IncrementalLoader
 	// ********************************************************************
 	public void ObjectBecameUnavailable (ObjectPoolObject _object) 
 	{
-		Debug.Log ("object became unavailable: "+_object.name);
+//		Debug.Log ("object became unavailable: "+_object.name);
 		m_available.Remove(_object);
 		m_inUse.Add(_object);
 	}
@@ -89,7 +89,7 @@ public class ObjectPool : IncrementalLoader
 	// ********************************************************************
 	public void ObjectDestroyed (ObjectPoolObject _object) 
 	{
-		Debug.Log ("object destroyed: "+_object.name);
+//		Debug.Log ("object destroyed: "+_object.name);
 		m_available.Remove(_object);
 		m_inUse.Remove(_object);
 	}
@@ -106,12 +106,12 @@ public class ObjectPool : IncrementalLoader
 		if (m_available.Count > 0)
 		{
 			toReturn = m_available[0];
-			Debug.Log ("returning available object: "+toReturn.name);
+//			Debug.Log ("returning available object: "+toReturn.name);
 		}
 		else
 		{
 			toReturn = CreateObject();
-			Debug.Log ("creating new object: "+toReturn.name);
+//			Debug.Log ("creating new object: "+toReturn.name);
 		}
 		toReturn.gameObject.SetActive(true); // Will mark it as unavailable
 		return toReturn.gameObject;
