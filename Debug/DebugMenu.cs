@@ -182,7 +182,7 @@ public class DebugMenu : Singleton<DebugMenu>
 	private void ResetButtonPressed(string _id, GameObject _button)
 	{
 		// Reset to title screen
-		LoadingSceneManager.LoadTitle();
+		LoadingSceneManager.LoadScene("TitleScreen");
 		ToggleVisibility();
 
 		// Remove all non-default buttons
