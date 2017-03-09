@@ -37,6 +37,7 @@ public class ObjectPool : IncrementalLoader
 	// ****************************************************************
 	public int Count { get { return m_inUse.Count; } }
 	public ObjectPoolObject FirstActive { get { return Count > 0 ? m_inUse[0] : null; } }
+	public List<ObjectPoolObject> activeObjects { get { return m_inUse; } }
 	#endregion
 	// ****************************************************************
 
