@@ -88,6 +88,12 @@ namespace BounderFramework
 		public AudioInfo(AudioCategory _category) 
 		{ 
 			category = _category;
+			if (_category == AudioCategory.MUSIC)
+			{
+				overrideChannelLimit = AudioChannelOverride.REPLACE;
+				fadeDuration = 1.0f;
+				loop = true;
+			}
 		}
 		// ****************************************************************
 		#endregion
