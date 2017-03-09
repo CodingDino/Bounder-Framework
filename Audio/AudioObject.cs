@@ -127,8 +127,11 @@ public class AudioObject : MonoBehaviour
 
 		m_audioSource.volume = targetVolume;
 
-		if (targetVolume == 0)
+		if (!_on)
+		{
 			m_audioSource.Stop();
+			gameObject.SetActive(false); // Triggers object pool to recycle
+		}
 
 		m_fading = false;
 	}
