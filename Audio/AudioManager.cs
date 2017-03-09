@@ -163,6 +163,11 @@ namespace BounderFramework
 			if (replacing)
 			{
 				AudioObject oldObject = instance.m_audioObjects[_info.category].FirstActive.GetComponent<AudioObject>();
+				
+				// If we're trying to replace it with the same thing, don't.
+				if (oldObject.audioClip.ToString() == _clip.ToString())
+					return null;
+			
 				oldObject.Fade(false);
 			}
 
@@ -187,6 +192,26 @@ namespace BounderFramework
 		public static bool ChannelAvailable(AudioCategory _category)
 		{
 			return instance.m_audioObjects[_category].Count < instance.m_audioCategorySettings_Internal[_category].numChannels;
+		}
+		// ****************************************************************
+		public static List<AudioObject> GetActiveAudioForCategory(AudioCategory _category)
+		{
+			List<AudioObject> audioObjects = new List<AudioObject>();
+			List<ObjectPoolObject> objectPoolObjects = instance.m_audioObjects[_category].activeObjects;
+			for (int i = 0; i < objectPoolObjects.Count; ++i)
+			{
+				audioObjects.Add(objectPoolObjects[i].GetComponent<AudioObject>());
+			}
+			return audioObjects;
+		}
+		// ****************************************************************
+		public static void FadeOutCategory(AudioCategory _category)
+		{
+			List<AudioObject> audioObjects = AudioManager.GetActiveAudioForCategory(AudioCategory.MUSIC);
+			for (int i = 0; i < audioObjects.Count; ++i)
+			{
+				audioObjects[i].Fade(false);
+			}
 		}
 		// ****************************************************************
 		#endregion
