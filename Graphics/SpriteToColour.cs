@@ -31,6 +31,12 @@ public class SpriteToColour : MonoBehaviour {
 	// Purpose:		Run when new instance of the object is created.
 	// ********************************************************************
 	void Start () {
+		Apply();
+	}
+
+	[ContextMenu("Apply")]
+	public void Apply()
+	{
 		SpriteRenderer renderer = gameObject.GetComponent<SpriteRenderer>();
 		renderer.material.shader = Shader.Find("GUI/Text Shader");
 		renderer.color = m_colour;
