@@ -190,7 +190,7 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager> {
 			yield return m_blackness.FadeIn();
 
 			// !!! unload loading screen
-			SceneManager.UnloadScene(m_loadingScene);
+			yield return SceneManager.UnloadSceneAsync(m_loadingScene);
 
 			// Fade to new screen
 			yield return m_blackness.FadeOut();
