@@ -22,11 +22,33 @@ using BounderFramework;
 namespace BounderFramework { 
 	
 	// ********************************************************************
-	// Interfae: Data
+	// Class: Data
 	// ********************************************************************
-	public interface Data
+	public class Data : Archive
 	{
-		string id { get; }
+		public string id;
+
+		// ********************************************************************
+		// Archive Methods 
+		// ********************************************************************
+		public virtual bool Load(JSON _JSON)
+		{
+			bool success = true;
+
+			success &= _JSON["id"].Get (ref id);
+
+			return success;
+		}
+		// ********************************************************************
+		public virtual JSON Save()
+		{
+			JSON save = new JSON();
+
+			save["id"].data = id;
+
+			return save;
+		}
+		// ********************************************************************
 	}
 	// ********************************************************************
 
@@ -34,13 +56,15 @@ namespace BounderFramework {
 	// ********************************************************************
 	// Class: Database 
 	// ******************************************************************** 
-	public class Database<T> : Singleton<Database<T>> where T : Archive, Data, new() 
+	public class Database<T> : Singleton<Database<T>> where T : Data, new() 
 	{
 		// ****************************************************************
 		#region Exposed Data Members
 		// ****************************************************************
 		[SerializeField]
-		private string[] m_databaseFolders;
+		protected string[] m_databaseFolders;
+		[SerializeField]
+		protected string[] m_demoModeFolders;
 		#endregion
 		// ****************************************************************
 
@@ -55,10 +79,31 @@ namespace BounderFramework {
 
 
 		// ****************************************************************
+		#region Monobehaviour Methods 
+		// ****************************************************************
+		void OnEnable()
+		{
+			DebugMenu.OnDemoModeToggle += OnDemoModeToggle;
+		}
+		// ****************************************************************
+		void OnDisable()
+		{
+			DebugMenu.OnDemoModeToggle -= OnDemoModeToggle;
+		}
+		// ****************************************************************
+		protected void OnDemoModeToggle(bool _demoActive)
+		{
+			Reinitialise();
+		}
+		// ****************************************************************
+		#endregion
+		// ****************************************************************
+
+
+		// ****************************************************************
 		#region Public Methods
 		// ****************************************************************
 		public static T GetData(string _id)
-		// ****************************************************************
 		{
 			if (!instance.m_initialised)
 			{
@@ -77,14 +122,12 @@ namespace BounderFramework {
 			}
 		}
 		// ****************************************************************
-
-		// ****************************************************************
 		public static void Initialise()
-		// ****************************************************************
 		{
-			for (int iFolder = 0; iFolder < instance.m_databaseFolders.Length; ++iFolder)
+			string[] databaseFolders = DebugMenu.demoMode ? instance.m_demoModeFolders : instance.m_databaseFolders;
+			for (int iFolder = 0; iFolder < databaseFolders.Length; ++iFolder)
 			{
-				TextAsset[] files = Resources.LoadAll<TextAsset>(instance.m_databaseFolders[iFolder]);
+				TextAsset[] files = Resources.LoadAll<TextAsset>(databaseFolders[iFolder]);
 				for (int iFile = 0; iFile < files.Length; ++iFile)
 				{
 					TextAsset file = files[iFile];
@@ -106,12 +149,16 @@ namespace BounderFramework {
 			instance.m_initialised = true;
 		}
 		// ****************************************************************
-
-		// ****************************************************************
 		public static bool IsInitialised()
-		// ****************************************************************
 		{
 			return instance.m_initialised;
+		}
+		// ****************************************************************
+		public static void Reinitialise() 
+		{ 
+			instance.m_initialised = false;
+			instance.m_data.Clear();
+			Initialise();
 		}
 		// ****************************************************************
 		#endregion
@@ -121,8 +168,7 @@ namespace BounderFramework {
 		// ****************************************************************
 		#region Protected Methods
 		// ****************************************************************
-		protected void ReadEntry(JSON _entry)
-		// ****************************************************************
+		protected virtual T ReadEntry(JSON _entry)
 		{
 			T data = _entry.GetArchive<T>();
 
@@ -134,6 +180,8 @@ namespace BounderFramework {
 			{
 				Debug.LogError("Database.ReadEntry(): Failed to load item: "+_entry.ToString());
 			}
+
+			return data;
 		}
 		// ****************************************************************
 		#endregion
