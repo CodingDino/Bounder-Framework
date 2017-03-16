@@ -208,7 +208,7 @@ public class DebugMenu : Singleton<DebugMenu>
         if (!m_callbackRegistered)
         {
             m_callbackRegistered = true;
-            Debug.Log("INITIALIZING DEBUG WINDOW!");
+//            Debug.Log("INITIALIZING DEBUG WINDOW!");
             Application.logMessageReceived += HandleLog;
         }
 	}
@@ -222,7 +222,7 @@ public class DebugMenu : Singleton<DebugMenu>
     {
         m_callbackRegistered = false;
 		Application.logMessageReceived -= HandleLog;
-        Debug.Log("DE_INITIALIZING DEBUG WINDOW!");
+//        Debug.Log("DE_INITIALIZING DEBUG WINDOW!");
 	}
 
 

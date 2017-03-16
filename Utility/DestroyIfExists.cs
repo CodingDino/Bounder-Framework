@@ -20,12 +20,12 @@ public class DestroyIfExists : MonoBehaviour {
 	void Awake () {
 		if (s_ExistingIDs.Contains(m_ID))
 		{
-			Debug.Log("DestroyIfExists: Destroying "+gameObject.name + " " + gameObject.GetInstanceID() +" - ID " + m_ID + " already exists.");
+//			Debug.Log("DestroyIfExists: Destroying "+gameObject.name + " " + gameObject.GetInstanceID() +" - ID " + m_ID + " already exists.");
 			DestroyImmediate(gameObject);
 		}
 		else
 		{
-			Debug.Log("DestroyIfExists: Adding ID " + m_ID + " for GameObject "+ gameObject.name + " " + gameObject.GetInstanceID() );
+//			Debug.Log("DestroyIfExists: Adding ID " + m_ID + " for GameObject "+ gameObject.name + " " + gameObject.GetInstanceID() );
 			s_ExistingIDs.Add(m_ID);
 		}
 	}
