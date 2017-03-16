@@ -103,6 +103,17 @@ namespace BounderFramework {
 		// ****************************************************************
 		#region Public Methods
 		// ****************************************************************
+		public static bool HasData(string _id)
+		{
+			if (!instance.m_initialised)
+			{
+				Debug.LogError("Database.HasData("+_id+"): Uninitialised Databse.");	
+				return false;
+			}
+
+			return instance.m_data.ContainsKey(_id);
+		}
+		// ****************************************************************
 		public static T GetData(string _id)
 		{
 			if (!instance.m_initialised)
@@ -124,10 +135,18 @@ namespace BounderFramework {
 		// ****************************************************************
 		public static void Initialise()
 		{
-			string[] databaseFolders = DebugMenu.demoMode ? instance.m_demoModeFolders : instance.m_databaseFolders;
+			instance._Initialise();
+		}
+		// ****************************************************************
+		protected virtual bool _Initialise()
+		{
+			Debug.Log("Database.Initialise() for "+name);
+			string[] databaseFolders = DebugMenu.demoMode ? m_demoModeFolders : m_databaseFolders;
 			for (int iFolder = 0; iFolder < databaseFolders.Length; ++iFolder)
 			{
 				TextAsset[] files = Resources.LoadAll<TextAsset>(databaseFolders[iFolder]);
+				if (files.Length == 0)
+					Debug.LogError("Database.Initialise(): No files found in folder "+databaseFolders[iFolder]);
 				for (int iFile = 0; iFile < files.Length; ++iFile)
 				{
 					TextAsset file = files[iFile];
@@ -135,9 +154,18 @@ namespace BounderFramework {
 					if (!jsonString.NullOrEmpty())
 					{
 						JSON N = JSON.ParseString(jsonString);
-						foreach(JSON entry in N["data"])
+						// Single entry
+						if (N.GetArchive<T>() != null)
 						{
-							instance.ReadEntry(entry);
+							ReadEntry(N);
+						}
+						// Multiple entries
+						else
+						{
+							foreach(JSON entry in N)
+							{
+								ReadEntry(entry);
+							}
 						}
 					}
 					else
@@ -146,7 +174,8 @@ namespace BounderFramework {
 					}
 				}
 			}
-			instance.m_initialised = true;
+			m_initialised = true;
+			return m_initialised;
 		}
 		// ****************************************************************
 		public static bool IsInitialised()
@@ -170,6 +199,7 @@ namespace BounderFramework {
 		// ****************************************************************
 		protected virtual T ReadEntry(JSON _entry)
 		{
+			Debug.Log("Database.ReadEntry("+_entry.ToString()+")");
 			T data = _entry.GetArchive<T>();
 
 			if (data != null)
