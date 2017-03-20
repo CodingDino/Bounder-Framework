@@ -102,7 +102,7 @@ namespace BounderFramework
 		// ****************************************************************
 		#region MonoBehaviour Methods
 		// ****************************************************************
-		void Start()
+		void Awake()
 		{
 			for (int i = 0; i < m_audioCategorySettings.Length; ++i)
 			{
