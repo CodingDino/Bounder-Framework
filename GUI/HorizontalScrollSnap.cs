@@ -196,6 +196,35 @@ public class HorizontalScrollSnap : MonoBehaviour
 		m_lerpTarget = FindClosestFrom(targetPos, m_positions);
 	}
 
+	// ********************************************************************
+
+	public void ScrollToTarget(GameObject _object)
+	{
+		int screenIndex = -1;
+		for (int i = 0; i < m_screens; ++i)
+		{
+			if (m_screensContainer.transform.GetChild(i).gameObject == _object)
+			{
+				screenIndex = i;
+				break;
+			}
+		}
+		Debug.Log("ScrollToTarget screenIndex = "+screenIndex);
+
+		if (screenIndex == -1)
+		{
+			Debug.LogError("Failed to scroll to target - not found in screens");
+			return;
+		}
+
+		Vector2 targetPos = m_screensContainer.localPosition;
+		targetPos.x =  m_layoutGroup.spacing * 0.5f * (float)(m_screens - (2*screenIndex+1));
+		Debug.Log("ScrollToTarget targetPos.x = "+targetPos.x);
+		m_lerp = true;
+		m_momentumEffectivelyStopped = false;
+		m_lerpTarget = FindClosestFrom(targetPos, m_positions);
+	}
+
 	
 	// ********************************************************************
 	// Function:	FindClosestFrom()
@@ -217,6 +246,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 
 	    return closest;
 	}
+
 
 
 	// ********************************************************************
