@@ -75,6 +75,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 	private bool m_currentlyDragging = false;
 	private Vector2 m_touchStartPoint;
 	private Vector2 m_contentsStartPoint;
+	private int m_centerItem = 0;
 
 
 	// ********************************************************************
@@ -83,6 +84,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 	public int numScreens { get { return m_screens;}}
 	public bool isStopped { get { return m_momentumEffectivelyStopped; } }
 	public int startingPage { set {m_startingPage = value; } }
+	public int centerItem { get { return m_centerItem; } }
 	
 	
 	// ********************************************************************
@@ -174,6 +176,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 		{
 			m_layoutGroup.transform.position = m_contentsStartPoint;
 		}
+		m_centerItem = GetCenterItemIndex();
 	}
 
 
@@ -221,6 +224,15 @@ public class HorizontalScrollSnap : MonoBehaviour
 		if (m_screensContainer == null || m_screensContainer.transform.childCount == 0)
 			return null;
 		return m_screensContainer.transform.GetChild(GetCenterItemIndex()).gameObject;
+	}
+
+	// ********************************************************************
+
+	public GameObject GetItem(int _index)
+	{
+		if (m_screensContainer == null || m_screensContainer.transform.childCount == 0 || _index < 0 || _index >= m_screensContainer.transform.childCount)
+			return null;
+		return m_screensContainer.transform.GetChild(_index).gameObject;
 	}
 
 	// ********************************************************************
