@@ -67,6 +67,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 	private Vector3 m_lerpTarget;
 	private Vector3 m_lerpStartPos;
 	private float m_lerpStartTime;
+	private float m_lerpCurrentDuration;
 	private bool m_lerp;
 	private bool m_momentumEffectivelyStopped = false;
 	private bool m_ignoringThisDrag = false;
@@ -140,15 +141,6 @@ public class HorizontalScrollSnap : MonoBehaviour
 			m_screensContainer.localPosition = m_positions[m_startingPage];
 		}
 	}
-
-
-	// ********************************************************************
-	// Function:	Update()
-	// Purpose:		Called once per frame.
-	// ********************************************************************
-	void Update()
-	{
-	}
 	
 	
 	// ********************************************************************
@@ -160,19 +152,21 @@ public class HorizontalScrollSnap : MonoBehaviour
 	{
 		if (m_lerp)
 		{
-			if (Time.time - m_lerpStartTime < m_lerpDuration)
+			float xPos = m_lerpTarget.x;
+			if (Time.time - m_lerpStartTime < m_lerpCurrentDuration)
 			{
-				float xPos = Easing.Apply(EasingFunction.QuadEaseOut,
-				                          Time.time - m_lerpStartTime,
-				                          m_lerpStartPos.x,
-				                          m_lerpTarget.x - m_lerpStartPos.x,
-				                          m_lerpDuration);
+				xPos = Easing.Apply(EasingFunction.QuadEaseOut,
+				                    Time.time - m_lerpStartTime,
+				                    m_lerpStartPos.x,
+				                    m_lerpTarget.x - m_lerpStartPos.x,
+				                    m_lerpCurrentDuration);
 				m_screensContainer.localPosition = new Vector3(xPos, m_screensContainer.localPosition.y, m_screensContainer.localPosition.z);
 			}
 			else
 			{
 				m_lerp = false;
 				m_momentumEffectivelyStopped = true;
+				m_screensContainer.localPosition = new Vector3(xPos, m_screensContainer.localPosition.y, m_screensContainer.localPosition.z);
 				m_contentsStartPoint = m_layoutGroup.transform.position; // to keep current drag in right place
 			}
 		}
@@ -210,9 +204,9 @@ public class HorizontalScrollSnap : MonoBehaviour
 
 	public int GetCenterItemIndex()
 	{
-		if (m_screensContainer.transform.childCount == 0)
+		if (m_screensContainer == null || m_screensContainer.transform.childCount == 0)
 			return 0;
-		int screenIndex = Mathf.RoundToInt(((float)m_screens - 1.0f)*0.5f-transform.position.x/m_layoutGroup.spacing);
+		int screenIndex = Mathf.RoundToInt(((float)m_screensContainer.transform.childCount - 1.0f)*0.5f-m_layoutGroup.transform.localPosition.x/m_layoutGroup.spacing);
 		if (screenIndex < 0)
 			screenIndex = 0;
 		if (screenIndex >= m_screensContainer.transform.childCount)
@@ -224,7 +218,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 
 	public GameObject GetCenterItem()
 	{
-		if (m_screensContainer.transform.childCount == 0)
+		if (m_screensContainer == null || m_screensContainer.transform.childCount == 0)
 			return null;
 		return m_screensContainer.transform.GetChild(GetCenterItemIndex()).gameObject;
 	}
@@ -325,13 +319,25 @@ public class HorizontalScrollSnap : MonoBehaviour
 	    m_screensContainer.GetComponent<RectTransform>().offsetMax = new Vector2(_dimension, 0f);
 	}
 
-	public void LerpToTarget(Vector3 _lerpTarget)
+	public void LerpToTarget(Vector3 _lerpTarget, float _duration = 0)
 	{
+		Debug.Log("Starting lerp: " + _lerpTarget.x);
+		if (_duration == 0)
+			m_lerpCurrentDuration = m_lerpDuration;
+		else
+			m_lerpCurrentDuration = _duration;
 		m_lerp = true;
 		m_momentumEffectivelyStopped = false;
 		m_lerpTarget = _lerpTarget;
 		m_lerpStartPos = m_screensContainer.localPosition;
 		m_lerpStartTime = Time.time;
+	}
+
+	public void ClearLerp()
+	{
+		Debug.Log("Clearing Lerp");
+		m_lerp = false;
+		m_momentumEffectivelyStopped = true;
 	}
 
 #region Interfaces
@@ -381,17 +387,20 @@ public class HorizontalScrollSnap : MonoBehaviour
 			float d = 0;
 			float numTimeSteps = 100.0f;
 			float timeStep = t/numTimeSteps;
+			float duration = 0.1f;
 			for (int i = 0; i <= numTimeSteps; ++i)
 			{
 				d += v*timeStep;
 				v = (c/timeStep)*v;
+				if (Mathf.Abs(v) >= 10.0f)
+					duration += timeStep;
 			}
 			if (d > m_layoutGroup.spacing)
 				d += m_layoutGroup.spacing * 0.5f * Mathf.Sign(d);
 
 			Vector2 targetPos = m_screensContainer.localPosition;
 			targetPos.x = targetPos.x + d;
-			LerpToTarget(FindClosestFrom(targetPos, m_positions));
+			LerpToTarget(FindClosestFrom(targetPos, m_positions),duration);
 	    }
 		else
 			m_momentumEffectivelyStopped = true;
