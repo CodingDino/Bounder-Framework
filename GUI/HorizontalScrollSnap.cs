@@ -68,8 +68,8 @@ public class HorizontalScrollSnap : MonoBehaviour
 	private Vector3 m_lerpStartPos;
 	private float m_lerpStartTime;
 	private float m_lerpCurrentDuration;
-	private bool m_lerp;
-	private bool m_momentumEffectivelyStopped = false;
+	private bool m_lerp = false;
+	private bool m_momentumEffectivelyStopped = true;
 	private bool m_ignoringThisDrag = false;
 	private bool m_allowingThisDrag = false;
 	private bool m_currentlyDragging = false;
@@ -333,7 +333,6 @@ public class HorizontalScrollSnap : MonoBehaviour
 
 	public void LerpToTarget(Vector3 _lerpTarget, float _duration = 0)
 	{
-		Debug.Log("Starting lerp: " + _lerpTarget.x);
 		if (_duration == 0)
 			m_lerpCurrentDuration = m_lerpDuration;
 		else
@@ -347,7 +346,6 @@ public class HorizontalScrollSnap : MonoBehaviour
 
 	public void ClearLerp()
 	{
-		Debug.Log("Clearing Lerp");
 		m_lerp = false;
 		m_momentumEffectivelyStopped = true;
 	}
