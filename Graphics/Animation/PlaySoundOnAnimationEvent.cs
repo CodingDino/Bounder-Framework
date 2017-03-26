@@ -26,9 +26,23 @@ public class PlaySoundOnAnimationEvent : MonoBehaviour
 	// ********************************************************************
 	#region Private Methods 
 	// ********************************************************************
+	[SerializeField]
+	AudioClip m_soundToPlay = null;
+	[SerializeField]
+	AudioCategory m_audioCategory = AudioCategory.EFFECTS;
+	#endregion
+	// ********************************************************************
+
+	// ********************************************************************
+	#region Private Methods 
+	// ********************************************************************
 	private void PlaySound (string _sound) 
 	{
-		AudioManager.Play(_sound, AudioCategory.EFFECTS);
+		AudioManager.Play(_sound, m_audioCategory);
+	}
+	private void PlaySoundClip () 
+	{
+		AudioManager.Play(m_soundToPlay, m_audioCategory);
 	}
 	// ********************************************************************
 	#endregion
