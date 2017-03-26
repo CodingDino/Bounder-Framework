@@ -30,7 +30,9 @@ public class MoveToTarget : MonoBehaviour {
 	[SerializeField]
 	private EasingFunction m_easingFunc;
 	[SerializeField]
-	private float m_duration;
+	private float m_duration = 0;
+	[SerializeField]
+	private float m_speed = 0;
 
 	
 	// ********************************************************************
@@ -43,6 +45,7 @@ public class MoveToTarget : MonoBehaviour {
 	private Queue<Vector3> m_targetQueue = new Queue<Vector3>();
 	private float m_startTime;
 	private bool m_moving = false;
+	private float m_currentDuration = 0;
 
 
 	// ********************************************************************
@@ -89,6 +92,11 @@ public class MoveToTarget : MonoBehaviour {
 		m_targetPoint = _target;
 		m_diff = m_targetPoint - m_originPoint;
 		m_startTime = Time.time;
+		m_currentDuration = m_duration;
+		if (m_currentDuration == 0 && m_speed != 0)
+		{
+			m_currentDuration = (m_targetPoint - m_originPoint).magnitude / m_speed;
+		}
 		if (!m_moving)
 			StartCoroutine(Move());
 	}
@@ -104,7 +112,7 @@ public class MoveToTarget : MonoBehaviour {
 		while (m_moving)
 		{
 			float currentTime = Time.time - m_startTime;
-			if (currentTime >= m_duration)
+			if (currentTime >= m_currentDuration)
 			{
 				m_transform.position = m_targetPoint;
 				m_moving = false;
@@ -116,7 +124,7 @@ public class MoveToTarget : MonoBehaviour {
 				float mult = Easing.GetFunc(m_easingFunc)(currentTime,
 				                                          0,
 				                                          1,
-				                                          m_duration);
+				                                          m_currentDuration);
 				m_transform.position = m_originPoint + m_diff * mult;
 			}
 
