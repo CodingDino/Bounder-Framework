@@ -78,6 +78,12 @@ public class MoveToTarget : MonoBehaviour {
 		else
 			SetTarget(_target);
 	}
+	public void ClearTargets()
+	{
+		m_targetQueue.Clear();
+		m_moving = false;
+		m_targetPoint = Vector3.zero;
+	}
 
 
 	// ********************************************************************
