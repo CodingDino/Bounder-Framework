@@ -53,6 +53,8 @@ public class MoveToTarget : MonoBehaviour {
 	// ********************************************************************
 	public Vector3 targetPoint { get { return m_targetPoint; } }
 	public bool hasTarget { get { return m_moving; } }
+	public float duration { set { m_duration = value; }}
+	public float speed { set { m_speed = value; }}
 
 
 	// ********************************************************************
