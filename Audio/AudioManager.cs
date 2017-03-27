@@ -118,6 +118,15 @@ namespace BounderFramework
 		// ****************************************************************
 		#region Public Methods
 		// ****************************************************************
+		public static AudioClip LoadClip(string _track, AudioInfo _info)
+		{
+			string filepath = instance.m_audioFolder+_info.category.ToString()+"/"+_track;
+			AudioClip clip = Resources.Load<AudioClip>(filepath);
+			if (clip == null)
+				Debug.LogError("AudioManager.LoadClip failed for "+filepath);
+			return clip;
+		}
+		// ****************************************************************
 		public static AudioCategorySettings GetAudioSettings(AudioCategory _category) 
 		{ 
 			return instance.m_audioCategorySettings_Internal[_category];
