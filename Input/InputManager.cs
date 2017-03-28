@@ -37,6 +37,22 @@ public enum ControlScheme
 
 
 // ************************************************************************ 
+#region Class: ChangeCursorEvent
+// ************************************************************************
+public class ChangeCursorEvent : GameEvent 
+{
+	public string cursor;
+	public ChangeCursorEvent(string _cursor = "")
+	{
+		cursor = _cursor;
+	}
+}
+// ************************************************************************
+#endregion
+// ************************************************************************
+
+
+// ************************************************************************ 
 #region Class: InputManager
 // ************************************************************************
 public class InputManager : Singleton<InputManager> 
@@ -47,6 +63,19 @@ public class InputManager : Singleton<InputManager>
 	// ********************************************************************
 	[SerializeField]
 	private ControlScheme m_controlScheme;
+	[SerializeField]
+	private Animator[] m_cursorPrefabs;
+	#endregion
+	// ********************************************************************
+
+
+	// ********************************************************************
+	#region Exposed Data Members 
+	// ********************************************************************
+	private Dictionary<string, Animator> m_cursorMap = new Dictionary<string,Animator>();
+	private Animator m_cursor;
+	private string m_defaultCursor;
+	private string m_pendingCursor;
 	#endregion
 	// ********************************************************************
 
@@ -59,6 +88,10 @@ public class InputManager : Singleton<InputManager>
 		get { return instance.m_controlScheme; } 
 		set { instance.m_controlScheme = value; } 
 	}
+	public static string cursor
+	{
+		get { return instance.m_cursor == null ? "" : instance.m_cursor.name; }
+	}
 	#endregion
 	// ********************************************************************
 
@@ -66,14 +99,95 @@ public class InputManager : Singleton<InputManager>
 	// ********************************************************************
 	#region MonoBehaviour Methods 
 	// ********************************************************************
-	void Start () 
+	void Start()
 	{
-		
+		if (m_cursorPrefabs != null && m_cursorPrefabs.Length > 0)
+		{
+			Cursor.visible = false;
+			for (int i = 0; i < m_cursorPrefabs.Length; ++i)
+			{
+				m_cursorMap[m_cursorPrefabs[i].name] = m_cursorPrefabs[i];
+			}
+			m_defaultCursor = m_cursorPrefabs[0].name;
+
+			StartCoroutine(SwapCursors(m_defaultCursor));
+		}
 	}
 	// ********************************************************************
-	void Update () 
+	void OnGUI () 
 	{
-		
+		if (controlScheme == ControlScheme.MOUSE_KEYBOARD && m_cursor != null)
+		{
+			Vector2 currentScreenPoint = new Vector3(Input.mousePosition.x, 
+			                                             Input.mousePosition.y, 
+			                                             0);
+
+			Vector2 currentWorldPoint = 
+				Camera.main.ScreenToWorldPoint(currentScreenPoint);
+			m_cursor.transform.position = currentWorldPoint;
+
+			m_cursor.SetBool("Click",Input.GetMouseButton(0));
+		}
+	}
+	// ********************************************************************
+	void OnEnable()
+	{
+		Events.AddListener<ChangeCursorEvent>(OnChangeCursorEvent);
+	}
+	// ********************************************************************
+	void OnDisable()
+	{
+		Events.RemoveListener<ChangeCursorEvent>(OnChangeCursorEvent);
+	}
+	// ********************************************************************
+	#endregion
+	// ********************************************************************
+
+
+	// ********************************************************************
+	#region Private Methods 
+	// ********************************************************************
+	private void OnChangeCursorEvent(ChangeCursorEvent _event)
+	{
+		if (_event.cursor == cursor || _event.cursor == m_pendingCursor)
+			return;
+
+		string toSwap = _event.cursor;
+		if (toSwap.NullOrEmpty())
+			toSwap = m_defaultCursor;
+
+		if (!m_cursorMap.ContainsKey(toSwap))
+		{
+			Debug.LogError("Can't find cursor "+toSwap);
+			return;
+		}
+		StartCoroutine(SwapCursors(toSwap));
+	}
+	// ********************************************************************
+	private IEnumerator SwapCursors(string _new)
+	{
+		m_pendingCursor = _new;
+		Debug.Log("Changing to cursor: "+_new+" from "+cursor);
+		if (m_cursor != null)
+		{
+			m_cursor.SetBool("Active", false);
+			yield return new WaitForSeconds(0.2f);
+		}
+
+		Vector3 currentScreenPoint = new Vector3(Input.mousePosition.x, 
+		                                         Input.mousePosition.y, 
+		                                         0);
+		Vector3 currentWorldPoint = 
+			Camera.main.ScreenToWorldPoint(currentScreenPoint);
+
+		Animator pendingCursor = Instantiate(m_cursorMap[_new].gameObject,transform).GetComponent<Animator>();
+		pendingCursor.name = _new;
+		pendingCursor.transform.position = currentWorldPoint;
+		m_pendingCursor = "";
+		if (m_cursor != null)
+			Destroy(m_cursor.gameObject);
+		m_cursor = pendingCursor;
+		m_cursor.SetBool("Active", true);
 	}
 	// ********************************************************************
 	#endregion
