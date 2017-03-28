@@ -75,7 +75,6 @@ public class InputManager : Singleton<InputManager>
 	private Dictionary<string, Animator> m_cursorMap = new Dictionary<string,Animator>();
 	private Animator m_cursor;
 	private string m_defaultCursor;
-	private string m_pendingCursor;
 	#endregion
 	// ********************************************************************
 
@@ -149,7 +148,7 @@ public class InputManager : Singleton<InputManager>
 	// ********************************************************************
 	private void OnChangeCursorEvent(ChangeCursorEvent _event)
 	{
-		if (_event.cursor == cursor || _event.cursor == m_pendingCursor)
+		if (_event.cursor == cursor)
 			return;
 
 		string toSwap = _event.cursor;
@@ -166,14 +165,6 @@ public class InputManager : Singleton<InputManager>
 	// ********************************************************************
 	private IEnumerator SwapCursors(string _new)
 	{
-		m_pendingCursor = _new;
-		Debug.Log("Changing to cursor: "+_new+" from "+cursor);
-		if (m_cursor != null)
-		{
-			m_cursor.SetBool("Active", false);
-			yield return new WaitForSeconds(0.2f);
-		}
-
 		Vector3 currentScreenPoint = new Vector3(Input.mousePosition.x, 
 		                                         Input.mousePosition.y, 
 		                                         0);
@@ -183,11 +174,11 @@ public class InputManager : Singleton<InputManager>
 		Animator pendingCursor = Instantiate(m_cursorMap[_new].gameObject,transform).GetComponent<Animator>();
 		pendingCursor.name = _new;
 		pendingCursor.transform.position = currentWorldPoint;
-		m_pendingCursor = "";
 		if (m_cursor != null)
 			Destroy(m_cursor.gameObject);
 		m_cursor = pendingCursor;
 		m_cursor.SetBool("Active", true);
+		yield return null;
 	}
 	// ********************************************************************
 	#endregion
