@@ -54,6 +54,15 @@ public class HorizontalScrollSnap : MonoBehaviour
 	[SerializeField]
 	[Tooltip("How long it takes to scroll to a target.")]
 	private float m_lerpDuration = 0.25f;
+	[SerializeField]
+	[Tooltip("Use arrow keys to scroll")]
+	private bool m_bUseArrowKeys = true;
+	[SerializeField]
+	[Tooltip("Use WASD keys to scroll")]
+	private bool m_bUseWASD = true;
+	[SerializeField]
+	[Tooltip("Use scroll wheel to scroll")]
+	private bool m_bUseScrollWheel = true;
 
 
 	
@@ -152,6 +161,40 @@ public class HorizontalScrollSnap : MonoBehaviour
 	// ********************************************************************
 	void LateUpdate()
 	{
+		if (m_bUseArrowKeys)
+		{
+			if (Input.GetKeyDown(KeyCode.LeftArrow))
+			{
+				PreviousScreen();
+			}
+			if (Input.GetKeyDown(KeyCode.RightArrow))
+			{
+				NextScreen();
+			}
+		}
+
+		if (m_bUseWASD)
+		{
+			if (Input.GetKeyDown(KeyCode.A))
+			{
+				PreviousScreen();
+			}
+			if (Input.GetKeyDown(KeyCode.D))
+			{
+				NextScreen();
+			}
+		}
+
+		if (m_bUseScrollWheel)
+		{
+			float scroll = Input.GetAxis("Mouse ScrollWheel");
+			int numScreens = Mathf.CeilToInt(scroll*10.0f);
+			if (numScreens != 0)
+			{
+				ChangeScreen(numScreens);
+			}
+		}
+
 		if (m_lerp)
 		{
 			float xPos = m_lerpTarget.x;
@@ -186,20 +229,16 @@ public class HorizontalScrollSnap : MonoBehaviour
 	// ********************************************************************
 	public void NextScreen()
 	{
-		Vector2 targetPos = m_screensContainer.localPosition;
-		targetPos.x = targetPos.x - m_layoutGroup.spacing;
-		LerpToTarget(FindClosestFrom(targetPos, m_positions));
+		ChangeScreen(1);
 	}
-
-
-	// ********************************************************************
-	// Function:	PreviousScreen()
-	// Purpose:		Function for switching screens with buttons.
-	// ********************************************************************
 	public void PreviousScreen()
 	{
+		ChangeScreen(-1);
+	}
+	public void ChangeScreen(int _numScreens)
+	{
 		Vector2 targetPos = m_screensContainer.localPosition;
-		targetPos.x = targetPos.x + m_layoutGroup.spacing;
+		targetPos.x = targetPos.x - _numScreens*m_layoutGroup.spacing;
 		LerpToTarget(FindClosestFrom(targetPos, m_positions));
 	}
 
