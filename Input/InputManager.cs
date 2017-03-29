@@ -148,6 +148,9 @@ public class InputManager : Singleton<InputManager>
 	// ********************************************************************
 	private void OnChangeCursorEvent(ChangeCursorEvent _event)
 	{
+		if (controlScheme != ControlScheme.MOUSE_KEYBOARD)
+			return;
+
 		if (_event.cursor == cursor)
 			return;
 
