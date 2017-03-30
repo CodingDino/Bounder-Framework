@@ -135,6 +135,8 @@ public class DebugMenu : Singleton<DebugMenu>
 	// ********************************************************************
 	public delegate void DemoModeToggle(bool _demoActive);
 	public static event DemoModeToggle OnDemoModeToggle;
+	public delegate void ResetGame();
+	public static event ResetGame OnResetGame;
 
 
 	// ********************************************************************
@@ -183,6 +185,8 @@ public class DebugMenu : Singleton<DebugMenu>
 	{
 		// Reset to title screen
 		PanelManager.CloseAllPanels();
+		if (OnResetGame != null)
+			OnResetGame();
 		LoadingSceneManager.LoadScene("TitleScreen");
 		ToggleVisibility();
 
