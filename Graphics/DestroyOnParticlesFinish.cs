@@ -28,13 +28,18 @@ namespace BounderFramework
 public class DestroyOnParticlesFinish : MonoBehaviour 
 {
 
+
+		private ParticleSystem particles;
 	// ********************************************************************
 	#region MonoBehaviour Methods 
 	// ********************************************************************
 	IEnumerator Start () 
 	{
-		yield return new WaitForSeconds(GetComponent<ParticleSystem>().duration);
-		Destroy(gameObject);
+			particles = GetComponent<ParticleSystem>();
+			while (particles.IsAlive())
+				yield return null;
+			Destroy(gameObject);
+			Debug.Log("Destroying Particles");
 	}
 	// ********************************************************************
 	#endregion
