@@ -447,5 +447,20 @@ public class DebugMenu : Singleton<DebugMenu>
 		Time.timeScale = oldTimeScale;
 	}
 
+	public static void Show(bool _show)
+	{
+		instance.m_visibleElements.SetActive(_show);
+		instance.UpdateTextBox();
 
+		if ((instance.m_timeScale == 0 && _show) || (instance.m_timeScale != 0 && !_show))
+		{
+			float oldTimeScale = instance.m_timeScale;
+			instance.m_timeScale = Time.timeScale;
+			Time.timeScale = oldTimeScale;
+		}
+	}
+	public static bool Shown()
+	{
+		return instance.m_visibleElements.activeSelf;
+	}
 }
