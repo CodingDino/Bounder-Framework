@@ -126,6 +126,8 @@ public class InputManager : Singleton<InputManager>
 			m_cursor.transform.position = currentWorldPoint;
 
 			m_cursor.SetBool("Click",Input.GetMouseButton(0));
+
+			Cursor.visible = false;
 		}
 	}
 	// ********************************************************************
