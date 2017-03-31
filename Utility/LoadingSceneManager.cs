@@ -71,6 +71,7 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager> {
 	#region Private Data Members
 	// ********************************************************************
 	private List<IncrementalLoader> m_loaders = new List<IncrementalLoader>();
+	private bool m_loading = false;
 	#endregion
 	// ********************************************************************
 
@@ -102,9 +103,14 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager> {
 	// ********************************************************************
 	#region Public Methods
 	// ********************************************************************
-	public static void LoadScene(string _newScene)
+	public static bool LoadScene(string _newScene)
 	{
-		instance.StartCoroutine(instance.CR_LoadScene(_newScene));
+		if (!instance.m_loading)
+			{
+				instance.StartCoroutine(instance.CR_LoadScene(_newScene));
+				return true;
+			}
+			return false;
 	}
 	// ********************************************************************
 	public static void RegisterLoader(IncrementalLoader _loader, bool _register = true)
@@ -125,6 +131,7 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager> {
 	public IEnumerator CR_LoadScene(string _newScene)
 	{
 		Debug.Log("Loading Scene: "+_newScene);
+		m_loading = true;
 
 		string oldScene = SceneManager.GetActiveScene().name;
 
@@ -201,6 +208,8 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager> {
 			if (OnStateChanged != null) 
 				OnStateChanged(LoadingState.LOADING_COMPLETE, _newScene, oldScene);
 		}
+
+		m_loading = false;
 	}
 	// ********************************************************************
 	#endregion
