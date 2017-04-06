@@ -56,13 +56,16 @@ public class HorizontalScrollSnap : MonoBehaviour
 	private float m_lerpDuration = 0.25f;
 	[SerializeField]
 	[Tooltip("Use arrow keys to scroll")]
-	private bool m_bUseArrowKeys = true;
+	private bool m_UseArrowKeys = true;
 	[SerializeField]
 	[Tooltip("Use WASD keys to scroll")]
-	private bool m_bUseWASD = true;
+	private bool m_UseWASD = true;
 	[SerializeField]
 	[Tooltip("Use scroll wheel to scroll")]
-	private bool m_bUseScrollWheel = true;
+	private bool m_UseScrollWheel = true;
+	[SerializeField]
+	[Tooltip("What control schemes allow drag scrolling")]
+	private ControlScheme m_dragScrollControlScheme = ControlScheme.TOUCH;
 
 
 	
@@ -150,6 +153,8 @@ public class HorizontalScrollSnap : MonoBehaviour
 			if (m_startingPage >= m_positions.Count)
 				m_startingPage = m_positions.Count - 1;
 			m_screensContainer.localPosition = m_positions[m_startingPage];
+
+			m_contentsStartPoint = m_positions[m_startingPage];
 		}
 	}
 	
@@ -161,7 +166,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 	// ********************************************************************
 	void LateUpdate()
 	{
-		if (m_bUseArrowKeys)
+		if (m_UseArrowKeys)
 		{
 			if (Input.GetKeyDown(KeyCode.LeftArrow))
 			{
@@ -173,7 +178,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 			}
 		}
 
-		if (m_bUseWASD)
+		if (m_UseWASD)
 		{
 			if (Input.GetKeyDown(KeyCode.A))
 			{
@@ -185,7 +190,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 			}
 		}
 
-		if (m_bUseScrollWheel)
+		if (m_UseScrollWheel)
 		{
 			float scroll = Input.GetAxis("Mouse ScrollWheel");
 			int numScreens = Mathf.CeilToInt(scroll*10.0f);
@@ -212,12 +217,12 @@ public class HorizontalScrollSnap : MonoBehaviour
 				m_lerp = false;
 				m_momentumEffectivelyStopped = true;
 				m_screensContainer.localPosition = new Vector3(xPos, m_screensContainer.localPosition.y, m_screensContainer.localPosition.z);
-				m_contentsStartPoint = m_layoutGroup.transform.position; // to keep current drag in right place
+				m_contentsStartPoint = m_screensContainer.localPosition; // to keep current drag in right place
 			}
 		}
-		else if (m_allowDragOff && !m_allowingThisDrag && m_currentlyDragging )
+		else if (!m_dragScrollControlScheme.Contains(InputManager.controlScheme) || (m_allowDragOff && !m_allowingThisDrag && m_currentlyDragging) )
 		{
-			m_layoutGroup.transform.position = m_contentsStartPoint;
+			m_screensContainer.localPosition = m_contentsStartPoint;
 		}
 		m_centerItem = GetCenterItemIndex();
 	}
@@ -248,7 +253,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 	{
 		if (m_screensContainer == null || m_screensContainer.transform.childCount == 0)
 			return 0;
-		int screenIndex = Mathf.RoundToInt(((float)m_screensContainer.transform.childCount - 1.0f)*0.5f-m_layoutGroup.transform.localPosition.x/m_layoutGroup.spacing);
+		int screenIndex = Mathf.RoundToInt(((float)m_screensContainer.transform.childCount - 1.0f)*0.5f-m_screensContainer.localPosition.x/m_layoutGroup.spacing);
 		if (screenIndex < 0)
 			screenIndex = 0;
 		if (screenIndex >= m_screensContainer.transform.childCount)
@@ -410,7 +415,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 		m_allowingThisDrag = false;
 
 		m_touchStartPoint = Input.mousePosition;
-		m_contentsStartPoint = m_layoutGroup.transform.position;
+		m_contentsStartPoint = m_screensContainer.localPosition;
 	}
 
 
@@ -482,11 +487,11 @@ public class HorizontalScrollSnap : MonoBehaviour
 				Vector2 dragScreenDistance = currentScreenPoint - m_touchStartPoint;
 				dragScreenDistance = new Vector3(Mathf.Abs(dragScreenDistance.x), Mathf.Abs(dragScreenDistance.y), 0);
 
-				if (dragScreenDistance.y >= m_dragOffThreshold)
+				if (dragScreenDistance.y >= m_dragOffThreshold || !m_dragScrollControlScheme.Contains(InputManager.controlScheme))
 				{
 					m_ignoringThisDrag = true;
 				}
-				else if (dragScreenDistance.x >= m_dragOffThreshold)
+				else if (dragScreenDistance.x >= m_dragOffThreshold || !m_dragScrollControlScheme.Contains(InputManager.controlScheme))
 				{
 					m_allowingThisDrag = true;
 				}
