@@ -108,8 +108,19 @@ public class AudioObject : MonoBehaviour
 		m_audioSource.outputAudioMixerGroup = settings.group;
 	}
 	// ********************************************************************
-	public Coroutine Fade(bool _on) { return StartCoroutine(_Fade(_on)); }
-	public IEnumerator _Fade(bool _on)
+	public Coroutine Fade(bool _on) 
+	{
+		return StartCoroutine(Fade_CR(_on)); 
+	}
+	// ********************************************************************
+	#endregion
+	// ********************************************************************
+
+
+	// ********************************************************************
+	#region Private Methods
+	// ********************************************************************
+	private IEnumerator Fade_CR(bool _on)
 	{
 		if (m_fading)
 			yield break;
