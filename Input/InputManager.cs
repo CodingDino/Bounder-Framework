@@ -126,6 +126,8 @@ public class InputManager : Singleton<InputManager>
 			m_cursor.transform.position = currentWorldPoint;
 
 			m_cursor.SetBool("Click",Input.GetMouseButton(0));
+
+			Cursor.visible = false;
 		}
 	}
 	// ********************************************************************
@@ -148,6 +150,9 @@ public class InputManager : Singleton<InputManager>
 	// ********************************************************************
 	private void OnChangeCursorEvent(ChangeCursorEvent _event)
 	{
+		if (controlScheme != ControlScheme.MOUSE_KEYBOARD)
+			return;
+
 		if (_event.cursor == cursor)
 			return;
 

@@ -135,6 +135,8 @@ public class DebugMenu : Singleton<DebugMenu>
 	// ********************************************************************
 	public delegate void DemoModeToggle(bool _demoActive);
 	public static event DemoModeToggle OnDemoModeToggle;
+	public delegate void ResetGame();
+	public static event ResetGame OnResetGame;
 
 
 	// ********************************************************************
@@ -182,6 +184,9 @@ public class DebugMenu : Singleton<DebugMenu>
 	private void ResetButtonPressed(string _id, GameObject _button)
 	{
 		// Reset to title screen
+		PanelManager.CloseAllPanels();
+		if (OnResetGame != null)
+			OnResetGame();
 		LoadingSceneManager.LoadScene("TitleScreen");
 		ToggleVisibility();
 
@@ -442,5 +447,20 @@ public class DebugMenu : Singleton<DebugMenu>
 		Time.timeScale = oldTimeScale;
 	}
 
+	public static void Show(bool _show)
+	{
+		instance.m_visibleElements.SetActive(_show);
+		instance.UpdateTextBox();
 
+		if ((instance.m_timeScale == 0 && _show) || (instance.m_timeScale != 0 && !_show))
+		{
+			float oldTimeScale = instance.m_timeScale;
+			instance.m_timeScale = Time.timeScale;
+			Time.timeScale = oldTimeScale;
+		}
+	}
+	public static bool Shown()
+	{
+		return instance.m_visibleElements.activeSelf;
+	}
 }
