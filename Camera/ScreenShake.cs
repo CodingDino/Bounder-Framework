@@ -1,7 +1,7 @@
 ﻿// ************************************************************************ 
 // File Name:   ScreenShake.cs 
-// Purpose:    	
-// Project:		
+// Purpose:    	Apply screen shake to camera from events
+// Project:		Framework
 // Author:      Sarah Herzog  
 // Copyright: 	2017 Bounder Games
 // ************************************************************************ 
@@ -16,6 +16,11 @@ using UnityEngine;
 using BounderFramework;
 #endregion
 // ************************************************************************
+
+
+// ************************************************************************
+namespace BounderFramework 
+{ 
 
 // ************************************************************************ 
 #region Class: ScreenShakeEvent
@@ -78,13 +83,13 @@ public class ScreenShake : MonoBehaviour
 
 
 	// ********************************************************************
-	#region Private Methods 
+	#region Public Methods 
 	// ********************************************************************
-	private void OnScreenShakeEvent (ScreenShakeEvent _event) 
+	public void ApplyScreenShake(float _magnitude)
 	{
 		MoveToTarget mover = GetComponent<MoveToTarget>();
-		int numShakes = Mathf.CeilToInt(2.0f * _event.magnitude);
-		float distance = 0.05f * _event.magnitude;
+		int numShakes = Mathf.CeilToInt(2.0f * _magnitude);
+		float distance = 0.05f * _magnitude;
 		if (!mover.hasTarget)
 			m_startingPoint = transform.position;
 		for (int i = 0; i < numShakes; ++i)
@@ -104,6 +109,21 @@ public class ScreenShake : MonoBehaviour
 	// ********************************************************************
 	#endregion
 	// ********************************************************************
+
+
+	// ********************************************************************
+	#region Private Methods 
+	// ********************************************************************
+	private void OnScreenShakeEvent (ScreenShakeEvent _event) 
+	{
+		ApplyScreenShake(_event.magnitude);
+	}
+	// ********************************************************************
+	#endregion
+	// ********************************************************************
 }
 #endregion
+// ************************************************************************
+
+}
 // ************************************************************************

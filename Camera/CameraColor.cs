@@ -8,42 +8,47 @@
 
 
 // ************************************************************************ 
-// Imports 
+#region Imports
 // ************************************************************************ 
 using UnityEngine;
 using System.Collections;
-
-
-// ************************************************************************ 
-// Attributes 
-// ************************************************************************ 
-[RequireComponent(typeof(Camera))]
-
-
-// ************************************************************************ 
-// Class: CameraColor
+#endregion
 // ************************************************************************
-public class CameraColor : MonoBehaviour {
+
+
+// ************************************************************************
+namespace BounderFramework 
+{ 
+
+// ************************************************************************ 
+#region Class: CameraColor
+// ************************************************************************
+[RequireComponent(typeof(Camera))]
+public class CameraColor : MonoBehaviour 
+{
 	
 	// ********************************************************************
-	// Private Data Members 
+	#region Private Data Members
 	// ********************************************************************
 	private Camera thisCamera;
+	#endregion
+	// ********************************************************************
 
 
 	// ********************************************************************
-	// Function:	Awake()
-	// Purpose:		Called when the script instance is being loaded
+	#region MonoBehaviour Methods
 	// ********************************************************************
 	void Awake () 
 	{
 		thisCamera = GetComponent<Camera>();
 	}
+	// ********************************************************************
+	#endregion
+	// ********************************************************************
 	
 	
 	// ********************************************************************
-	// Function:	ChangeColor()
-	// Purpose:		Changes the color over time.
+	#region Public Methods
 	// ********************************************************************
 	public void ChangeColor (Color _newColor, float _transitionTime = 0) 
 	{
@@ -52,41 +57,35 @@ public class CameraColor : MonoBehaviour {
 			Debug.LogError("CameraColor - attempt to change camera before initialization.");
 			return;
 		}
-
-		if (_transitionTime == 0)
-		{
-			thisCamera.backgroundColor = _newColor;
-		}
-		else
-		{
-			StartCoroutine(ChangeColorOverTime(_newColor, _transitionTime));
-		}
+		StartCoroutine(ChangeColor_CR(_newColor, _transitionTime));
 	}
-	
-	
 	// ********************************************************************
-	// Function:	ChangeColor()
-	// Purpose:		Changes the color over time.
+	#endregion
 	// ********************************************************************
-	public IEnumerator ChangeColorOverTime (Color _newColor, float _transitionTime) 
-	{
-		if (thisCamera == null)
-		{
-			Debug.LogError("CameraColor - attempt to change camera before initialization.");
-			yield break;
-		}
 
+
+	// ********************************************************************
+	#region Private Methods
+	// ********************************************************************
+	private IEnumerator ChangeColor_CR (Color _newColor, float _transitionTime) 
+	{
 		float startTime = Time.time;
 		Color originalColor = thisCamera.backgroundColor;
-		Color colorDiff = _newColor - originalColor;
 		while (Time.time < startTime + _transitionTime)
 		{
 			float timePassed = Time.time - startTime;
-			Color colorChange = colorDiff * (timePassed / _transitionTime);
-			thisCamera.backgroundColor = originalColor + colorChange;
+			thisCamera.backgroundColor = Color.Lerp(originalColor,_newColor,timePassed/_transitionTime);
 			yield return null;
 		}
 		thisCamera.backgroundColor = _newColor;
-
 	}
+	// ********************************************************************
+	#endregion
+	// ********************************************************************
+
 }
+#endregion
+// ************************************************************************
+
+}
+// ************************************************************************
