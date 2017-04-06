@@ -125,7 +125,8 @@ public class InputManager : Singleton<InputManager>
 				Camera.main.ScreenToWorldPoint(currentScreenPoint);
 			m_cursor.transform.position = currentWorldPoint;
 
-			m_cursor.SetBool("Click",Input.GetMouseButton(0));
+			if (m_cursor.HasParameterOfType("Click",AnimatorControllerParameterType.Bool))
+				m_cursor.SetBool("Click",Input.GetMouseButton(0));
 
 			Cursor.visible = false;
 		}
