@@ -23,7 +23,7 @@ namespace BounderFramework
 	#region Class: Vector2Bool
 	// ******************************************************************** 
 	[System.Serializable]
-	class Vector2Bool
+	public class Vector2Bool
 	{
 		// ****************************************************************
 		#region Public Members
@@ -95,7 +95,7 @@ namespace BounderFramework
 	#region Class Vector3Bool
 	// ******************************************************************** 
 	[System.Serializable]
-	class Vector3Bool
+	public class Vector3Bool
 	{
 		// ****************************************************************
 		#region Public Members
