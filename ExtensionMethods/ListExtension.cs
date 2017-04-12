@@ -49,6 +49,16 @@ public static class ListExtension
 			_self.Add(_toAdd);
 	}
 	// ********************************************************************
+	public static List<T> Copy<T>(this List<T> _self)
+	{
+		List<T> copy = new List<T>();
+		for (int i = 0; i < _self.Count; ++i)
+		{
+			copy.Add(_self[i]);
+		}
+		return copy;
+	}
+	// ********************************************************************
 	#endregion
 	// ********************************************************************
 
