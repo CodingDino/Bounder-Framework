@@ -115,6 +115,9 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager> {
 	// ********************************************************************
 	public static void RegisterLoader(IncrementalLoader _loader, bool _register = true)
 	{
+		if (instance == null)
+			return;
+		
 		if (_register)
 			instance.m_loaders.Add(_loader);
 		else
