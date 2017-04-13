@@ -17,7 +17,7 @@ using System.Collections.Generic;
 // ************************************************************************ 
 // Class: GameEvent
 // ************************************************************************ 
-public class GameEvent
+public interface GameEvent
 {
 }
 
