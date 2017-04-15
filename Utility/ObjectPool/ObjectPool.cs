@@ -54,7 +54,7 @@ public class ObjectPool : IncrementalLoader
 	// Function:	Constructor
 	// Purpose:		Sets the prefab for this object pool
 	// ********************************************************************
-	public ObjectPool(GameObject _prefab)
+	public ObjectPool(GameObject _prefab = null)
 	{
 		m_prefab = _prefab;
 	}
@@ -125,10 +125,21 @@ public class ObjectPool : IncrementalLoader
 	// ********************************************************************
 	private ObjectPoolObject CreateObject()
 	{
-		GameObject newObject = GameObject.Instantiate<GameObject>(m_prefab);
+		GameObject newObject = null;
+		if (m_prefab == null)
+		{
+			newObject = new GameObject("ObjectPool Object");
+			newObject.SetActive(false);
+		}
+		else
+		{
+			bool wasEnabled = m_prefab.activeSelf;
+			m_prefab.SetActive(false);
+			newObject = GameObject.Instantiate<GameObject>(m_prefab);
+			m_prefab.SetActive(wasEnabled);
+		}
 		ObjectPoolObject objectPoolObject = newObject.AddComponent<ObjectPoolObject>();
 		objectPoolObject.pool = this;
-		newObject.SetActive(false);
 		return objectPoolObject;
 	}
 	
