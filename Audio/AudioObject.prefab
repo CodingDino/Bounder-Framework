@@ -147,8 +147,10 @@ MonoBehaviour:
   m_audioClip: {fileID: 0}
   m_audioInfo:
     category: 0
+    overrideChannelLimit: 0
     volume: 1
     volumeFuzz: 0
     pitch: 1
     pitchFuzz: 0
-    shouldLoop: 0
+    loop: 0
+    fadeDuration: 0
