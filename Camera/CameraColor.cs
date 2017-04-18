@@ -1,7 +1,7 @@
 ﻿// ************************************************************************ 
 // File Name:   CameraColor.cs 
 // Purpose:    	Change the color of the camera.
-// Project:		Armoured Engines
+// Project:		Bounder Framework
 // Author:      Sarah Herzog  
 // Copyright: 	2015 Bounder Games
 // ************************************************************************ 
@@ -43,6 +43,16 @@ public class CameraColor : MonoBehaviour
 		thisCamera = GetComponent<Camera>();
 	}
 	// ********************************************************************
+	void OnEnable()
+	{
+		Events.AddListener<CameraColorCue>(HandleColorChangeEvent);
+	}
+	// ********************************************************************
+	void OnDisable()
+	{
+		Events.RemoveListener<CameraColorCue>(HandleColorChangeEvent);
+	}
+	// ********************************************************************
 	#endregion
 	// ********************************************************************
 	
@@ -78,6 +88,11 @@ public class CameraColor : MonoBehaviour
 			yield return null;
 		}
 		thisCamera.backgroundColor = _newColor;
+	}
+	// ********************************************************************
+	private void HandleColorChangeEvent(CameraColorCue _event)
+	{
+		ChangeColor(_event.color, _event.duration);
 	}
 	// ********************************************************************
 	#endregion
