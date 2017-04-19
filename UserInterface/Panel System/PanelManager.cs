@@ -113,25 +113,29 @@ public class PanelManager : Singleton<PanelManager>
 		
 		// Get prefab from map
 		Panel prefab = instance.m_panelPrefabMap[_id];
-
+		return OpenPanel(prefab,_data);
+	}
+	// ********************************************************************
+	public static Panel OpenPanel (Panel _prefab, PanelData _data = null)
+	{
 		PanelLimitOverride limitOverride = _data != null ? _data.limitOverride : PanelLimitOverride.REPLACE;
 
-		bool atLimit = (   !prefab.group.NullOrEmpty() 
-		                &&  instance.m_groupStacks.ContainsKey(prefab.group)
-		                &&  instance.m_groupStacks[prefab.group].Count > 0 );
+		bool atLimit = (   !_prefab.group.NullOrEmpty() 
+			&&  instance.m_groupStacks.ContainsKey(_prefab.group)
+			&&  instance.m_groupStacks[_prefab.group].Count > 0 );
 
 		// Hide existing panel if we are replacing it
 		Panel hidingPanel = null;
 		if (atLimit && limitOverride == PanelLimitOverride.REPLACE)
 		{
-			hidingPanel = instance.m_groupStacks[prefab.group].Front();
+			hidingPanel = instance.m_groupStacks[_prefab.group].Front();
 		}
 
 		// If we are allowed to show this new panel, do so
 		if (!atLimit || limitOverride != PanelLimitOverride.NONE)
 		{
-			Panel newPanel = Instantiate<GameObject>(prefab.gameObject,instance.transform,false).GetComponent<Panel>();
-			newPanel.name = prefab.name;
+			Panel newPanel = Instantiate<GameObject>(_prefab.gameObject,instance.transform,false).GetComponent<Panel>();
+			newPanel.name = _prefab.name;
 
 			newPanel.Initialise(_data);
 			instance.m_activePanelMap[newPanel.name] = newPanel;
@@ -158,6 +162,20 @@ public class PanelManager : Singleton<PanelManager>
 
 		if (!instance.m_closingPanels.ContainsKey(_id))
 			instance.StartCoroutine(instance._ClosePanel(instance.m_activePanelMap[_id]));
+		return true;
+	}
+	// ********************************************************************
+	public static bool ClosePanel (Panel _panel) 
+	{
+		// If it isn't open we can't close it
+		if (!instance.m_activePanelMap.ContainsValue(_panel))
+		{
+			Debug.LogError("PanelManager.ClosePanel("+_panel+") - no panel found.");
+			return false;
+		}
+
+		if (!instance.m_closingPanels.ContainsValue(_panel))
+			instance.StartCoroutine(instance._ClosePanel(_panel));
 		return true;
 	}
 	// ********************************************************************
