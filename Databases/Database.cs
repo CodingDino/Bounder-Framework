@@ -12,59 +12,28 @@
 // ************************************************************************
 using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using BounderFramework;
+using AssetBundles;
 #endregion
 // ************************************************************************
 
 
 // ************************************************************************
 namespace BounderFramework { 
-	
-	// ********************************************************************
-	// Class: Data
-	// ********************************************************************
-	public class Data : Archive
-	{
-		public string id;
-
-		// ********************************************************************
-		// Archive Methods 
-		// ********************************************************************
-		public virtual bool Load(JSON _JSON)
-		{
-			bool success = true;
-
-			success &= _JSON["id"].Get (ref id);
-
-			return success;
-		}
-		// ********************************************************************
-		public virtual JSON Save()
-		{
-			JSON save = new JSON();
-
-			save["id"].data = id;
-
-			return save;
-		}
-		// ********************************************************************
-	}
-	// ********************************************************************
 
 
 	// ********************************************************************
 	// Class: Database 
 	// ******************************************************************** 
-	public class Database<T> : Singleton<Database<T>> where T : Data, new() 
+	public class Database<T> : Singleton<Database<T>> where T : ScriptableObject, new() 
 	{
 		// ****************************************************************
 		#region Exposed Data Members
 		// ****************************************************************
 		[SerializeField]
-		protected string[] m_databaseFolders;
-		[SerializeField]
-		protected string[] m_demoModeFolders;
+		protected string m_assetBundleName;
 		#endregion
 		// ****************************************************************
 
@@ -73,29 +42,15 @@ namespace BounderFramework {
 		#region Private Data Members
 		// ****************************************************************
 		private Dictionary<string, T> m_data = new Dictionary<string, T>();
-		private bool m_initialised = false;
+		private List<AssetBundleLoadAssetOperation> m_loadRequests = new List<AssetBundleLoadAssetOperation>();
 		#endregion
 		// ****************************************************************
 
 
 		// ****************************************************************
-		#region Monobehaviour Methods 
+		#region Properties
 		// ****************************************************************
-		void OnEnable()
-		{
-			DebugMenu.OnDemoModeToggle += OnDemoModeToggle;
-		}
-		// ****************************************************************
-		void OnDisable()
-		{
-			DebugMenu.OnDemoModeToggle -= OnDemoModeToggle;
-		}
-		// ****************************************************************
-		protected void OnDemoModeToggle(bool _demoActive)
-		{
-			Reinitialise();
-		}
-		// ****************************************************************
+		public bool loading { get { return m_loadRequests.Count != 0; } }
 		#endregion
 		// ****************************************************************
 
@@ -105,23 +60,11 @@ namespace BounderFramework {
 		// ****************************************************************
 		public static bool HasData(string _id)
 		{
-			if (!instance.m_initialised)
-			{
-				Debug.LogError("Database.HasData("+_id+"): Uninitialised Databse.");	
-				return false;
-			}
-
 			return instance.m_data.ContainsKey(_id);
 		}
 		// ****************************************************************
 		public static T GetData(string _id)
 		{
-			if (!instance.m_initialised)
-			{
-				Debug.LogError("Database.GetData("+_id+"): Uninitialised Databse.");	
-				return default (T);
-			}
-
 			if (instance.m_data.ContainsKey(_id))
 			{
 				return instance.m_data[_id];
@@ -133,61 +76,23 @@ namespace BounderFramework {
 			}
 		}
 		// ****************************************************************
-		public static void Initialise()
+		public static Coroutine RequestAssets(List<string> _assets)
 		{
-			instance._Initialise();
-		}
-		// ****************************************************************
-		protected virtual bool _Initialise()
-		{
-			Debug.Log("Database.Initialise() for "+name);
-			string[] databaseFolders = DebugMenu.demoMode ? m_demoModeFolders : m_databaseFolders;
-			for (int iFolder = 0; iFolder < databaseFolders.Length; ++iFolder)
+			List<AssetBundleLoadAssetOperation> requests = new List<AssetBundleLoadAssetOperation>();
+			for (int i = 0; i < _assets.Count; ++i)
 			{
-				TextAsset[] files = Resources.LoadAll<TextAsset>(databaseFolders[iFolder]);
-				if (files.Length == 0)
-					Debug.LogError("Database.Initialise(): No files found in folder "+databaseFolders[iFolder]);
-				for (int iFile = 0; iFile < files.Length; ++iFile)
-				{
-					TextAsset file = files[iFile];
-					string jsonString = file.text;
-					if (!jsonString.NullOrEmpty())
-					{
-						JSON N = JSON.ParseString(jsonString);
-						// Single entry
-						if (N.GetArchive<T>() != null)
-						{
-							ReadEntry(N);
-						}
-						// Multiple entries
-						else
-						{
-							foreach(JSON entry in N)
-							{
-								ReadEntry(entry);
-							}
-						}
-					}
-					else
-					{
-						Debug.LogError("Database.Initialise(): Text file "+file.name+" contained empty json string.");	
-					}
-				}
+				AssetBundleLoadAssetOperation request = AssetBundleManager.LoadAssetAsync(instance.m_assetBundleName,_assets[i], typeof(T));
+				instance.StartCoroutine(request);
+				requests.Add(request);
+				instance.m_loadRequests.Add(request);	
 			}
-			m_initialised = true;
-			return m_initialised;
+			return instance.StartCoroutine(instance.WaitForAssets(requests));
 		}
 		// ****************************************************************
-		public static bool IsInitialised()
+		public static void UnloadAsset()
 		{
-			return instance.m_initialised;
-		}
-		// ****************************************************************
-		public static void Reinitialise() 
-		{ 
-			instance.m_initialised = false;
 			instance.m_data.Clear();
-			Initialise();
+			AssetBundleManager.UnloadAssetBundle(instance.m_assetBundleName);
 		}
 		// ****************************************************************
 		#endregion
@@ -195,23 +100,24 @@ namespace BounderFramework {
 
 
 		// ****************************************************************
-		#region Protected Methods
+		#region Private Methods
 		// ****************************************************************
-		protected virtual T ReadEntry(JSON _entry)
+		private IEnumerator WaitForAssets(List<AssetBundleLoadAssetOperation> _requests)
 		{
-			Debug.Log("Database.ReadEntry("+_entry.ToString()+")");
-			T data = _entry.GetArchive<T>();
-
-			if (data != null)
+			while (_requests.Count > 0)
 			{
-				m_data[data.id] = data;
+				if (_requests.Front().IsDone())
+				{
+					T asset = _requests.Front().GetAsset<T>();
+					if (asset != null)
+					{
+						m_data[asset.name] = asset;
+					}
+					m_loadRequests.Remove(_requests.Front());
+					_requests.RemoveAt(0);
+				}
+				yield return null;
 			}
-			else
-			{
-				Debug.LogError("Database.ReadEntry(): Failed to load item: "+_entry.ToString());
-			}
-
-			return data;
 		}
 		// ****************************************************************
 		#endregion
