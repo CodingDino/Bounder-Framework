@@ -57,7 +57,6 @@ public static class ColorExtension
 		}
 
 		_hex = _hex.ToUpper();
-		string alpha = "0123456789ABCDEF";
 		Color color = Color.black;
 		for (int i = 0; i < 4 && i*2 < _hex.Length; ++i)
 		{
