@@ -16,6 +16,7 @@ using System.Collections;
 using System.Collections.Generic;
 using BounderFramework;
 using UnityEngine.SceneManagement;
+using AssetBundles;
 #endregion
 // ************************************************************************
 
@@ -47,7 +48,8 @@ public enum LoadingState
 // ************************************************************************ 
 #region Class: LoadingSceneManager
 // ************************************************************************ 
-public class LoadingSceneManager : Singleton<LoadingSceneManager> {
+public class LoadingSceneManager : Singleton<LoadingSceneManager> 
+{
 
 
 	// ********************************************************************
@@ -59,6 +61,8 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager> {
 	private string m_levelToLoad = "";
 	[SerializeField]
 	private string m_loadingScene = "";
+	[SerializeField]
+	private string m_loadingSceneBundle = "";
 	[SerializeField]
 	private FadeSprite m_blackness;
 	[SerializeField]
@@ -103,11 +107,11 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager> {
 	// ********************************************************************
 	#region Public Methods
 	// ********************************************************************
-	public static bool LoadScene(string _newScene)
+	public static bool LoadScene(string _newScene, string _bundle = "scenes")
 	{
 		if (!instance.m_loading)
 			{
-				instance.StartCoroutine(instance.CR_LoadScene(_newScene));
+				instance.StartCoroutine(instance.CR_LoadScene(_newScene, _bundle));
 				return true;
 			}
 			return false;
@@ -119,9 +123,15 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager> {
 			return;
 		
 		if (_register)
-			instance.m_loaders.Add(_loader);
+			{
+				Debug.Log("Adding IncrementalLoader: "+_loader);
+				instance.m_loaders.Add(_loader);
+			}
 		else
-			instance.m_loaders.Remove(_loader);
+			{
+				Debug.Log("Removing IncrementalLoader: "+_loader);
+				instance.m_loaders.Remove(_loader);
+			}
 	}
 	// ********************************************************************
 	#endregion
@@ -131,7 +141,7 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager> {
 	// ********************************************************************
 	#region Private Methods
 	// ********************************************************************
-	public IEnumerator CR_LoadScene(string _newScene)
+		public IEnumerator CR_LoadScene(string _newScene, string _assetBundle)
 	{
 		Debug.Log("Loading Scene: "+_newScene);
 		m_loading = true;
@@ -140,6 +150,7 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager> {
 
 		// COVERING_SCREEN
 		{
+				Debug.Log("Loading Scene state: "+LoadingState.COVERING_SCREEN);
 			if (OnStateChanged != null) 
 				OnStateChanged(LoadingState.COVERING_SCREEN, _newScene, oldScene);
 
@@ -147,12 +158,14 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager> {
 			yield return m_blackness.FadeIn();
 
 			// Load loading screen
-			SceneManager.LoadScene(m_loadingScene);
+			AssetBundleLoadOperation loadOp = AssetBundleManager.LoadLevelAsync(m_loadingSceneBundle.ToLower(), m_loadingScene, false);
+			yield return StartCoroutine(loadOp);
 			// !!! unload old screen (automatic)
 		}
 
 		// SCREEN_COVERED
-		{
+			{
+				Debug.Log("Loading Scene state: "+LoadingState.SCREEN_COVERED);
 			if (OnStateChanged != null) 
 				OnStateChanged(LoadingState.SCREEN_COVERED, _newScene, oldScene);
 
@@ -163,17 +176,21 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager> {
 		float endTime = Time.time + m_minDuration;
 
 		// LOADING_NEW_SCENE
-		{
+			{
+				Debug.Log("Loading Scene state: "+LoadingState.LOADING_NEW_SCENE);
 			if (OnStateChanged != null) 
 				OnStateChanged(LoadingState.LOADING_NEW_SCENE, _newScene, oldScene);
 
 			// Load level async
-			yield return SceneManager.LoadSceneAsync(_newScene, LoadSceneMode.Additive);
+				AssetBundleLoadOperation loadOp = AssetBundleManager.LoadLevelAsync(_assetBundle, _newScene, true);
+			yield return StartCoroutine(loadOp);
 			SceneManager.SetActiveScene(SceneManager.GetSceneByName(_newScene));
+			// TODO: Unload inactive asset bundles to free up memory
 		}
 
 		// PROCESSING_INCREMENTAL_LOADERS
-		{
+			{
+				Debug.Log("Loading Scene state: "+LoadingState.PROCESSING_INCREMENTAL_LOADERS);
 			if (OnStateChanged != null) 
 				OnStateChanged(LoadingState.PROCESSING_INCREMENTAL_LOADERS, _newScene, oldScene);
 
@@ -183,7 +200,8 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager> {
 
 
 		// NEW_SCENE_LOADED
-		{
+			{
+				Debug.Log("Loading Scene state: "+LoadingState.NEW_SCENE_LOADED);
 			if (OnStateChanged != null) 
 				OnStateChanged(LoadingState.NEW_SCENE_LOADED, _newScene, oldScene);
 
@@ -192,7 +210,8 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager> {
 		}
 
 		// REVEALING_NEW_SCENE
-		{
+			{
+				Debug.Log("Loading Scene state: "+LoadingState.REVEALING_NEW_SCENE);
 			if (OnStateChanged != null) 
 				OnStateChanged(LoadingState.REVEALING_NEW_SCENE, _newScene, oldScene);
 
@@ -207,7 +226,8 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager> {
 		}
 
 		// LOADING_COMPLETE
-		{
+			{
+				Debug.Log("Loading Scene state: "+LoadingState.LOADING_COMPLETE);
 			if (OnStateChanged != null) 
 				OnStateChanged(LoadingState.LOADING_COMPLETE, _newScene, oldScene);
 		}
