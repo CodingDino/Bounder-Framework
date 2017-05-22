@@ -41,6 +41,14 @@ public static class ListExtension
 			return default(T);
 	}
 	// ********************************************************************
+	public static T Random<T>(this List<T> _self)
+	{
+		if (_self.Count > 0)
+			return _self[Random.Range(0,_self.Count)];
+		else
+			return default(T);
+	}
+	// ********************************************************************
 	public static void AddAtFront<T>(this List<T> _self, T _toAdd)
 	{
 		if (_self.Count > 0)
