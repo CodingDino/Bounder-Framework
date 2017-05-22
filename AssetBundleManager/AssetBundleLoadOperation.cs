@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.iOS;
 #endif
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 namespace AssetBundles
 {
@@ -241,15 +242,8 @@ namespace AssetBundles
 
             LoadedAssetBundle bundle = AssetBundleManager.GetLoadedAssetBundle(m_AssetBundleName, out m_DownloadingError);
             if (bundle != null)
-            {
-#if UNITY_5_3 || UNITY_5_4
-                m_Request = SceneManager.LoadSceneAsync(m_LevelName, m_IsAdditive ? LoadSceneMode.Additive : LoadSceneMode.Single);
-#else
-                if (m_IsAdditive)
-                    m_Request = Application.LoadLevelAdditiveAsync(m_LevelName);
-                else
-                    m_Request = Application.LoadLevelAsync(m_LevelName);
-#endif
+			{
+				m_Request = SceneManager.LoadSceneAsync(m_LevelName, m_IsAdditive ? LoadSceneMode.Additive : LoadSceneMode.Single);
                 return false;
             }
             else
