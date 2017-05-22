@@ -75,7 +75,7 @@ public class AudioCategorySettings
 // ************************************************************************
 #region Class: AudioManager
 // ************************************************************************
-public class AudioManager : Singleton<AudioManager>
+public class AudioManager : Database<AudioClip>
 {
 
 	// ********************************************************************
@@ -119,18 +119,9 @@ public class AudioManager : Singleton<AudioManager>
 	// ********************************************************************
 	#region Public Methods
 	// ********************************************************************
-	public static AudioClip LoadClip(string _track, AudioInfo _info)
-	{
-		string filepath = instance.m_audioFolder+_info.category.ToString()+"/"+_track;
-		AudioClip clip = Resources.Load<AudioClip>(filepath);
-		if (clip == null)
-			Debug.LogError("AudioManager.LoadClip failed for "+filepath);
-		return clip;
-	}
-	// ********************************************************************
 	public static AudioCategorySettings GetAudioSettings(AudioCategory _category) 
 	{ 
-		return instance.m_audioCategorySettings_Internal[_category];
+			return (instance as AudioManager).m_audioCategorySettings_Internal[_category];
 	}
 	// ********************************************************************
 	public static AudioObject Play(string _track, 
@@ -144,17 +135,14 @@ public class AudioManager : Singleton<AudioManager>
 	{
 		if (_info.overrideChannelLimit == AudioChannelOverride.NONE && !ChannelAvailable(_info.category))
 			return null;
-
-		string filepath = instance.m_audioFolder+_info.category.ToString()+"/"+_track;
-		AudioClip clip = Resources.Load<AudioClip>(filepath);
-
-		if (clip == null)
+		
+		if (!HasData(_track))
 		{
-			Debug.LogError("Attempt to load non-existant audio file: "+filepath);
+			Debug.LogError("Attempt to play unloaded audio file: "+_track);
 			return null;
 		}
 
-		return Play(clip,_info);
+		return Play(GetData(_track),_info);
 	}
 	// ********************************************************************
 	public static AudioObject Play(AudioClip _clip, 
@@ -172,7 +160,7 @@ public class AudioManager : Singleton<AudioManager>
 		bool replacing = !ChannelAvailable(_info.category) && _info.overrideChannelLimit == AudioChannelOverride.REPLACE;
 		if (replacing)
 		{
-			AudioObject oldObject = instance.m_audioObjects[_info.category].FirstActive.GetComponent<AudioObject>();
+			AudioObject oldObject = (instance as AudioManager).m_audioObjects[_info.category].FirstActive.GetComponent<AudioObject>();
 			
 			// If we're trying to replace it with the same thing, don't.
 			if (oldObject.audioClip.ToString() == _clip.ToString())
@@ -181,7 +169,7 @@ public class AudioManager : Singleton<AudioManager>
 			oldObject.Fade(false);
 		}
 
-		GameObject audioGameObject = instance.m_audioObjects[_info.category].RequestObject();
+		GameObject audioGameObject = (instance as AudioManager).m_audioObjects[_info.category].RequestObject();
 		audioGameObject.transform.SetParent(instance.transform);
 		AudioObject audioObject = audioGameObject.GetComponent<AudioObject>();
 		audioObject.audioInfo = _info;
@@ -201,13 +189,13 @@ public class AudioManager : Singleton<AudioManager>
 	// ********************************************************************
 	public static bool ChannelAvailable(AudioCategory _category)
 	{
-		return instance.m_audioObjects[_category].Count < instance.m_audioCategorySettings_Internal[_category].numChannels;
+		return (instance as AudioManager).m_audioObjects[_category].Count < (instance as AudioManager).m_audioCategorySettings_Internal[_category].numChannels;
 	}
 	// ********************************************************************
 	public static List<AudioObject> GetActiveAudioForCategory(AudioCategory _category)
 	{
 		List<AudioObject> audioObjects = new List<AudioObject>();
-		List<ObjectPoolObject> objectPoolObjects = instance.m_audioObjects[_category].activeObjects;
+		List<ObjectPoolObject> objectPoolObjects = (instance as AudioManager).m_audioObjects[_category].activeObjects;
 		for (int i = 0; i < objectPoolObjects.Count; ++i)
 		{
 			audioObjects.Add(objectPoolObjects[i].GetComponent<AudioObject>());
