@@ -82,9 +82,7 @@ public class Panel : MonoBehaviour
 	public void Initialise (PanelData _data)  
 	{ 
 		PanelState startingState = _data != null ? _data.startingState : PanelState.HIDDEN;
-		ChangeState(startingState, true);
-		GetComponent<Animator>().SetTrigger("InstantChange");
-
+		ChangeState(startingState, true, true);
 		_Initialise(_data);
 	}
 	// ********************************************************************
@@ -155,7 +153,7 @@ public class Panel : MonoBehaviour
 		}
 	}
 	// ********************************************************************
-	private void ChangeState (PanelState _newState, bool _forceApply = false)
+	private void ChangeState (PanelState _newState, bool _forceApply = false, bool _instant = false)
 	{
 		if (_newState == m_state && !_forceApply)
 			return;
@@ -166,8 +164,11 @@ public class Panel : MonoBehaviour
 		}
 		PanelState oldState = m_state;
 		m_state = _newState;
-		gameObject.SetActive(IsVisible());
+		gameObject.SetActive(true);
 		GetComponent<Animator>().SetInteger("PanelState",(int)m_state);
+		if (_instant)
+			GetComponent<Animator>().SetTrigger("InstantChange");
+		gameObject.SetActive(IsVisible());
 		_ChangeState(_newState, oldState);
 		if (OnPanelStateChanged != null)
 			OnPanelStateChanged(name, _newState, oldState);
