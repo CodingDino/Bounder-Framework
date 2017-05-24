@@ -44,7 +44,7 @@ public class Database<T> : Singleton<Database<T>> where T : UnityEngine.Object
 	#region Private Data Members
 	// ********************************************************************
 	protected Dictionary<string, T> m_data = new Dictionary<string, T>();
-	protected List<AssetBundleLoadAssetOperation> m_loadRequests = new List<AssetBundleLoadAssetOperation>();
+	protected Dictionary<string, AssetBundleLoadAssetOperation> m_loadRequests = new Dictionary<string, AssetBundleLoadAssetOperation>();
 	#endregion
 	// ********************************************************************
 
@@ -89,7 +89,7 @@ public class Database<T> : Singleton<Database<T>> where T : UnityEngine.Object
 		}
 		else
 		{
-			Debug.LogWarning("Database.GetData("+_id+"): Database does not contain key.");
+			Debug.LogError("Database.GetData("+_id+"): Database does not contain key.");
 			return default (T);
 		}
 	}
@@ -106,15 +106,19 @@ public class Database<T> : Singleton<Database<T>> where T : UnityEngine.Object
 		if (_assets.Count == 0)
 			return null;
 
-		List<AssetBundleLoadAssetOperation> requests = new List<AssetBundleLoadAssetOperation>();
+		Dictionary<string, AssetBundleLoadAssetOperation> requests = new Dictionary<string, AssetBundleLoadAssetOperation>();
 		for (int i = 0; i < _assets.Count; ++i)
 		{
 			if (_assets[i].NullOrEmpty())
 				continue;
+			if (instance.m_data.ContainsKey(_assets[i]))
+				continue;
+			if (instance.m_loadRequests.ContainsKey(_assets[i]))
+				continue;
 			AssetBundleLoadAssetOperation request = AssetBundleManager.LoadAssetAsync(_assetBundleName.NullOrEmpty() ? instance.m_assetBundleName : _assetBundleName, _assets[i], typeof(T));
 			instance.StartCoroutine(request);
-			requests.Add(request);
-			instance.m_loadRequests.Add(request);	
+			requests[_assets[i]] = request;
+			instance.m_loadRequests[_assets[i]] = request;	
 		}
 		if (requests.Count > 0)
 			return instance.StartCoroutine(instance.WaitForAssets(requests));
@@ -144,24 +148,32 @@ public class Database<T> : Singleton<Database<T>> where T : UnityEngine.Object
 	// ********************************************************************
 	#region Private Methods
 	// ********************************************************************
-	private IEnumerator WaitForAssets(List<AssetBundleLoadAssetOperation> _requests)
+	private IEnumerator WaitForAssets(Dictionary<string, AssetBundleLoadAssetOperation> _requests)
 	{
 		while (_requests.Count > 0)
 		{
-			if (_requests.Front().IsDone())
+			List<string> toRemove = new List<string>();
+			foreach (KeyValuePair<string, AssetBundleLoadAssetOperation> request in _requests)
 			{
-				T asset = _requests.Front().GetAsset<T>();
-				if (asset != null)
+				if (request.Value.IsDone())
 				{
-					m_data[asset.name] = asset;
-					Debug.Log("Database: Asset request complete: "+asset.name);
+					T asset = request.Value.GetAsset<T>();
+					if (asset != null)
+					{
+						m_data[asset.name] = asset;
+						Debug.Log("Database: Asset request complete: "+asset.name);
+					}
+					else
+					{
+						Debug.LogError("Database: Asset request failed: "+request.Key);
+					}
+					toRemove.Add(request.Key);
 				}
-				else
-				{
-					Debug.LogError("Database: Asset request failed.");
-				}
-				m_loadRequests.Remove(_requests.Front());
-				_requests.RemoveAt(0);
+			}
+			for (int i = 0; i < toRemove.Count; ++i)
+			{
+				m_loadRequests.Remove(toRemove[i]);
+				_requests.Remove(toRemove[i]);
 			}
 			yield return null;
 		}
