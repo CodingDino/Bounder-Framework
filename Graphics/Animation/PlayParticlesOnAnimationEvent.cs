@@ -39,6 +39,11 @@ public class PlayParticlesOnAnimationEvent : MonoBehaviour
 	{
 		m_toPlay.Play();
 	}
+	// ********************************************************************
+	private void StopParticles () 
+	{
+		m_toPlay.Stop();
+	}
 	#endregion
 	// ********************************************************************
 
