@@ -23,20 +23,9 @@ using BounderFramework;
 // ************************************************************************
 public class PanelManager : Singleton<PanelManager> 
 {
-
-	// ********************************************************************
-	#region Exposed Data Members 
-	// ********************************************************************
-	[SerializeField]
-	private List<Panel> m_panelPrefabs = new List<Panel>();
-	#endregion
-	// ********************************************************************
-
-
 	// ********************************************************************
 	#region Private Data Members 
 	// ********************************************************************
-	private Dictionary<string, Panel> m_panelPrefabMap = new Dictionary<string, Panel>();
 	private Dictionary<string, List<Panel>> m_groupStacks = new Dictionary<string, List<Panel>>();
 	private Dictionary<string,Panel> m_activePanelMap = new Dictionary<string,Panel>();
 	private Dictionary<string,Panel> m_closingPanels = new Dictionary<string,Panel>();
@@ -58,14 +47,6 @@ public class PanelManager : Singleton<PanelManager>
 	// ********************************************************************
 	#region MonoBehaviour Methods 
 	// ********************************************************************
-	void Awake () 
-	{
-		for (int i = 0; i < m_panelPrefabs.Count; ++i)
-		{
-			m_panelPrefabMap[m_panelPrefabs[i].name] = m_panelPrefabs[i];
-		}
-	}
-	// ********************************************************************
 	void OnEnable()
 	{
 		DebugMenu.OnResetGame += CloseAllPanels;
@@ -82,39 +63,6 @@ public class PanelManager : Singleton<PanelManager>
 
 	// ********************************************************************
 	#region Public Methods 
-	// ********************************************************************
-	public static Panel OpenPanel (string _id, JSON _data) 
-	{
-		// Don't try to show if we don't have the prefab
-		if (!instance.m_panelPrefabMap.ContainsKey(_id))
-			return null;
-
-		// Don't allow duplicate panels of the same ID
-		if (instance.m_activePanelMap.ContainsKey(_id))
-			return null;
-
-		// Get prefab from map
-		Panel prefab = instance.m_panelPrefabMap[_id];
-
-		PanelData data = prefab.CreatePanelData(_data);
-
-		return OpenPanel(_id, data);
-	}
-	// ********************************************************************
-	public static Panel OpenPanel (string _id, PanelData _data = null) 
-	{
-		// Don't try to show if we don't have the prefab
-		if (!instance.m_panelPrefabMap.ContainsKey(_id))
-			return null;
-
-		// Don't allow duplicate panels of the same ID
-		if (instance.m_activePanelMap.ContainsKey(_id))
-			return null;
-		
-		// Get prefab from map
-		Panel prefab = instance.m_panelPrefabMap[_id];
-		return OpenPanel(prefab,_data);
-	}
 	// ********************************************************************
 	public static Panel OpenPanel (Panel _prefab, PanelData _data = null)
 	{
@@ -185,6 +133,19 @@ public class PanelManager : Singleton<PanelManager>
 		{
 			ClosePanel(panel.Key);
 		}
+	}
+	// ********************************************************************
+	public static bool IsPanelOpen(string _panelName)
+	{
+		return instance.m_activePanelMap.ContainsKey(_panelName);
+	}
+	// ********************************************************************
+	public static int NumPanelsOpenInGroup(string _group)
+	{
+		if (instance.m_groupStacks.ContainsKey(_group))
+			return instance.m_groupStacks[_group].Count;
+		else
+			return 0;
 	}
 	// ********************************************************************
 	#endregion
