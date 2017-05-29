@@ -25,30 +25,44 @@ using System.Collections.Generic;
 // ************************************************************************ 
 public class DestroyOffScreen : MonoBehaviour {
 
+	public enum Action {
+		DESTROY,
+		DISABLE
+	};
 
     // ********************************************************************
     // Private Data Members 
-    // ********************************************************************
+	// ********************************************************************
 	[SerializeField]
-	private Vector2 m_min = Vector2.zero;
-	[SerializeField]
-	private Vector2 m_max = Vector2.zero;
+	private Action m_action = Action.DESTROY;
 	[SerializeField]
 	private float m_outsideDuration = 5.0f;
 
 	private bool m_isOutside = false;
 	private float m_outsideStartTime = 0.0f;
-	
+	private SpriteRenderer[] m_sprites;
+
+	void Start () {
+		m_sprites = GetComponentsInChildren<SpriteRenderer>();
+	}
 	
     // ********************************************************************
     // Function:	Update()
 	// Purpose:		Called once per frame.
     // ********************************************************************
-	void Update () {
-		if (   transform.position.x < m_min.x
-		    || transform.position.y < m_min.y
-		    || transform.position.x > m_max.x
-		    || transform.position.y > m_max.y )
+	void Update () 
+	{
+		bool outside = true;
+		for (int i = 0; i < m_sprites.Length; ++i)
+		{
+			if (m_sprites[i].isVisible)
+			{
+				outside = false;
+				break;
+			}
+		}
+
+		if (outside)
 		{
 			if (!m_isOutside)
 			{
@@ -58,7 +72,10 @@ public class DestroyOffScreen : MonoBehaviour {
 
 			if (Time.time >= m_outsideStartTime + m_outsideDuration)
 			{
-				Destroy(gameObject);
+				if (m_action == Action.DESTROY)
+					Destroy(gameObject);
+				else if (m_action == Action.DISABLE)
+					gameObject.SetActive(false);
 			}
 		}
 		else
