@@ -23,6 +23,7 @@ public class ObjectPoolObject : MonoBehaviour
 	// Private Data Members 
 	// ********************************************************************
 	private ObjectPool m_pool;
+	private static bool m_shuttingDown = false;
 
 
 	// ********************************************************************
@@ -79,8 +80,15 @@ public class ObjectPoolObject : MonoBehaviour
 	// ********************************************************************
 	void OnDestroy () 
 	{
-		Debug.LogWarning("ObjectPoolObject destroyed - should simply disable so it can be reused!");
+		if (!m_shuttingDown && !BounderFramework.LoadingSceneManager.loading)
+			Debug.LogWarning("ObjectPoolObject destroyed - should simply disable so it can be reused!");
 		if (m_pool != null)
 			m_pool.ObjectDestroyed(this);
+	}
+
+
+	void OnApplicationQuit()
+	{
+		m_shuttingDown = true;
 	}
 }
