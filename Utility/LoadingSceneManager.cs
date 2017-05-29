@@ -81,6 +81,14 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 
 
 	// ********************************************************************
+	#region Properties
+	// ********************************************************************
+	public static bool loading { get { return instance == null ? false : instance.m_loading; } }
+	#endregion
+	// ********************************************************************
+
+
+	// ********************************************************************
 	#region Events
 	// ********************************************************************
 	public delegate void StateChanged(LoadingState _state, string _newScene, string _oldScene);
