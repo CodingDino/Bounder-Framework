@@ -31,52 +31,19 @@ public class ObjectPoolObject : MonoBehaviour
 	// ********************************************************************
 	public ObjectPool pool { set { m_pool = value; } }
 
-	
+
 	// ********************************************************************
-	// Function:	Recycle()
-	// Purpose:		Inform pool that we are available
-	// ********************************************************************
-	void Recycle()
-	{
-		if (m_pool != null)
-			m_pool.ObjectBecameAvailable(this);
-	}
-	
-	
-	// ********************************************************************
-	// Function:	Reserve()
-	// Purpose:		Inform pool that we are NOT available
-	// ********************************************************************
-	void Reserve()
-	{
-		if (m_pool != null)
-			m_pool.ObjectBecameUnavailable(this);
-	}
-	
-	
-	// ********************************************************************
-	// Function:	OnDisable()
-	// Purpose:		Recycle object when it is disabled
+	// Monobehavior Methods
 	// ********************************************************************
 	void OnEnable () 
 	{
 		Reserve();
 	}
-
-	
-	// ********************************************************************
-	// Function:	OnDisable()
-	// Purpose:		Recycle object when it is disabled
 	// ********************************************************************
 	void OnDisable () 
 	{
 		Recycle();
 	}
-
-
-	// ********************************************************************
-	// Function:	OnDestroy()
-	// Purpose:		Warn that object has been destroyed, and deregister it
 	// ********************************************************************
 	void OnDestroy () 
 	{
@@ -85,10 +52,28 @@ public class ObjectPoolObject : MonoBehaviour
 		if (m_pool != null)
 			m_pool.ObjectDestroyed(this);
 	}
-
-
+	// ********************************************************************
 	void OnApplicationQuit()
 	{
 		m_shuttingDown = true;
 	}
+	// ********************************************************************
+
+
+	// ********************************************************************
+	// Private Methods
+	// ********************************************************************
+	void Recycle()
+	{
+		if (m_pool != null)
+			m_pool.ObjectBecameAvailable(this);
+	}
+	// ********************************************************************
+	void Reserve()
+	{
+		if (m_pool != null)
+			m_pool.ObjectBecameUnavailable(this);
+	}
+	// ********************************************************************
+
 }
