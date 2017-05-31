@@ -327,11 +327,12 @@ namespace AssetBundles
             if (bundle != null)
             {
                 ///@TODO: When asset bundle download fails this throws an exception...
-                m_Request = bundle.m_AssetBundle.LoadAssetAsync(m_AssetName, m_Type);
+			m_Request = bundle.m_AssetBundle.LoadAssetAsync(m_AssetName, m_Type);
+			Debug.Log("[AssetBundleManager] <color=green>Loaded successfully:</color> "+m_AssetBundleName+" bundle");
                 return false;
             }
             else
-            {
+		{
                 return true;
             }
         }
@@ -342,9 +343,12 @@ namespace AssetBundles
             // m_DownloadingError might come from the dependency downloading.
             if (m_Request == null && m_DownloadingError != null)
             {
-                Debug.LogError(m_DownloadingError);
+			Debug.LogError(m_DownloadingError);
+			Debug.LogError("[AssetBundleManager] Load failed: "+m_AssetName+" from "+m_AssetBundleName+" bundle");
                 return true;
             }
+		else if (m_Request != null && m_Request.isDone)
+			Debug.Log("[AssetBundleManager] <color=green>Loaded successfully:</color> "+m_AssetName+" from "+m_AssetBundleName+" bundle");
 
             return m_Request != null && m_Request.isDone;
         }

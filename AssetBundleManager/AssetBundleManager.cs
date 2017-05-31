@@ -340,6 +340,8 @@ namespace AssetBundles
 
             // Check if the assetBundle has already been processed.
             bool isAlreadyProcessed = LoadAssetBundleInternal(assetBundleName, isLoadingAssetBundleManifest);
+		if (isAlreadyProcessed)
+			Log(LogType.Info, "<color=green>Asset bundle already processed:</color>: " + assetBundleName);
 
             // Load dependencies.
             if (!isAlreadyProcessed && !isLoadingAssetBundleManifest)
@@ -448,7 +450,10 @@ namespace AssetBundles
             // In the demo, we never have duplicate WWWs as we wait LoadAssetAsync()/LoadLevelAsync() to be finished before calling another LoadAssetAsync()/LoadLevelAsync().
             // But in the real case, users can call LoadAssetAsync()/LoadLevelAsync() several times then wait them to be finished which might have duplicate WWWs.
             if (m_DownloadingBundles.Contains(assetBundleName))
-                return true;
+		{
+			Log(LogType.Info, "Asset Bundle already loading: " + assetBundleName);
+			return true;
+		}
 
             string bundleBaseDownloadingURL = GetAssetBundleBaseDownloadingURL(assetBundleName);
 
@@ -571,9 +576,17 @@ namespace AssetBundles
 			url = "file://"+Application.streamingAssetsPath+"/" + url;
 		SetSourceAssetBundleURL(url);
 
+		Debug.Log("AssetBundleManager: Initialising");
 		var request = Initialize();
 		if (request != null)
+		{
 			yield return StartCoroutine(request);
+			Debug.Log("AssetBundleManager: Initialisation complete");
+		}
+		else
+		{
+			Debug.LogError("AssetBundleManager: Initialisation failed");
+		}
 	}
 
         void Update()
@@ -601,7 +614,10 @@ namespace AssetBundles
                 return;
 
             if (download.error == null)
-                m_LoadedAssetBundles.Add(download.assetBundleName, download.assetBundle);
+		{
+			Log(LogType.Info, "<color=green>Asset Bundle download finished:</color> " + download.assetBundleName);
+			m_LoadedAssetBundles.Add(download.assetBundleName, download.assetBundle);
+		}
             else
             {
                 string msg = string.Format("Failed downloading bundle {0} from {1}: {2}",
