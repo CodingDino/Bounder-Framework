@@ -102,7 +102,7 @@ public class PanelManager : Singleton<PanelManager>
 	public static bool ClosePanel (string _id) 
 	{
 		// If it isn't open we can't close it
-		if (!instance.m_activePanelMap.ContainsKey(_id))
+		if (instance == null || !instance.m_activePanelMap.ContainsKey(_id))
 		{
 			Debug.LogError("PanelManager.ClosePanel("+_id+") - no panel found of this name.");
 			return false;
