@@ -149,7 +149,7 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 	// ********************************************************************
 	#region Private Methods
 	// ********************************************************************
-		public IEnumerator CR_LoadScene(string _newScene, string _assetBundle)
+	public IEnumerator CR_LoadScene(string _newScene, string _assetBundle)
 	{
 		Debug.Log("Loading Scene: "+_newScene);
 		m_loading = true;
@@ -158,7 +158,7 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 
 		// COVERING_SCREEN
 		{
-				Debug.Log("Loading Scene state: "+LoadingState.COVERING_SCREEN);
+			Debug.Log("Loading Scene state: "+LoadingState.COVERING_SCREEN);
 			if (OnStateChanged != null) 
 				OnStateChanged(LoadingState.COVERING_SCREEN, _newScene, oldScene);
 
@@ -169,11 +169,15 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 			AssetBundleLoadOperation loadOp = AssetBundleManager.LoadLevelAsync(m_loadingSceneBundle.ToLower(), m_loadingScene, false);
 			yield return StartCoroutine(loadOp);
 			// !!! unload old screen (automatic)
+			// close any open panels
+			PanelManager.CloseAllPanels();
+			// TODO: Clear databses to allow asset unloading
+			// TODO: Unload inactive asset bundles to free up memory
 		}
 
 		// SCREEN_COVERED
-			{
-				Debug.Log("Loading Scene state: "+LoadingState.SCREEN_COVERED);
+		{
+			Debug.Log("Loading Scene state: "+LoadingState.SCREEN_COVERED);
 			if (OnStateChanged != null) 
 				OnStateChanged(LoadingState.SCREEN_COVERED, _newScene, oldScene);
 
@@ -184,21 +188,20 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 		float endTime = Time.time + m_minDuration;
 
 		// LOADING_NEW_SCENE
-			{
-				Debug.Log("Loading Scene state: "+LoadingState.LOADING_NEW_SCENE);
+		{
+			Debug.Log("Loading Scene state: "+LoadingState.LOADING_NEW_SCENE);
 			if (OnStateChanged != null) 
 				OnStateChanged(LoadingState.LOADING_NEW_SCENE, _newScene, oldScene);
 
 			// Load level async
-				AssetBundleLoadOperation loadOp = AssetBundleManager.LoadLevelAsync(_assetBundle, _newScene, true);
+			AssetBundleLoadOperation loadOp = AssetBundleManager.LoadLevelAsync(_assetBundle, _newScene, true);
 			yield return StartCoroutine(loadOp);
 			SceneManager.SetActiveScene(SceneManager.GetSceneByName(_newScene));
-			// TODO: Unload inactive asset bundles to free up memory
 		}
 
 		// PROCESSING_INCREMENTAL_LOADERS
-			{
-				Debug.Log("Loading Scene state: "+LoadingState.PROCESSING_INCREMENTAL_LOADERS);
+		{
+			Debug.Log("Loading Scene state: "+LoadingState.PROCESSING_INCREMENTAL_LOADERS);
 			if (OnStateChanged != null) 
 				OnStateChanged(LoadingState.PROCESSING_INCREMENTAL_LOADERS, _newScene, oldScene);
 
@@ -208,8 +211,8 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 
 
 		// NEW_SCENE_LOADED
-			{
-				Debug.Log("Loading Scene state: "+LoadingState.NEW_SCENE_LOADED);
+		{
+			Debug.Log("Loading Scene state: "+LoadingState.NEW_SCENE_LOADED);
 			if (OnStateChanged != null) 
 				OnStateChanged(LoadingState.NEW_SCENE_LOADED, _newScene, oldScene);
 
@@ -218,8 +221,8 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 		}
 
 		// REVEALING_NEW_SCENE
-			{
-				Debug.Log("Loading Scene state: "+LoadingState.REVEALING_NEW_SCENE);
+		{
+			Debug.Log("Loading Scene state: "+LoadingState.REVEALING_NEW_SCENE);
 			if (OnStateChanged != null) 
 				OnStateChanged(LoadingState.REVEALING_NEW_SCENE, _newScene, oldScene);
 
@@ -234,8 +237,8 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 		}
 
 		// LOADING_COMPLETE
-			{
-				Debug.Log("Loading Scene state: "+LoadingState.LOADING_COMPLETE);
+		{
+			Debug.Log("Loading Scene state: "+LoadingState.LOADING_COMPLETE);
 			if (OnStateChanged != null) 
 				OnStateChanged(LoadingState.LOADING_COMPLETE, _newScene, oldScene);
 		}
