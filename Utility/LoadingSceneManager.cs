@@ -33,7 +33,11 @@ public enum LoadingState
 	INVALID = -1,
 	// ---
 	COVERING_SCREEN = 0,
-	SCREEN_COVERED,
+	OPENING_LOADING_SCREEN,
+	CLOSING_PANELS,
+	UNLOADING_OLD_SCENE,
+	UNLOADING_ASSETS,
+	HIDING_SCREEN_COVER,
 	LOADING_NEW_SCENE,
 	PROCESSING_INCREMENTAL_LOADERS,
 	NEW_SCENE_LOADED,
@@ -164,25 +168,59 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 
 			// Fade to black
 			yield return m_blackness.FadeIn();
-
-			// Load loading screen
-			AssetBundleLoadOperation loadOp = AssetBundleManager.LoadLevelAsync(m_loadingSceneBundle.ToLower(), m_loadingScene, false);
-			yield return StartCoroutine(loadOp);
-			// !!! unload old screen (automatic)
-			// close any open panels
-			PanelManager.CloseAllPanels();
-			// TODO: Clear databses to allow asset unloading
-			// TODO: Unload inactive asset bundles to free up memory
 		}
 
-		// SCREEN_COVERED
-		{
-			Debug.Log("Loading Scene state: "+LoadingState.SCREEN_COVERED);
-			if (OnStateChanged != null) 
-				OnStateChanged(LoadingState.SCREEN_COVERED, _newScene, oldScene);
+			// OPENING_LOADING_SCREEN
+			{
+				Debug.Log("Loading Scene state: "+LoadingState.OPENING_LOADING_SCREEN);
+				if (OnStateChanged != null) 
+					OnStateChanged(LoadingState.OPENING_LOADING_SCREEN, _newScene, oldScene);
 
-			// Fade to loading screen
-			yield return m_blackness.FadeOut();
+				// Load loading screen
+				AssetBundleLoadOperation loadOp = AssetBundleManager.LoadLevelAsync(m_loadingSceneBundle.ToLower(), m_loadingScene, true);
+				yield return StartCoroutine(loadOp);
+			}
+
+			// HIDING_SCREEN_COVER
+			{
+				Debug.Log("Loading Scene state: "+LoadingState.HIDING_SCREEN_COVER);
+				if (OnStateChanged != null) 
+					OnStateChanged(LoadingState.HIDING_SCREEN_COVER, _newScene, oldScene);
+
+				// Fade to loading screen
+				yield return m_blackness.FadeOut();
+			}
+
+			// CLOSING_PANELS
+			{
+				Debug.Log("Loading Scene state: "+LoadingState.CLOSING_PANELS);
+				if (OnStateChanged != null) 
+					OnStateChanged(LoadingState.CLOSING_PANELS, _newScene, oldScene);
+
+				PanelManager.CloseAllPanels();
+				while (PanelManager.NumPanelsOpen() > 0)
+					yield return null;
+			}
+
+			// UNLOADING_OLD_SCENE
+			{
+				Debug.Log("Loading Scene state: "+LoadingState.UNLOADING_OLD_SCENE);
+				if (OnStateChanged != null) 
+					OnStateChanged(LoadingState.UNLOADING_OLD_SCENE, _newScene, oldScene);
+
+				// !!! unload old screen
+				yield return SceneManager.UnloadSceneAsync(oldScene);
+			}
+
+
+		// UNLOADING_ASSETS
+		{
+			Debug.Log("Loading Scene state: "+LoadingState.UNLOADING_ASSETS);
+			if (OnStateChanged != null) 
+				OnStateChanged(LoadingState.UNLOADING_ASSETS, _newScene, oldScene);
+
+			// TODO: Clear databses to allow asset unloading
+			// TODO: Unload inactive asset bundles to free up memory
 		}
 
 		float endTime = Time.time + m_minDuration;
