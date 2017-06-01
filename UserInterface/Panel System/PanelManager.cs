@@ -85,6 +85,31 @@ public class PanelManager : Singleton<PanelManager>
 			Panel newPanel = Instantiate<GameObject>(_prefab.gameObject,instance.transform,false).GetComponent<Panel>();
 			newPanel.name = _prefab.name;
 
+			// Set sibling position (if no data, gets left where created - on top)
+			if (_data != null)
+			{
+				switch (_data.siblingPosition)
+				{
+				case PanelData.SiblingPosition.TOP :
+					{
+						newPanel.transform.SetAsLastSibling();
+						break;
+					}
+				case PanelData.SiblingPosition.BOTTOM :
+					{
+						newPanel.transform.SetAsFirstSibling();
+						break;
+					}
+				case PanelData.SiblingPosition.SPECIFIED :
+					{
+						newPanel.transform.SetSiblingIndex(_data.siblingIndex);
+						break;
+					}
+				default :
+					break;
+				}
+			}
+
 			newPanel.Initialise(_data);
 			instance.m_activePanelMap[newPanel.name] = newPanel;
 			if (!instance.m_groupStacks.ContainsKey(newPanel.group))
@@ -146,6 +171,11 @@ public class PanelManager : Singleton<PanelManager>
 			return instance.m_groupStacks[_group].Count;
 		else
 			return 0;
+	}
+	// ********************************************************************
+	public static int NumPanelsOpen()
+	{
+		return instance.m_activePanelMap.Count;
 	}
 	// ********************************************************************
 	#endregion

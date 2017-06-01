@@ -25,10 +25,25 @@ using BounderFramework;
 public class PanelData 
 {
 	// ********************************************************************
+	#region Enum: SiblingPosition 
+	// ********************************************************************
+	public enum SiblingPosition 
+	{
+		TOP,
+		BOTTOM,
+		SPECIFIED
+	};
+	#endregion
+	// ********************************************************************
+
+
+	// ********************************************************************
 	#region Public Data Members 
 	// ********************************************************************
 	public PanelState startingState = PanelState.HIDDEN;
 	public PanelLimitOverride limitOverride = PanelLimitOverride.REPLACE;
+	public SiblingPosition siblingPosition = SiblingPosition.TOP;
+	public int siblingIndex = 0; 
 	#endregion
 	// ********************************************************************
 
