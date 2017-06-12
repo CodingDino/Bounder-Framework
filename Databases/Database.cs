@@ -24,6 +24,14 @@ using AssetBundles;
 namespace BounderFramework { 
 
 
+// ************************************************************************ 
+#region Class: ClearDatabaseEvent
+// ************************************************************************
+public class ClearDatabaseEvent : GameEvent { }
+#endregion
+// ************************************************************************
+
+
 // ************************************************************************
 // Class: Database 
 // ************************************************************************
@@ -62,9 +70,22 @@ public class Database<T> : Singleton<Database<T>> where T : UnityEngine.Object
 	// ********************************************************************
 	void Start()
 	{
-		for (int i = 0; i < m_preloadedAssets.Count; ++i)
+		SetupPreloadedAssets();
+	}
+	// ********************************************************************
+	void OnEnable()
+	{
+		if (instance == this)
 		{
-			m_data[m_preloadedAssets[i].name] = m_preloadedAssets[i];
+			Events.AddListener<ClearDatabaseEvent>(ClearDatabases);
+		}
+	}
+	// ********************************************************************
+	void OnDisable()
+	{
+		if (instance == this)
+		{
+			Events.RemoveListener<ClearDatabaseEvent>(ClearDatabases);
 		}
 	}
 	// ********************************************************************
@@ -135,10 +156,10 @@ public class Database<T> : Singleton<Database<T>> where T : UnityEngine.Object
 		}
 	}
 	// ********************************************************************
-	public static void UnloadAsset()
+	public static void UnloadAssets()
 	{
 		instance.m_data.Clear();
-		AssetBundleManager.UnloadAssetBundle(instance.m_assetBundleName);
+		instance.SetupPreloadedAssets();
 	}
 	// ********************************************************************
 	#endregion
@@ -147,6 +168,14 @@ public class Database<T> : Singleton<Database<T>> where T : UnityEngine.Object
 
 	// ********************************************************************
 	#region Private Methods
+	// ********************************************************************
+	private void SetupPreloadedAssets()
+	{
+		for (int i = 0; i < m_preloadedAssets.Count; ++i)
+		{
+			m_data[m_preloadedAssets[i].name] = m_preloadedAssets[i];
+		}
+	}
 	// ********************************************************************
 	private IEnumerator WaitForAssets(Dictionary<string, AssetBundleLoadAssetOperation> _requests)
 	{
@@ -177,6 +206,11 @@ public class Database<T> : Singleton<Database<T>> where T : UnityEngine.Object
 			}
 			yield return null;
 		}
+	}
+	// ********************************************************************
+	private void ClearDatabases(ClearDatabaseEvent _gameEvent)
+	{
+		UnloadAssets();
 	}
 	// ********************************************************************
 	#endregion

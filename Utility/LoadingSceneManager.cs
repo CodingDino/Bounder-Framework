@@ -219,8 +219,10 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 			if (OnStateChanged != null) 
 				OnStateChanged(LoadingState.UNLOADING_ASSETS, _newScene, oldScene);
 
-			// TODO: Clear databses to allow asset unloading
-			// TODO: Unload inactive asset bundles to free up memory
+			// Clear databses to allow asset unloading
+			Events.Raise(new ClearDatabaseEvent());
+			// Unload inactive asset bundles to free up memory
+			AssetBundleManager.UnloadAllAssetBundles();
 		}
 
 		float endTime = Time.time + m_minDuration;
