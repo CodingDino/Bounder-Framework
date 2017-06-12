@@ -474,7 +474,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 	{
 		LogManager.Log("OnDrag()",
 		               LogCategory.INPUT,
-		               LogSeverity.LOG, 
+		               LogSeverity.SPAMMY_LOG, 
 		               "HorizontalScrollSnap",
 		               gameObject);
 
@@ -511,9 +511,8 @@ public class HorizontalScrollSnap : MonoBehaviour
 					for (int i = 0; i < m_screensContainer.transform.childCount; i++)
 					{
 						RectTransform childTransform = m_screensContainer.transform.GetChild(i).GetChild(0).GetComponent<RectTransform>();
-						Rect childRect = childTransform.rect;
-						Vector2 touchStartPointLocal = m_touchStartPoint - (Vector2)Camera.main.WorldToScreenPoint(childTransform.position);
-						if (childRect.Contains(touchStartPointLocal))
+						bool contains = RectTransformUtility.RectangleContainsScreenPoint(childTransform,m_touchStartPoint,Camera.main);
+						if (contains)
 						{
 							if (OnDragOff != null) 
 								OnDragOff(gameObject, m_screensContainer.transform.GetChild(i).gameObject, eventData);
