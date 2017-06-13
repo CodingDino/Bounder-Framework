@@ -26,7 +26,7 @@ public class DropAnimationTrigger : MonoBehaviour {
 	[SerializeField]
 	private Animator m_animator = null;
 	[SerializeField]
-	private ColliderList m_collider = null;
+	private Collider2D m_collider = null;
 	[SerializeField]
 	private float m_timeout = 0.1f;
 	[SerializeField]
@@ -57,8 +57,8 @@ public class DropAnimationTrigger : MonoBehaviour {
 		
 		if (Time.time < m_lastCommand + m_timeout)
 			return;
-		
-		if (m_collider.isColliding)
+
+		if (m_collider.IsColliding())
 		{
 			m_animator.SetBool(m_dropTrigger, false);
 		}

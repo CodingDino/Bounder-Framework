@@ -34,7 +34,7 @@ public class InputPlatformMovement2D : MonoBehaviour {
 	[SerializeField]
 	private Entity m_entity = null;
 	[SerializeField]
-	private ColliderList m_groundTrigger = null;
+	private Collider2D m_groundTrigger = null;
 	[SerializeField]
 	private string m_axisHorizontal = "Horizontal";
 	[SerializeField]
@@ -76,7 +76,7 @@ public class InputPlatformMovement2D : MonoBehaviour {
 		
 		// Move in the set direction
 		m_entity.MoveX(direction.x);
-		if (jump && (m_groundTrigger == null || m_groundTrigger.isColliding))
+		if (jump && (m_groundTrigger == null || m_groundTrigger.IsColliding()))
 			m_entity.MoveY(1.0f,m_jumpVelocity);
 		
 		// Set facing
