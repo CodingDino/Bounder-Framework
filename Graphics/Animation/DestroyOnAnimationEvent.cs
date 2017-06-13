@@ -31,12 +31,17 @@ public class DestroyOnAnimationEvent : MonoBehaviour {
 	// ********************************************************************
 	[SerializeField]
 	private Action m_action = Action.DESTROY;
+	[SerializeField]
+	private GameObject m_toActOn = null;
 
 	public void DestroyOnEvent () 
 	{
+		if (m_toActOn == null)
+			m_toActOn = gameObject;
+
 		if (m_action == Action.DESTROY)
-			Destroy(gameObject);
+			Destroy(m_toActOn);
 		else if (m_action == Action.DISABLE)
-			gameObject.SetActive(false);
+			m_toActOn.SetActive(false);
 	}
 }
