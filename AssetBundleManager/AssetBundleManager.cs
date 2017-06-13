@@ -528,7 +528,7 @@ public class AssetBundleManager : MonoBehaviour
 		}
 		for (int i = 0; i < dependencies.Length; i++)
 		{
-			bool isAlreadyProcessed = LoadAssetBundleInternal(dependencies[i], false);
+			LoadAssetBundleInternal(dependencies[i], false);
 //			if (isAlreadyProcessed)
 //				Log(LogType.Info, "<color=green>Asset bundle already processed</color>: " + assetBundleName);
 		}
