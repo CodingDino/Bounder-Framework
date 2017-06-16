@@ -49,11 +49,15 @@ public class PanelManager : Singleton<PanelManager>
 	// ********************************************************************
 	void OnEnable()
 	{
+		if (s_instance != this)
+			return;
 		DebugMenu.OnResetGame += CloseAllPanels;
 	}
 	// ********************************************************************
 	void OnDisable()
 	{
+		if (s_instance != this)
+			return;
 		DebugMenu.OnResetGame -= CloseAllPanels;
 	}
 	// ********************************************************************
