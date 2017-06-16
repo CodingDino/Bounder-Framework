@@ -66,7 +66,7 @@ public class AssetBundleManager : MonoBehaviour
 	public enum LogMode { All, JustErrors };
 	public enum LogType { Info, Warning, Error };
 
-	static LogMode m_LogMode = LogMode.All;
+	static LogMode m_LogMode = LogMode.JustErrors;
 	static string m_BaseDownloadingURL = "";
 	static string[] m_ActiveVariants =  {};
 	static AssetBundleManifest m_AssetBundleManifest = null;
