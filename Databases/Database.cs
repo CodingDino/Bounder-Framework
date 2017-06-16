@@ -27,7 +27,7 @@ namespace BounderFramework {
 // ************************************************************************ 
 #region Class: ClearDatabaseEvent
 // ************************************************************************
-public class ClearDatabaseEvent : GameEvent { }
+public class ClearDatabaseForSceneChangeEvent : GameEvent { }
 #endregion
 // ************************************************************************
 
@@ -42,6 +42,8 @@ public class Database<T> : Singleton<Database<T>> where T : UnityEngine.Object
 	// ********************************************************************
 	[SerializeField]
 	protected string m_assetBundleName;
+	[SerializeField]
+	protected bool m_unloadOnSceneChange;
 	[SerializeField]
 	protected List<T> m_preloadedAssets;
 	#endregion
@@ -77,7 +79,7 @@ public class Database<T> : Singleton<Database<T>> where T : UnityEngine.Object
 	{
 		if (instance == this)
 		{
-			Events.AddListener<ClearDatabaseEvent>(ClearDatabases);
+			Events.AddListener<ClearDatabaseForSceneChangeEvent>(ClearDatabase);
 		}
 	}
 	// ********************************************************************
@@ -85,7 +87,7 @@ public class Database<T> : Singleton<Database<T>> where T : UnityEngine.Object
 	{
 		if (instance == this)
 		{
-			Events.RemoveListener<ClearDatabaseEvent>(ClearDatabases);
+			Events.RemoveListener<ClearDatabaseForSceneChangeEvent>(ClearDatabase);
 		}
 	}
 	// ********************************************************************
@@ -162,6 +164,16 @@ public class Database<T> : Singleton<Database<T>> where T : UnityEngine.Object
 		instance.SetupPreloadedAssets();
 	}
 	// ********************************************************************
+	public static List<T> GetDatabaseContents()
+	{
+		List<T> data =	new List<T>();
+		foreach (var entry in instance.m_data)
+		{
+			data.Add(entry.Value);
+		}
+		return data;
+	}
+	// ********************************************************************
 	#endregion
 	// ********************************************************************
 
@@ -190,7 +202,7 @@ public class Database<T> : Singleton<Database<T>> where T : UnityEngine.Object
 					if (asset != null)
 					{
 						m_data[asset.name] = asset;
-						Debug.Log("Database: Asset request complete: "+asset.name);
+//						Debug.Log("Database: Asset request complete: "+asset.name);
 					}
 					else
 					{
@@ -208,9 +220,10 @@ public class Database<T> : Singleton<Database<T>> where T : UnityEngine.Object
 		}
 	}
 	// ********************************************************************
-	private void ClearDatabases(ClearDatabaseEvent _gameEvent)
+	private void ClearDatabase(ClearDatabaseForSceneChangeEvent _gameEvent)
 	{
-		UnloadAssets();
+		if (m_unloadOnSceneChange)
+			UnloadAssets();
 	}
 	// ********************************************************************
 	#endregion

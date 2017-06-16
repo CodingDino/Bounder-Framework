@@ -220,7 +220,7 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 				OnStateChanged(LoadingState.UNLOADING_ASSETS, _newScene, oldScene);
 
 			// Clear databses to allow asset unloading
-			Events.Raise(new ClearDatabaseEvent());
+			Events.Raise(new ClearDatabaseForSceneChangeEvent());
 			// Unload inactive asset bundles to free up memory
 			AssetBundleManager.UnloadAllAssetBundles();
 		}
