@@ -118,9 +118,17 @@ public class PanelManager : Singleton<PanelManager>
 			instance.m_activePanelMap[newPanel.name] = newPanel;
 			if (!instance.m_groupStacks.ContainsKey(newPanel.group))
 				instance.m_groupStacks[newPanel.group] = new List<Panel>();
-			instance.m_groupStacks[newPanel.group].AddAtFront(newPanel);
 
-			instance.StartCoroutine(instance._OpenPanel(newPanel,hidingPanel));
+			if (atLimit && limitOverride == PanelLimitOverride.WAIT )
+			{
+				instance.m_groupStacks[newPanel.group].Add(newPanel);
+			}
+			else
+			{
+				instance.m_groupStacks[newPanel.group].AddAtFront(newPanel);
+				instance.StartCoroutine(instance._OpenPanel(newPanel,hidingPanel));
+			}
+
 
 			return newPanel;
 		}

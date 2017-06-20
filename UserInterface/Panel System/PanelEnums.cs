@@ -41,6 +41,7 @@ public enum PanelState
 public enum PanelLimitOverride
 {
 	REPLACE = 0,	// Hide existing panel (but do not uninit) and show this one
+	WAIT,			// Do not hide existing panel, but insert this one into the stack under it to be shown when it hides.
 	ADD,			// Do not hide existing panel, but also show this one
 	NONE			// Do not hide existing panel, do NOT show this one
 }
