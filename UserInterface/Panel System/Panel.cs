@@ -135,6 +135,12 @@ public class Panel : MonoBehaviour
 		PanelManager.ClosePanel(name);
 	}
 	// ********************************************************************
+	public IEnumerator CloseAfterDelay (float _delay)
+	{
+		yield return new WaitForSeconds(_delay);
+		PanelManager.ClosePanel(name);
+	}
+	// ********************************************************************
 	#endregion
 	// ********************************************************************
 
