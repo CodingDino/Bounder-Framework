@@ -67,6 +67,21 @@ public static class ListExtension
 		return copy;
 	}
 	// ********************************************************************
+	public static bool Contains<T>(this List<T> _self, List<T> _other)
+	{
+		for (int i = 0; i < _other.Count; ++i)
+		{
+			if (!_self.Contains(_other[i]))
+				return false;
+		}
+		return true;
+	}
+	// ********************************************************************
+	public static bool ContentEquals<T>(this List<T> _self, List<T> _other)
+	{
+		return _self.Contains(_other) && _other.Contains(_self);
+	}
+	// ********************************************************************
 	#endregion
 	// ********************************************************************
 
