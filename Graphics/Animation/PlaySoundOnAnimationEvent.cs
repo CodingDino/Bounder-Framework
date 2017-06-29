@@ -24,25 +24,71 @@ using BounderFramework;
 public class PlaySoundOnAnimationEvent : MonoBehaviour 
 {
 	// ********************************************************************
-	#region Private Methods 
+	#region Class: SoundData
 	// ********************************************************************
-	[SerializeField]
-	AudioClip m_soundToPlay = null;
-	[SerializeField]
-	AudioCategory m_audioCategory = AudioCategory.EFFECTS;
+	[System.Serializable]
+	public class SoundData
+	{
+		[Tooltip("Clip you want to play")]
+		public AudioClip clip = null;
+		[Tooltip("Audio info for the clip to use")]
+		public AudioInfo info = new AudioInfo();
+	}
 	#endregion
 	// ********************************************************************
+
+
+	// ********************************************************************
+	#region Exposed Data Members 
+	// ********************************************************************
+	[SerializeField]
+	[Tooltip("Parameters you want to change.")]
+	private List<SoundData> m_sounds = new List<SoundData>();
+	#endregion
+	// ********************************************************************
+
+
+	// ********************************************************************
+	#region Private Data Members 
+	// ********************************************************************
+	private Dictionary<string,SoundData> m_soundMap = new Dictionary<string, SoundData>();
+	#endregion
+	// ********************************************************************
+
+
+	// ********************************************************************
+	#region MonoBehaviour Methods
+	// ********************************************************************
+	void Start()
+	{
+		for (int i = 0; i < m_sounds.Count; ++i)
+		{
+			SoundData sound = m_sounds[i];
+			if (m_soundMap.ContainsKey(sound.clip.name))
+				Debug.LogError("Duplicate ID found: "+sound.clip.name);
+			else
+				m_soundMap[sound.clip.name] = sound;
+		}
+	}
+	// ********************************************************************
+	#endregion
+	// ********************************************************************
+
 
 	// ********************************************************************
 	#region Private Methods 
 	// ********************************************************************
-	private void PlaySound (string _sound) 
+	private void PlaySound (string _id) 
 	{
-		AudioManager.Play(_sound, m_audioCategory);
-	}
-	private void PlaySoundClip () 
-	{
-		AudioManager.Play(m_soundToPlay, m_audioCategory);
+		if (!m_soundMap.ContainsKey(_id))
+		{
+			Debug.LogError("No data found for ID: "+_id);
+			return;
+		}
+
+		SoundData sound = m_soundMap[_id];
+
+		AudioManager.Play(sound.clip, sound.info);
 	}
 	// ********************************************************************
 	#endregion
