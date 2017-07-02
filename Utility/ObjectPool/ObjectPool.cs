@@ -54,9 +54,10 @@ public class ObjectPool : IncrementalLoader
 	// Function:	Constructor
 	// Purpose:		Sets the prefab for this object pool
 	// ********************************************************************
-	public ObjectPool(GameObject _prefab = null)
+	public ObjectPool(GameObject _prefab = null, int _toAllocate = 0)
 	{
 		m_prefab = _prefab;
+		AllocateImmediate(_toAllocate);
 	}
 	
 
@@ -123,18 +124,18 @@ public class ObjectPool : IncrementalLoader
 	// Function:	CreateObject()
 	// Purpose:		Creates an available objects from the supplied prefab.
 	// ********************************************************************
-	private ObjectPoolObject CreateObject()
+	private ObjectPoolObject CreateObject(bool _active = true)
 	{
 		GameObject newObject = null;
 		if (m_prefab == null)
 		{
 			newObject = new GameObject("ObjectPool Object");
-			newObject.SetActive(false);
+			newObject.SetActive(_active);
 		}
 		else
 		{
 			bool wasEnabled = m_prefab.activeSelf;
-			m_prefab.SetActive(false);
+			m_prefab.SetActive(_active);
 			newObject = GameObject.Instantiate<GameObject>(m_prefab);
 			m_prefab.SetActive(wasEnabled);
 		}
@@ -159,6 +160,13 @@ public class ObjectPool : IncrementalLoader
 			yield return null;
 		}
 		m_progress = 1.0f;
+	}
+	public void AllocateImmediate (int _numToAllocate) 
+	{
+		for (int i = 0; i < _numToAllocate; ++i)
+		{
+			m_available.Add(CreateObject());
+		}
 	}
 
 
