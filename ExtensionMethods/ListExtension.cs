@@ -82,6 +82,14 @@ public static class ListExtension
 		return _self.Contains(_other) && _other.Contains(_self);
 	}
 	// ********************************************************************
+	public static void Remove<T>(this List<T> _self, List<T> _toRemove)
+	{
+		for (int i = 0; i < _toRemove.Count; ++i)
+		{
+			_self.Remove(_toRemove[i]);
+		}
+	}
+	// ********************************************************************
 	#endregion
 	// ********************************************************************
 
