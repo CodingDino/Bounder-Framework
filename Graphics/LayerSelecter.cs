@@ -75,52 +75,60 @@ public class LayerSelecter : MonoBehaviour {
 		}
 	}
 
+
 	// ********************************************************************
 	#if UNITY_EDITOR
 	// ********************************************************************
+	public static void DrawSortingGUI(UnityEngine.Object _target, string _paramName, ref string _currentLayer)
+	{
+		SerializedObject serialized = new SerializedObject(_target);
+		serialized.Update();
+
+		// default - just draw objects
+		SerializedProperty property = serialized.GetIterator();
+		property.NextVisible(true);
+		do
+		{
+			// Dropdown list for graphic layers
+			if (property.name == _paramName)
+			{
+				Type utilityType = typeof(InternalEditorUtility);
+				PropertyInfo sortingLayersProperty = utilityType.GetProperty("sortingLayerNames", BindingFlags.Static | BindingFlags.NonPublic);
+				string[] sortingLayers = (string[])sortingLayersProperty.GetValue(null,new object[0]);
+				// find current layer
+				int currentLayer = sortingLayers.Length;
+				for (int i = 0; i < sortingLayers.Length; ++i)
+				{
+					if (sortingLayers[i] == _currentLayer)
+					{
+						currentLayer = i;
+					}
+				}
+				int newChoice = EditorGUILayout.Popup("Layer",currentLayer, sortingLayers);
+				if (newChoice != currentLayer)
+				{
+					_currentLayer = sortingLayers[newChoice];
+					EditorUtility.SetDirty(_target);
+				}
+			}
+			else
+			{
+				EditorGUILayout.PropertyField(property, !property.hasVisibleChildren || property.isExpanded);
+			}
+		} while (property.NextVisible(false));
+
+		serialized.ApplyModifiedProperties();
+	}
+
+
+
 	[CustomEditor(typeof(LayerSelecter))]
 	public class Inspector : Editor
 	{
 		public override void OnInspectorGUI()
 		{
 			LayerSelecter layerSelecter = (LayerSelecter)target;
-			SerializedObject serialized = new SerializedObject(target);
-			serialized.Update();
-
-			// default - just draw objects
-			SerializedProperty property = serialized.GetIterator();
-			property.NextVisible(true);
-			do
-			{
-				// Dropdown list for graphic layers
-				if (property.name == "m_sortingLayer")
-				{
-					Type utilityType = typeof(InternalEditorUtility);
-					PropertyInfo sortingLayersProperty = utilityType.GetProperty("sortingLayerNames", BindingFlags.Static | BindingFlags.NonPublic);
-					string[] sortingLayers = (string[])sortingLayersProperty.GetValue(null,new object[0]);
-					// find current layer
-					int currentLayer = sortingLayers.Length;
-					for (int i = 0; i < sortingLayers.Length; ++i)
-					{
-						if (sortingLayers[i] == layerSelecter.m_sortingLayer)
-						{
-							currentLayer = i;
-						}
-					}
-					int newChoice = EditorGUILayout.Popup("Layer",currentLayer, sortingLayers);
-					if (newChoice != currentLayer)
-					{
-						layerSelecter.m_sortingLayer = sortingLayers[newChoice];
-						EditorUtility.SetDirty(target);
-					}
-				}
-				else
-				{
-					EditorGUILayout.PropertyField(property, !property.hasVisibleChildren || property.isExpanded);
-				}
-			} while (property.NextVisible(false));
-
-			serialized.ApplyModifiedProperties();
+			DrawSortingGUI(target,"m_sortingLayer",ref layerSelecter.m_sortingLayer);
 		}
 	}
 	// ********************************************************************
