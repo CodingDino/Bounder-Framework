@@ -29,6 +29,7 @@ public class RandomSprite : MonoBehaviour
 	#region Exposed Data Members 
 	// ********************************************************************
 	[SerializeField]
+	[Tooltip("List of sprites to choose from")]
 	private Sprite[] m_sprites;
 	#endregion
 	// ********************************************************************
@@ -54,7 +55,7 @@ public class RandomSprite : MonoBehaviour
 		}
 
 		SpriteRenderer renderer = GetComponent<SpriteRenderer>();
-		if (sprite == null)
+		if (renderer == null)
 		{
 			Debug.LogError("RandomSprite.Start() - no SpriteRenderer attached");
 			return;
