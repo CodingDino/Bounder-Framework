@@ -33,6 +33,8 @@ public class PlaySoundOnAnimationEvent : MonoBehaviour
 		public AudioClip clip = null;
 		[Tooltip("Audio info for the clip to use")]
 		public AudioInfo info = new AudioInfo();
+		[Tooltip("Should the audio be parented to this object?")]
+		public bool parent = false;
 	}
 	#endregion
 	// ********************************************************************
@@ -88,7 +90,9 @@ public class PlaySoundOnAnimationEvent : MonoBehaviour
 
 		SoundData sound = m_soundMap[_id];
 
-		AudioManager.Play(sound.clip, sound.info);
+		AudioObject audio = AudioManager.Play(sound.clip, sound.info);
+		if (sound.parent)
+			audio.transform.SetParent(transform);
 	}
 	// ********************************************************************
 	#endregion
