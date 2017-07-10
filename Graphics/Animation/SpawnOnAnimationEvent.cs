@@ -73,7 +73,7 @@ public class SpawnOnAnimationEvent : MonoBehaviour
 	// ********************************************************************
 	#region MonoBehaviour Methods
 	// ********************************************************************
-	void Start()
+	void Awake()
 	{
 		for (int i = 0; i < m_objects.Count; ++i)
 		{
