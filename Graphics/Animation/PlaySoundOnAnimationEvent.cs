@@ -54,6 +54,7 @@ public class PlaySoundOnAnimationEvent : MonoBehaviour
 	#region Private Data Members 
 	// ********************************************************************
 	private Dictionary<string,SoundData> m_soundMap = new Dictionary<string, SoundData>();
+	private Dictionary<string,AudioObject> m_activeSounds = new Dictionary<string, AudioObject>();
 	#endregion
 	// ********************************************************************
 
@@ -61,7 +62,7 @@ public class PlaySoundOnAnimationEvent : MonoBehaviour
 	// ********************************************************************
 	#region MonoBehaviour Methods
 	// ********************************************************************
-	void Start()
+	void Awake()
 	{
 		for (int i = 0; i < m_sounds.Count; ++i)
 		{
@@ -91,8 +92,31 @@ public class PlaySoundOnAnimationEvent : MonoBehaviour
 		SoundData sound = m_soundMap[_id];
 
 		AudioObject audio = AudioManager.Play(sound.clip, sound.info);
+		m_activeSounds[_id] = audio;
 		if (sound.parent)
 			audio.transform.SetParent(transform);
+	}
+	// ********************************************************************
+	private void StopSound (string _id) 
+	{
+		if (!m_soundMap.ContainsKey(_id))
+		{
+			Debug.LogError("No data found for ID: "+_id);
+			return;
+		}
+
+		if (!m_activeSounds.ContainsKey(_id))
+		{
+			// NOTE: No error message as we just want this to be a no-op
+			return;
+		}
+
+		AudioObject audio = m_activeSounds[_id];
+		if (audio.gameObject.activeSelf && audio.audioSource.isPlaying && audio.audioClip.name == _id)
+		{
+			audio.Fade(false);
+		}
+		m_activeSounds.Remove(_id);
 	}
 	// ********************************************************************
 	#endregion
