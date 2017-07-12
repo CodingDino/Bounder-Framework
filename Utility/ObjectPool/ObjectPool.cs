@@ -130,17 +130,17 @@ public class ObjectPool : IncrementalLoader
 		if (m_prefab == null)
 		{
 			newObject = new GameObject("ObjectPool Object");
-			newObject.SetActive(_active);
 		}
 		else
 		{
 			bool wasEnabled = m_prefab.activeSelf;
-			m_prefab.SetActive(_active);
+			m_prefab.SetActive(false);
 			newObject = GameObject.Instantiate<GameObject>(m_prefab);
 			m_prefab.SetActive(wasEnabled);
 		}
 		ObjectPoolObject objectPoolObject = newObject.AddComponent<ObjectPoolObject>();
 		objectPoolObject.pool = this;
+		newObject.SetActive(_active);
 		return objectPoolObject;
 	}
 	

@@ -171,6 +171,7 @@ public class AudioManager : Database<AudioClip>
 
 		GameObject audioGameObject = (instance as AudioManager).m_audioObjects[_info.category].RequestObject();
 		audioGameObject.transform.SetParent(instance.transform);
+		audioGameObject.name = "AudioObject - "+_clip.name;
 		AudioObject audioObject = audioGameObject.GetComponent<AudioObject>();
 		audioObject.audioInfo = _info;
 		audioObject.audioClip = _clip;
