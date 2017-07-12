@@ -149,12 +149,17 @@ public class Database<T> : Singleton<Database<T>> where T : UnityEngine.Object
 			return null;
 	}
 	// ********************************************************************
+	public static void MakeAvailable(T _asset)
+	{
+		instance.m_data[_asset.name] = _asset;
+	}
+	// ********************************************************************
 	public static void MakeAvailable(List<T> _assets)
 	{
 		for (int i = 0; i < _assets.Count; ++i)
 		{
 			if (_assets[i] != null)
-				instance.m_data[_assets[i].name] = _assets[i];
+				MakeAvailable(_assets[i]);
 		}
 	}
 	// ********************************************************************
