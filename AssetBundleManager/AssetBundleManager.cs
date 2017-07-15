@@ -597,6 +597,13 @@ public class AssetBundleManager : MonoBehaviour
 
 	IEnumerator Start()
 	{
+		#if UNITY_EDITOR
+		if (SimulateAssetBundleInEditor)
+		{
+			yield break;
+		}
+		#endif
+
 		string url = m_serverURL;
 		if (m_useLocalAssetPath)
 			url = "file://"+Application.streamingAssetsPath+"/" + url;
