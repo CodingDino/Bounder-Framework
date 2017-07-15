@@ -60,10 +60,6 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 	#region Exposed Data Members
 	// ********************************************************************
 	[SerializeField]
-	private bool m_loadOnStart = true;
-	[SerializeField]
-	private string m_levelToLoad = "";
-	[SerializeField]
 	private string m_loadingScene = "";
 	[SerializeField]
 	private string m_loadingSceneBundle = "";
@@ -97,21 +93,6 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 	// ********************************************************************
 	public delegate void StateChanged(LoadingState _state, string _newScene, string _oldScene);
 	public static event StateChanged OnStateChanged;
-	#endregion
-	// ********************************************************************
-
-
-	// ********************************************************************
-	#region Monobehavior Methods
-	// ********************************************************************
-	void Start()
-	{
-		if (m_loadOnStart) 
-		{
-			SceneManager.LoadScene(m_levelToLoad);
-		}
-	}
-	// ********************************************************************
 	#endregion
 	// ********************************************************************
 
