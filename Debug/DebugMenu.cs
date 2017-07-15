@@ -187,7 +187,7 @@ public class DebugMenu : Singleton<DebugMenu>
 		PanelManager.CloseAllPanels();
 		if (OnResetGame != null)
 			OnResetGame();
-		LoadingSceneManager.LoadScene("TitleScreen");
+		LoadingSceneManager.LoadScene(0);
 		ToggleVisibility();
 
 		// Remove all non-default buttons

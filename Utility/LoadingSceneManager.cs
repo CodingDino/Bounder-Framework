@@ -62,6 +62,8 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 	[SerializeField]
 	private string m_loadingScene = "";
 	[SerializeField]
+	private bool m_useAssetBundles = false;
+	[SerializeField]
 	private string m_loadingSceneBundle = "";
 	[SerializeField]
 	private FadeSprite m_blackness;
@@ -100,31 +102,40 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 	// ********************************************************************
 	#region Public Methods
 	// ********************************************************************
+	public static bool LoadScene(int _sceneIndex)
+	{
+		if (!instance.m_loading)
+		{
+			instance.StartCoroutine(instance.CR_LoadScene("", "", _sceneIndex));
+			return true;
+		}
+		return false;
+	}
 	public static bool LoadScene(string _newScene, string _bundle = "scenes")
 	{
 		if (!instance.m_loading)
-			{
-				instance.StartCoroutine(instance.CR_LoadScene(_newScene, _bundle));
-				return true;
-			}
-			return false;
+		{
+			instance.StartCoroutine(instance.CR_LoadScene(_newScene, _bundle));
+			return true;
+		}
+		return false;
 	}
 	// ********************************************************************
 	public static void RegisterLoader(IncrementalLoader _loader, bool _register = true)
 	{
 		if (instance == null)
 			return;
-		
+
 		if (_register)
-			{
-				Debug.Log("Adding IncrementalLoader: "+_loader);
-				instance.m_loaders.Add(_loader);
-			}
+		{
+			Debug.Log("Adding IncrementalLoader: "+_loader);
+			instance.m_loaders.Add(_loader);
+		}
 		else
-			{
-				Debug.Log("Removing IncrementalLoader: "+_loader);
-				instance.m_loaders.Remove(_loader);
-			}
+		{
+			Debug.Log("Removing IncrementalLoader: "+_loader);
+			instance.m_loaders.Remove(_loader);
+		}
 	}
 	// ********************************************************************
 	#endregion
@@ -134,7 +145,7 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 	// ********************************************************************
 	#region Private Methods
 	// ********************************************************************
-	public IEnumerator CR_LoadScene(string _newScene, string _assetBundle)
+	public IEnumerator CR_LoadScene(string _newScene, string _assetBundle, int _buildIndex = 0)
 	{
 		Debug.Log("Loading Scene: "+_newScene);
 		m_loading = true;
@@ -151,47 +162,56 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 			yield return m_blackness.FadeIn();
 		}
 
-			// OPENING_LOADING_SCREEN
-			{
-				Debug.Log("Loading Scene state: "+LoadingState.OPENING_LOADING_SCREEN);
-				if (OnStateChanged != null) 
-					OnStateChanged(LoadingState.OPENING_LOADING_SCREEN, _newScene, oldScene);
+		// OPENING_LOADING_SCREEN
+		{
+			Debug.Log("Loading Scene state: "+LoadingState.OPENING_LOADING_SCREEN);
+			if (OnStateChanged != null) 
+				OnStateChanged(LoadingState.OPENING_LOADING_SCREEN, _newScene, oldScene);
 
-				// Load loading screen
+			// Load loading screen
+			if (m_useAssetBundles)
+			{
 				AssetBundleLoadOperation loadOp = AssetBundleManager.LoadLevelAsync(m_loadingSceneBundle.ToLower(), m_loadingScene, true);
 				yield return StartCoroutine(loadOp);
 			}
-
-			// HIDING_SCREEN_COVER
+			else
 			{
-				Debug.Log("Loading Scene state: "+LoadingState.HIDING_SCREEN_COVER);
-				if (OnStateChanged != null) 
-					OnStateChanged(LoadingState.HIDING_SCREEN_COVER, _newScene, oldScene);
-
-				// Fade to loading screen
-				yield return m_blackness.FadeOut();
+				yield return SceneManager.LoadSceneAsync(m_loadingScene, LoadSceneMode.Additive);
 			}
+		}
 
-			// CLOSING_PANELS
-			{
-				Debug.Log("Loading Scene state: "+LoadingState.CLOSING_PANELS);
-				if (OnStateChanged != null) 
-					OnStateChanged(LoadingState.CLOSING_PANELS, _newScene, oldScene);
+		// HIDING_SCREEN_COVER
+		{
+			Debug.Log("Loading Scene state: "+LoadingState.HIDING_SCREEN_COVER);
+			if (OnStateChanged != null) 
+				OnStateChanged(LoadingState.HIDING_SCREEN_COVER, _newScene, oldScene);
 
-				PanelManager.CloseAllPanels();
-				while (PanelManager.NumPanelsOpen() > 0)
-					yield return null;
-			}
+			// Fade to loading screen
+			yield return m_blackness.FadeOut();
+		}
 
-			// UNLOADING_OLD_SCENE
-			{
-				Debug.Log("Loading Scene state: "+LoadingState.UNLOADING_OLD_SCENE);
-				if (OnStateChanged != null) 
-					OnStateChanged(LoadingState.UNLOADING_OLD_SCENE, _newScene, oldScene);
+		float endTime = Time.time + m_minDuration;
 
-				// !!! unload old screen
-				yield return SceneManager.UnloadSceneAsync(oldScene);
-			}
+		// CLOSING_PANELS
+		{
+			Debug.Log("Loading Scene state: "+LoadingState.CLOSING_PANELS);
+			if (OnStateChanged != null) 
+				OnStateChanged(LoadingState.CLOSING_PANELS, _newScene, oldScene);
+
+			PanelManager.CloseAllPanels();
+			while (PanelManager.NumPanelsOpen() > 0)
+				yield return null;
+		}
+
+		// UNLOADING_OLD_SCENE
+		{
+			Debug.Log("Loading Scene state: "+LoadingState.UNLOADING_OLD_SCENE);
+			if (OnStateChanged != null) 
+				OnStateChanged(LoadingState.UNLOADING_OLD_SCENE, _newScene, oldScene);
+
+			// !!! unload old screen
+			yield return SceneManager.UnloadSceneAsync(oldScene);
+		}
 
 
 		// UNLOADING_ASSETS
@@ -203,10 +223,9 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 			// Clear databses to allow asset unloading
 			Events.Raise(new ClearDatabaseForSceneChangeEvent());
 			// Unload inactive asset bundles to free up memory
-			AssetBundleManager.UnloadAllAssetBundles();
+			if (m_useAssetBundles)
+				AssetBundleManager.UnloadAllAssetBundles();
 		}
-
-		float endTime = Time.time + m_minDuration;
 
 		// LOADING_NEW_SCENE
 		{
@@ -215,8 +234,18 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 				OnStateChanged(LoadingState.LOADING_NEW_SCENE, _newScene, oldScene);
 
 			// Load level async
-			AssetBundleLoadOperation loadOp = AssetBundleManager.LoadLevelAsync(_assetBundle, _newScene, true);
-			yield return StartCoroutine(loadOp);
+			if (m_useAssetBundles)
+			{
+				AssetBundleLoadOperation loadOp = AssetBundleManager.LoadLevelAsync(_assetBundle, _newScene, true);
+				yield return StartCoroutine(loadOp);
+			}
+			else
+			{
+				if (_newScene.NullOrEmpty())
+					yield return SceneManager.LoadSceneAsync(_buildIndex, LoadSceneMode.Additive);
+				else
+					yield return SceneManager.LoadSceneAsync(_newScene, LoadSceneMode.Additive);
+			}
 			SceneManager.SetActiveScene(SceneManager.GetSceneByName(_newScene));
 		}
 
