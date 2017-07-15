@@ -559,8 +559,8 @@ public class AssetBundleManager : MonoBehaviour
 		}
 		foreach (string bundleName in toUnload)
 		{
-			UnloadAssetBundleInternal(bundleName, true);
-			UnloadDependencies(bundleName, true);
+			UnloadAssetBundleInternal(bundleName, false);
+			UnloadDependencies(bundleName, false);
 		}
 	}
 
