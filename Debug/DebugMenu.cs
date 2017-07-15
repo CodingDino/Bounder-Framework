@@ -244,7 +244,7 @@ public class DebugMenu : Singleton<DebugMenu>
                 fingerCount++;
         }
 
-        if (Input.GetKeyUp(m_debugKey)
+		if ((!m_debugKey.NullOrEmpty() && Input.GetKeyUp(m_debugKey))
             || (m_openWith4FingerTouch && fingerCount >=4))
         {
             if (Time.realtimeSinceStartup < m_last4FingerTouch + m_touchCooldown) return;
