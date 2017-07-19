@@ -24,22 +24,41 @@ namespace BounderFramework
 // ************************************************************************ 
 #region Class: DestroyOnParticlesFinish
 // ************************************************************************
-[RequireComponent(typeof(ParticleSystem))]
 public class DestroyOnParticlesFinish : MonoBehaviour 
 {
+	public enum Action {
+		DESTROY,
+		DISABLE
+	};
 
+	// ********************************************************************
+	#region Exposed Data Members 
+	// ********************************************************************
+	[SerializeField]
+	private Action m_action = Action.DESTROY;
+	[SerializeField]
+	private ParticleSystem m_particles = null;
+	[SerializeField]
+	private GameObject m_toActOn = null;
+	#endregion
+	// ********************************************************************
 
-		private ParticleSystem particles;
 	// ********************************************************************
 	#region MonoBehaviour Methods 
 	// ********************************************************************
 	IEnumerator Start () 
 	{
-			particles = GetComponent<ParticleSystem>();
-			while (particles.IsAlive())
-				yield return null;
-			Destroy(gameObject);
-			Debug.Log("Destroying Particles");
+		if (m_particles == null)
+			m_particles = GetComponent<ParticleSystem>();
+		if (m_toActOn == null)
+			m_toActOn = gameObject;
+		while (m_particles.IsAlive())
+			yield return null;
+
+		if (m_action == Action.DESTROY)
+			Destroy(m_toActOn);
+		else if (m_action == Action.DISABLE)
+			m_toActOn.SetActive(false);
 	}
 	// ********************************************************************
 	#endregion
