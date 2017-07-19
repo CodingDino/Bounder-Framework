@@ -80,6 +80,12 @@ public static class TransformExtension
 		                                   _trans.localPosition.y,
 		                                   _pos);
 	}
+	// ********************************************************************
+	public static Vector3 Direction(this Transform _trans, Vector3 _relativeTo)
+	{
+		return (_trans.rotation*_relativeTo).normalized;
+	}
+	// ********************************************************************
 	#endregion
 	// ********************************************************************
 
