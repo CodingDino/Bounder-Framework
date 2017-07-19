@@ -49,6 +49,20 @@ public static class ListExtension
 			return default(T);
 	}
 	// ********************************************************************
+	public static List<T> Randomise<T>(this List<T> _self)
+	{
+		int n = _self.Count;
+		while (n > 1)
+		{
+			--n;
+			int k = Random.Range(0,n+1);
+			T swap = _self[k];
+			_self[k] = _self[n];
+			_self[n] = swap;
+		}
+		return _self;
+	}
+	// ********************************************************************
 	public static void AddAtFront<T>(this List<T> _self, T _toAdd)
 	{
 		if (_self.Count > 0)
@@ -60,10 +74,7 @@ public static class ListExtension
 	public static List<T> Copy<T>(this List<T> _self)
 	{
 		List<T> copy = new List<T>();
-		for (int i = 0; i < _self.Count; ++i)
-		{
-			copy.Add(_self[i]);
-		}
+		copy.AddRange(_self);
 		return copy;
 	}
 	// ********************************************************************
@@ -87,6 +98,15 @@ public static class ListExtension
 		for (int i = 0; i < _toRemove.Count; ++i)
 		{
 			_self.Remove(_toRemove[i]);
+		}
+	}
+	// ********************************************************************
+	public static void AddWithoutDuplicates<T>(this List<T> _self, List<T> _toAdd)
+	{
+		for (int i = 0; i < _toAdd.Count; ++i)
+		{
+			if (!_self.Contains(_toAdd[i]))
+				_self.Add(_toAdd[i]);
 		}
 	}
 	// ********************************************************************
