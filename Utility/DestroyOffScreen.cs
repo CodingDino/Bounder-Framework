@@ -45,6 +45,11 @@ public class DestroyOffScreen : MonoBehaviour {
 	void Start () {
 		m_sprites = GetComponentsInChildren<SpriteRenderer>();
 	}
+
+	void OnEnable () {
+		m_isOutside = false;
+		m_outsideStartTime = 0;
+	}
 	
     // ********************************************************************
     // Function:	Update()
