@@ -46,14 +46,18 @@ public class DestroyOnParticlesFinish : MonoBehaviour
 	// ********************************************************************
 	#region MonoBehaviour Methods 
 	// ********************************************************************
-	IEnumerator Start () 
+	void Start () 
 	{
 		if (m_particles == null)
 			m_particles = GetComponent<ParticleSystem>();
 		if (m_toActOn == null)
 			m_toActOn = gameObject;
-		while (m_particles.IsAlive())
-			yield return null;
+	}
+	// ********************************************************************
+	void Update () 
+	{
+		if(m_particles.IsAlive())
+			return;
 
 		if (m_action == Action.DESTROY)
 			Destroy(m_toActOn);
