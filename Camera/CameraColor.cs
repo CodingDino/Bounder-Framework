@@ -23,6 +23,18 @@ namespace BounderFramework
 // ************************************************************************ 
 #region Class: CameraColor
 // ************************************************************************
+public class ChangeCameraColorEvent : GameEvent
+{
+	public Color color = Color.white;
+	public float duration;
+}
+#endregion
+// ************************************************************************
+
+
+// ************************************************************************ 
+#region Class: CameraColor
+// ************************************************************************
 [RequireComponent(typeof(Camera))]
 public class CameraColor : MonoBehaviour 
 {
@@ -45,12 +57,12 @@ public class CameraColor : MonoBehaviour
 	// ********************************************************************
 	void OnEnable()
 	{
-		Events.AddListener<CameraColorCue>(HandleColorChangeEvent);
+		Events.AddListener<ChangeCameraColorEvent>(HandleColorChangeEvent);
 	}
 	// ********************************************************************
 	void OnDisable()
 	{
-		Events.RemoveListener<CameraColorCue>(HandleColorChangeEvent);
+		Events.RemoveListener<ChangeCameraColorEvent>(HandleColorChangeEvent);
 	}
 	// ********************************************************************
 	#endregion
@@ -90,7 +102,7 @@ public class CameraColor : MonoBehaviour
 		thisCamera.backgroundColor = _newColor;
 	}
 	// ********************************************************************
-	private void HandleColorChangeEvent(CameraColorCue _event)
+	private void HandleColorChangeEvent(ChangeCameraColorEvent _event)
 	{
 		ChangeColor(_event.color, _event.duration);
 	}
