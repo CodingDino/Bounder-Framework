@@ -7,6 +7,12 @@
 [Ll]ibrary/
 sysinfo.txt
 Builds/*
+# Ignore: name DOT meta
+*.meta
+# Include: name DOT extension DOT meta
+!*.*.meta
+# Include: Text mesh pro files:
+!*TextMesh*
  
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
