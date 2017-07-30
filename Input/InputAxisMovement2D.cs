@@ -40,6 +40,8 @@ public class InputAxisMovement2D : MonoBehaviour {
     // ********************************************************************
     // Properties 
     // ********************************************************************
+	public string axisHorizontal { set { m_axisHorizontal = value; }}
+	public string axisVertical { set { m_axisVertical = value; }}
 	
 	
     // ********************************************************************
