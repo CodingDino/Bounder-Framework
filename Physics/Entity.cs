@@ -36,6 +36,8 @@ public class Entity : MonoBehaviour {
 	private bool m_rotateToMatchFacing;
 	[SerializeField]
 	private bool m_useRigidBodyVelocity;
+	[SerializeField]
+	private bool m_useZ = false;
 
 
     // ********************************************************************
@@ -170,23 +172,31 @@ public class Entity : MonoBehaviour {
 	public void Move (Vector2 _direction, float _speed) 
 	{
 		// Normalize the direction vector
-		Vector2 normDirection = _direction.normalized;
+		Vector3 normDirection = _direction.normalized;
+
+		if (m_useZ)
+		{
+			normDirection.z = normDirection.y;
+			normDirection.y = 0;
+		}
 		
 		// Determine velocity in this direction
-		Vector2 velocity = normDirection*_speed;
+		Vector3 velocity = normDirection*_speed;
 
 		if (m_useRigidBodyVelocity && GetComponent<Rigidbody2D>() != null && !GetComponent<Rigidbody2D>().isKinematic)
 		{
 			// Update the rigidbody's velocity
 			GetComponent<Rigidbody2D>().velocity = velocity;
 		}
+		else if (m_useRigidBodyVelocity && GetComponent<Rigidbody>() != null && !GetComponent<Rigidbody>().isKinematic)
+		{
+			// Update the rigidbody's velocity
+			GetComponent<Rigidbody>().velocity = velocity;
+		}
 		else
 		{
 			// Update position manually
-			transform.position = new Vector3 (
-				transform.position.x + velocity.x*Time.deltaTime,
-				transform.position.y + velocity.y*Time.deltaTime,
-				transform.position.z );
+			transform.position = transform.position + velocity*Time.deltaTime;
 		}
 
 		m_movedLastFrame = true;
@@ -373,7 +383,7 @@ public class Entity : MonoBehaviour {
 
 		// Apply to object
 		if (m_rotateToMatchFacing)
-			transform.rotation = Quaternion.Euler(0,0,m_facing);
+			transform.rotation = Quaternion.Euler(0, m_useZ ? - m_facing : 0,m_useZ ? 0 : m_facing);
 	}
 	
 	
@@ -388,7 +398,7 @@ public class Entity : MonoBehaviour {
 				angleDistance, 		angleDirection;
 
 		// Get current facing
-		m_facing = transform.rotation.eulerAngles.z;
+		m_facing = m_useZ ? -transform.rotation.eulerAngles.y : transform.rotation.eulerAngles.z;
 
 		// Determine direction and distance to target
 		angleDistanceLeft = m_turnTargetAngle - m_facing;
@@ -418,13 +428,7 @@ public class Entity : MonoBehaviour {
 		else
 			m_facing += angleDirection * m_turnSpeed * Time.deltaTime;
 
-		// Adjust for wrap around
-		if (m_facing < 0 ) m_facing += 360.0f;
-		if (m_facing > 360.0f ) m_facing -= 360.0f;
-
-		// Apply the facing to the object
-		if (m_rotateToMatchFacing)
-			transform.rotation = Quaternion.Euler(0,0,m_facing);
+		TurnToFaceDirectionInstant(m_facing);
 
 	}
 
