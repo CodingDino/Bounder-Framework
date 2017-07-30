@@ -36,6 +36,20 @@ public static class GameObjectExtension
 		return path;
 	}
 	// ********************************************************************
+	public static void SetLayerRecursive(this GameObject _object, string _layerName)
+	{
+		SetLayerRecursive(_object, LayerMask.NameToLayer(_layerName));
+	}
+	// ********************************************************************
+	public static void SetLayerRecursive(this GameObject _object, int _layer)
+	{
+		_object.layer = _layer;
+		for (int i = 0; i < _object.transform.childCount; ++i)
+		{
+			_object.transform.GetChild(i).gameObject.SetLayerRecursive(_layer);
+		}
+	}
+	// ********************************************************************
 	#endregion
 	// ********************************************************************
 
