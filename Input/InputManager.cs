@@ -41,10 +41,16 @@ public enum ControlScheme
 // ************************************************************************
 public class ChangeCursorEvent : GameEvent 
 {
-	public string cursor;
+	public string cursorID;
+	public Animator cursor;
 	public ChangeCursorEvent(string _cursor = "")
 	{
+		cursorID = _cursor;
+	}
+	public ChangeCursorEvent(Animator _cursor)
+	{
 		cursor = _cursor;
+		cursorID = _cursor.name;
 	}
 }
 // ************************************************************************
@@ -154,17 +160,24 @@ public class InputManager : Singleton<InputManager>
 		if (controlScheme != ControlScheme.MOUSE_KEYBOARD)
 			return;
 
-		if (_event.cursor == cursor)
+		if (_event.cursorID == cursor)
 			return;
 
-		string toSwap = _event.cursor;
+		string toSwap = _event.cursorID;
 		if (toSwap.NullOrEmpty())
 			toSwap = m_defaultCursor;
 
 		if (!m_cursorMap.ContainsKey(toSwap))
 		{
-			Debug.LogError("Can't find cursor "+toSwap);
-			return;
+			if (_event.cursor != null)
+			{
+				m_cursorMap[_event.cursorID] = _event.cursor;
+			}
+			else
+			{
+				Debug.LogError("Can't find cursor "+toSwap);
+				return;
+			}
 		}
 		StartCoroutine(SwapCursors(toSwap));
 	}
