@@ -154,6 +154,9 @@ public class AudioManager : Database<AudioClip>
 	public static AudioObject Play(AudioClip _clip, 
                                    AudioInfo _info)
 	{
+		if (_clip == null)
+			return null;
+		
 		if (_info.overrideChannelLimit == AudioChannelOverride.NONE && !ChannelAvailable(_info.category))
 			return null;
 
