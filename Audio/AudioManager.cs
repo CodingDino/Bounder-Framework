@@ -155,7 +155,10 @@ public class AudioManager : Database<AudioClip>
                                    AudioInfo _info)
 	{
 		if (_clip == null)
+		{
+			Debug.LogWarning("Attempt to play null audio clip");
 			return null;
+		}
 		
 		if (_info.overrideChannelLimit == AudioChannelOverride.NONE && !ChannelAvailable(_info.category))
 			return null;
