@@ -67,16 +67,6 @@ public class MoveToTarget : MonoBehaviour {
 
 
 	// ********************************************************************
-	// Function:	Start()
-	// Purpose:		Run when new instance of the object is created.
-	// ********************************************************************
-	void Start () 
-	{
-		m_transform = transform;
-	}
-
-
-	// ********************************************************************
 	// Function:	MoveTo()
 	// Purpose:		Set new target or add to queue
 	// ********************************************************************
@@ -101,6 +91,8 @@ public class MoveToTarget : MonoBehaviour {
 	// ********************************************************************
 	private void SetTarget(Vector3 _target) 
 	{ 
+		if (m_transform == null)
+			m_transform = transform;
 		if (m_moving && _target == m_targetPoint)
 			return;
 		if (!m_moving && _target == m_transform.position)
@@ -125,6 +117,8 @@ public class MoveToTarget : MonoBehaviour {
 	// ********************************************************************
 	IEnumerator Move() 
 	{
+		if (m_transform == null)
+			m_transform = transform;
 		m_moving = true;
 		while (m_moving)
 		{
