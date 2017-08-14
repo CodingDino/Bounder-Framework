@@ -70,6 +70,12 @@ public class PanelManager : Singleton<PanelManager>
 	// ********************************************************************
 	public static Panel OpenPanel (Panel _prefab, PanelData _data = null)
 	{
+		if (_prefab == null)
+		{
+			Debug.LogError("OpenPanel() called with null prefab.");
+			return null;
+		}
+
 		PanelLimitOverride limitOverride = _data != null ? _data.limitOverride : PanelLimitOverride.REPLACE;
 
 		bool atLimit = (   !_prefab.group.NullOrEmpty() 
@@ -129,7 +135,7 @@ public class PanelManager : Singleton<PanelManager>
 				instance.StartCoroutine(instance._OpenPanel(newPanel,hidingPanel));
 			}
 
-
+			Debug.Log("Opening new panel: "+_prefab.name);
 			return newPanel;
 		}
 
