@@ -21,12 +21,11 @@ using System.Collections.Generic;
 #region Class: AnimatorControllerParameterData
 // ************************************************************************ 
 [System.Serializable]
-public class AnimatorControllerParameterData
+public class AnimatorControllerParameterData : GameEvent
 {
 	// ********************************************************************
 	#region Public Data Members 
 	// ********************************************************************
-	[Tooltip("ID to be referenced in the calling animation event")]
 	public string id;
 	[Tooltip("Animator for the animation you want to activate.")]
 	public Animator animator;
@@ -47,21 +46,24 @@ public class AnimatorControllerParameterData
 	// ********************************************************************
 	#region Public Methods 
 	// ********************************************************************
-	public void Apply()
+	public void Apply(Animator _animator = null)
 	{
+		Animator animatorToApply = _animator;
+		if (_animator == null)
+			animatorToApply = animator;
 		switch(parameterType)
 		{
 		case AnimatorControllerParameterType.Trigger:
-			animator.SetTrigger(parameter);
+			animatorToApply.SetTrigger(parameter);
 			break;
 		case AnimatorControllerParameterType.Bool:
-			animator.SetBool(parameter, parameterValueBool);
+			animatorToApply.SetBool(parameter, parameterValueBool);
 			break;
 		case AnimatorControllerParameterType.Int:
-			animator.SetInteger(parameter, parameterValueInt);
+			animatorToApply.SetInteger(parameter, parameterValueInt);
 			break;
 		case AnimatorControllerParameterType.Float:
-			animator.SetFloat(parameter, parameterValueFloat);
+			animatorToApply.SetFloat(parameter, parameterValueFloat);
 			break;
 		}
 	}
