@@ -27,7 +27,7 @@ public static class ListExtension
 	// ********************************************************************
 	public static T Front<T>(this List<T> _self)
 	{
-		if (_self.Count > 0)
+		if (_self != null && _self.Count > 0)
 			return _self[0];
 		else
 			return default(T);
@@ -35,7 +35,7 @@ public static class ListExtension
 	// ********************************************************************
 	public static T Back<T>(this List<T> _self)
 	{
-		if (_self.Count > 0)
+		if (_self != null && _self.Count > 0)
 			return _self[_self.Count-1];
 		else
 			return default(T);
