@@ -58,6 +58,15 @@ public class MoveToTarget : MonoBehaviour {
 
 
 	// ********************************************************************
+	#region Events 
+	// ********************************************************************
+	public delegate void ArrivedAtTarget(Vector3 _target);
+	public event ArrivedAtTarget OnArrivedAtTarget;
+	#endregion
+	// ********************************************************************
+
+
+	// ********************************************************************
 	// Function:	Start()
 	// Purpose:		Run when new instance of the object is created.
 	// ********************************************************************
@@ -124,6 +133,8 @@ public class MoveToTarget : MonoBehaviour {
 			{
 				m_transform.position = m_targetPoint;
 				m_moving = false;
+				if (OnArrivedAtTarget != null)
+					OnArrivedAtTarget(m_targetPoint);
 				if (m_targetQueue.Count > 0)
 					SetTarget(m_targetQueue.Dequeue());
 			}
