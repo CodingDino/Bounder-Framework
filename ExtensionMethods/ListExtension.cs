@@ -110,6 +110,12 @@ public static class ListExtension
 		}
 	}
 	// ********************************************************************
+	public static void AddWithoutDuplicates<T>(this List<T> _self, T _toAdd)
+	{
+		if (!_self.Contains(_toAdd))
+			_self.Add(_toAdd);
+	}
+	// ********************************************************************
 	public static bool Empty<T>(this List<T> _self)
 	{
 		return _self == null || _self.Count == 0;
