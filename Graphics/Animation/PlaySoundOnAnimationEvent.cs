@@ -31,10 +31,17 @@ public class PlaySoundOnAnimationEvent : MonoBehaviour
 	{
 		[Tooltip("Clip you want to play")]
 		public AudioClip clip = null;
+		[Tooltip("ID for this audio info (defaults to clip name)")]
+		public string id = "";
 		[Tooltip("Audio info for the clip to use")]
 		public AudioInfo info = new AudioInfo();
 		[Tooltip("Should the audio be parented to this object?")]
 		public bool parent = false;
+
+		public string GetID()
+		{
+			return id.NullOrEmpty() ? clip.name : id;
+		}
 	}
 	#endregion
 	// ********************************************************************
@@ -67,10 +74,11 @@ public class PlaySoundOnAnimationEvent : MonoBehaviour
 		for (int i = 0; i < m_sounds.Count; ++i)
 		{
 			SoundData sound = m_sounds[i];
-			if (m_soundMap.ContainsKey(sound.clip.name))
-				Debug.LogError("Duplicate ID found: "+sound.clip.name);
+			string id = sound.GetID();
+			if (m_soundMap.ContainsKey(id))
+				Debug.LogError("Duplicate ID found: "+id);
 			else
-				m_soundMap[sound.clip.name] = sound;
+				m_soundMap[id] = sound;
 		}
 	}
 	// ********************************************************************
@@ -112,7 +120,7 @@ public class PlaySoundOnAnimationEvent : MonoBehaviour
 		}
 
 		AudioObject audio = m_activeSounds[_id];
-		if (audio.gameObject.activeSelf && audio.audioSource.isPlaying && audio.audioClip.name == _id)
+		if (audio.gameObject.activeSelf && audio.audioSource.isPlaying && audio.audioClip.name == m_soundMap[_id].clip.name)
 		{
 			audio.Fade(false);
 		}
