@@ -33,6 +33,16 @@ public class ObjectPoolObject : MonoBehaviour
 
 
 	// ********************************************************************
+	#region Events 
+	// ********************************************************************
+	public delegate void Action(ObjectPoolObject _object);
+	public event Action OnRecycle;
+	public event Action OnReserve;
+	#endregion
+	// ********************************************************************
+
+
+	// ********************************************************************
 	// Monobehavior Methods
 	// ********************************************************************
 	void OnEnable () 
@@ -67,12 +77,18 @@ public class ObjectPoolObject : MonoBehaviour
 	{
 		if (m_pool != null)
 			m_pool.ObjectBecameAvailable(this);
+
+		if (OnRecycle != null)
+			OnRecycle(this);
 	}
 	// ********************************************************************
 	void Reserve()
 	{
 		if (m_pool != null)
 			m_pool.ObjectBecameUnavailable(this);
+
+		if (OnReserve != null)
+			OnReserve(this);
 	}
 	// ********************************************************************
 
