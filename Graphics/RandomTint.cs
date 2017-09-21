@@ -22,7 +22,6 @@ using BounderFramework;
 // ************************************************************************ 
 #region Class: RandomTint
 // ************************************************************************ 
-[RequireComponent(typeof(SpriteRenderer))]
 public class RandomTint : MonoBehaviour 
 {
 	// ********************************************************************
@@ -42,8 +41,14 @@ public class RandomTint : MonoBehaviour
 	[Tooltip("DISCRETE = pick one of the supplied tints. LERP - pick tint between supplied tints.")]
 	private Selection m_selection = Selection.DISCRETE;
 	[SerializeField]
+	[Tooltip("List of sprites to be tinted")]
+	private List<SpriteRenderer> m_sprites = new List<SpriteRenderer>();
+	[SerializeField]
 	[Tooltip("List of tints to choose from")]
 	private Color[] m_tints;
+	[SerializeField]
+	[Tooltip("Should the random tint be applied on start")]
+	private bool m_applyOnStart = true;
 	#endregion
 	// ********************************************************************
 
@@ -51,11 +56,34 @@ public class RandomTint : MonoBehaviour
 	// ********************************************************************
 	#region Monobehavior Methods 
 	// ********************************************************************
+	void Awake () 
+	{
+		if (m_sprites.Count == 0)
+		{
+			SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+			if (renderer != null)
+				m_sprites.Add(renderer);
+		}
+	}
+	// ********************************************************************
 	void Start () 
+	{
+		if (m_applyOnStart)
+			ApplyRandomTint();
+	}
+	// ********************************************************************
+	#endregion
+	// ********************************************************************
+
+
+	// ********************************************************************
+	#region Public Methods 
+	// ********************************************************************
+	public void ApplyRandomTint()
 	{
 		if (m_tints == null || m_tints.Length == 0)
 		{
-			Debug.LogError("RandomTint.Start() - no tints provided");
+			Debug.LogError("RandomTint.ApplyRandomTint() - no tints provided");
 			return;
 		}
 
@@ -74,14 +102,14 @@ public class RandomTint : MonoBehaviour
 			break;
 		}
 
-		SpriteRenderer renderer = GetComponent<SpriteRenderer>();
-		if (renderer == null)
+		if (m_sprites == null || m_sprites.Count == 0)
 		{
-			Debug.LogError("RandomTint.Start() - no SpriteRenderer attached");
+			Debug.LogError("RandomTint.ApplyTint() - no SpriteRenderer supplied");
 			return;
 		}
 
-		renderer.color = color;
+		for (int i = 0; i < m_sprites.Count; ++i)
+			m_sprites[i].color = color;
 	}
 	// ********************************************************************
 	#endregion
