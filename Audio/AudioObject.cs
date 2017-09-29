@@ -33,6 +33,8 @@ public class AudioObject : MonoBehaviour
 	#region Exposed Data Members
 	// ********************************************************************
 	[SerializeField]
+	private bool m_playOnEnable = false;
+	[SerializeField]
 	private AudioClip m_audioClip;
 	[SerializeField]
 	private AudioInfo m_audioInfo = new AudioInfo();
@@ -82,6 +84,15 @@ public class AudioObject : MonoBehaviour
 	{
 		if (!m_audioSource.isPlaying)
 			gameObject.SetActive(false); // Triggers object pool to recycle
+	}
+	// ********************************************************************
+	void OnEnable()
+	{
+		if (m_playOnEnable)
+		{
+			Apply();
+			m_audioSource.Play();
+		}
 	}
 	// ********************************************************************
 	#endregion
