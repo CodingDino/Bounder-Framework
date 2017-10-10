@@ -128,12 +128,12 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 
 		if (_register)
 		{
-			Debug.Log("Adding IncrementalLoader: "+_loader);
+//			Debug.Log("Adding IncrementalLoader: "+_loader);
 			instance.m_loaders.Add(_loader);
 		}
 		else
 		{
-			Debug.Log("Removing IncrementalLoader: "+_loader);
+//			Debug.Log("Removing IncrementalLoader: "+_loader);
 			instance.m_loaders.Remove(_loader);
 		}
 	}
