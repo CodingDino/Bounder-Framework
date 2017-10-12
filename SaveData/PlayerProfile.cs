@@ -30,6 +30,45 @@ public class PlayerProfile : ScriptableObject
 	// ********************************************************************
 	public List<string> conversationsSeen = new List<string>();
 	public List<string> choicesMade = new List<string>();
+	public List<string> availableFeatures = new List<string>();
+	#endregion
+	// ********************************************************************
+
+
+	// ********************************************************************
+	#region Delegates 
+	// ********************************************************************
+	public delegate void FeatureBecameAvailable(string _featureID);
+	public static event FeatureBecameAvailable OnFeatureBecameAvailable;
+	#endregion
+	// ********************************************************************
+
+
+	// ********************************************************************
+	#region Public Data Members 
+	// ********************************************************************
+	public bool IsFeatureAvailable(string _featureID)
+	{
+		return availableFeatures.Contains(_featureID);
+	}
+	// ********************************************************************
+	public bool TryAddFeature(string _featureID)
+	{
+		if (availableFeatures.Contains(_featureID))
+		{
+			return false;
+		}
+		else
+		{
+			availableFeatures.Add(_featureID);
+
+			if (OnFeatureBecameAvailable != null)
+				OnFeatureBecameAvailable(_featureID);
+
+			return true;
+		}
+	}
+	// ********************************************************************
 	#endregion
 	// ********************************************************************
 

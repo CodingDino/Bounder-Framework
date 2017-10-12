@@ -143,6 +143,10 @@ public class ProfileManager : Singleton<ProfileManager> {
 
 
 	// ********************************************************************
+	public static PlayerProfile GetProfile()
+	{
+		return profile;
+	}
 	public static T GetProfile<T>() where T : PlayerProfile
 	{
 		return profile as T;
