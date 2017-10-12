@@ -78,6 +78,7 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 	// ********************************************************************
 	private List<IncrementalLoader> m_loaders = new List<IncrementalLoader>();
 	private bool m_loading = false;
+	private List<string> m_sceneHistory = new List<string>();
 	#endregion
 	// ********************************************************************
 
@@ -86,6 +87,7 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 	#region Properties
 	// ********************************************************************
 	public static bool loading { get { return instance == null ? false : instance.m_loading; } }
+	public static List<string> sceneHistory { get { return instance.m_sceneHistory.Copy(); } }
 	#endregion
 	// ********************************************************************
 
@@ -151,6 +153,7 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 		m_loading = true;
 
 		string oldScene = SceneManager.GetActiveScene().name;
+		m_sceneHistory.Add(oldScene);
 
 		// COVERING_SCREEN
 		{
