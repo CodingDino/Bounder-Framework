@@ -46,7 +46,8 @@ public class AudioObject : MonoBehaviour
 	#region Private Data Members
 	// ********************************************************************
 	private AudioSource m_audioSource;
-	private bool m_fading;
+	private bool m_fading = false;
+	private bool m_hasPlayed = false;
 	#endregion
 	// ********************************************************************
 
@@ -82,17 +83,23 @@ public class AudioObject : MonoBehaviour
 	// ********************************************************************
 	void Update()
 	{
-		if (!m_audioSource.isPlaying)
+			if (m_playOnEnable && !m_hasPlayed) 
+			{
+				if (AudioManager.initialized) 
+				{
+					Apply();
+					m_audioSource.Play();
+					m_hasPlayed = true;
+				}
+			}
+		else if (!m_audioSource.isPlaying)
 			gameObject.SetActive(false); // Triggers object pool to recycle
 	}
 	// ********************************************************************
-	void OnEnable()
+	void OnDisable()
 	{
-		if (m_playOnEnable)
-		{
-			Apply();
-			m_audioSource.Play();
-		}
+		m_fading = false;
+		m_hasPlayed = false;
 	}
 	// ********************************************************************
 	#endregion
