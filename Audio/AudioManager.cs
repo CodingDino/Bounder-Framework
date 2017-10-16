@@ -154,12 +154,19 @@ public class AudioManager : Database<AudioClip>
 	public static AudioObject Play(AudioClip _clip, 
                                    AudioInfo _info)
 	{
-		if (_clip == null)
+		_info.clip = _clip;
+		return Play(_info);
+	}
+
+	// ********************************************************************
+	public static AudioObject Play(AudioInfo _info)
+	{
+		if (_info.clip == null)
 		{
 			Debug.LogWarning("Attempt to play null audio clip");
 			return null;
 		}
-		
+
 		if (_info.overrideChannelLimit == AudioChannelOverride.NONE && !ChannelAvailable(_info.category))
 			return null;
 
@@ -167,20 +174,19 @@ public class AudioManager : Database<AudioClip>
 		if (replacing)
 		{
 			AudioObject oldObject = (instance as AudioManager).m_audioObjects[_info.category].FirstActive.GetComponent<AudioObject>();
-			
+
 			// If we're trying to replace it with the same thing, don't.
-			if (oldObject.audioClip.ToString() == _clip.ToString())
+			if (oldObject.audioClip.ToString() == _info.clip.ToString())
 				return null;
-		
+
 			oldObject.Fade(false);
 		}
 
 		GameObject audioGameObject = (instance as AudioManager).m_audioObjects[_info.category].RequestObject();
 		audioGameObject.transform.SetParent(instance.transform);
-		audioGameObject.name = "AudioObject - "+_clip.name;
+		audioGameObject.name = "AudioObject - "+_info.clip.name;
 		AudioObject audioObject = audioGameObject.GetComponent<AudioObject>();
 		audioObject.audioInfo = _info;
-		audioObject.audioClip = _clip;
 
 		audioObject.Apply();
 		audioObject.audioSource.Play();

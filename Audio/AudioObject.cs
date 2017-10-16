@@ -35,8 +35,6 @@ public class AudioObject : MonoBehaviour
 	[SerializeField]
 	private bool m_playOnEnable = false;
 	[SerializeField]
-	private AudioClip m_audioClip;
-	[SerializeField]
 	private AudioInfo m_audioInfo = new AudioInfo();
 	#endregion
 	// ********************************************************************
@@ -61,8 +59,8 @@ public class AudioObject : MonoBehaviour
 	}
 	// ********************************************************************
 	public AudioClip audioClip {
-		get { return m_audioClip; }
-		set { m_audioClip = value; }
+		get { return m_audioInfo.clip; }
+		set { m_audioInfo.clip = value; }
 	}
 	// ********************************************************************
 	public AudioInfo audioInfo {
@@ -111,7 +109,7 @@ public class AudioObject : MonoBehaviour
 	// ********************************************************************
 	public void Apply()
 	{
-		m_audioSource.clip = m_audioClip;
+		m_audioSource.clip = m_audioInfo.clip;
 
 		// Apply Info
 		if (m_audioInfo != null)

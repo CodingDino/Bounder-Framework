@@ -133,8 +133,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_playOnEnable: 0
-  m_audioClip: {fileID: 8300000, guid: 485ed5ce7a923db478b3500bd7880a21, type: 3}
   m_audioInfo:
+    clip: {fileID: 0}
     category: 1
     overrideChannelLimit: 0
     volume: 1
