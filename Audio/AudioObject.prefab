@@ -141,5 +141,5 @@ MonoBehaviour:
     volumeFuzz: 0
     pitch: 1
     pitchFuzz: 0.25
-    loop: 1
+    loop: 0
     fadeDuration: 0
