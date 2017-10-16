@@ -37,7 +37,7 @@ public class DialogueSection
 		HAPPY 		// = 3
 	}
 	public PortraitEmotion emotion = PortraitEmotion.NEUTRAL;
-    public string triggerAnimation;
+    public int triggerAnimation = 0;
     public string triggerEffect;
 
 	// Text

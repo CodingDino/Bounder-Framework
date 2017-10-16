@@ -350,10 +350,12 @@ public class DialoguePanel : Panel
 			{
 				side = (int) m_currentFrame.portraitSide;
 				// Set portrait emotion
-				// TODO: Maybe use triggers?
 				m_characterAnimator[side].SetInteger("Emotion", (int)m_currentSection.emotion);
 				// Set portrait to talking animation
 				m_characterAnimator[side].SetBool("Talk", true);
+				// Set special animation triggers
+				if (m_currentSection.triggerAnimation > 0)
+					m_characterAnimator[side].SetTrigger("Special-"+m_currentSection.triggerAnimation);
 			}
 
             while (m_displayIndex < m_currentSection.text.Length)
