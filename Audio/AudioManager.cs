@@ -148,7 +148,7 @@ public class AudioManager : Database<AudioClip>
 	public static AudioObject Play(AudioClip _clip, 
                                    AudioCategory _category)
 	{
-		return Play(_clip, new AudioInfo(_category));
+		return Play(new AudioInfo(_clip, _category));
 	}
 	// ********************************************************************
 	public static AudioObject Play(AudioClip _clip, 
@@ -157,7 +157,6 @@ public class AudioManager : Database<AudioClip>
 		_info.clip = _clip;
 		return Play(_info);
 	}
-
 	// ********************************************************************
 	public static AudioObject Play(AudioInfo _info)
 	{
@@ -183,7 +182,10 @@ public class AudioManager : Database<AudioClip>
 		}
 
 		GameObject audioGameObject = (instance as AudioManager).m_audioObjects[_info.category].RequestObject();
-		audioGameObject.transform.SetParent(instance.transform);
+		if (_info.parent != null)
+			audioGameObject.transform.SetParent(_info.parent);
+		else
+			audioGameObject.transform.SetParent(instance.transform);
 		audioGameObject.name = "AudioObject - "+_info.clip.name;
 		AudioObject audioObject = audioGameObject.GetComponent<AudioObject>();
 		audioObject.audioInfo = _info;
@@ -196,6 +198,7 @@ public class AudioManager : Database<AudioClip>
 			audioObject.audioSource.volume=0;
 			audioObject.Fade(true);
 		}
+
 
 		return audioObject;
 	}

@@ -109,11 +109,10 @@ public class AudioObject : MonoBehaviour
 	// ********************************************************************
 	public void Apply()
 	{
-		m_audioSource.clip = m_audioInfo.clip;
-
 		// Apply Info
 		if (m_audioInfo != null)
 		{
+			m_audioSource.clip = m_audioInfo.clip;
 			m_audioSource.volume = m_audioInfo.volume + Random.Range(-m_audioInfo.volumeFuzz,m_audioInfo.volumeFuzz);
 			m_audioSource.pitch = m_audioInfo.pitch + Random.Range(-m_audioInfo.pitchFuzz,m_audioInfo.pitchFuzz);
 			m_audioSource.loop = m_audioInfo.loop;

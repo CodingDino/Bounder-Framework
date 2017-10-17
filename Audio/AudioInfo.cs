@@ -30,6 +30,7 @@ public class AudioInfo : Archive
 	// ********************************************************************
 	#region Public Data Members
 	// ********************************************************************
+	public string id;
 	public AudioClip clip = null;
 	public AudioCategory category = AudioCategory.EFFECTS;
 	public AudioChannelOverride overrideChannelLimit = AudioChannelOverride.NONE;
@@ -39,6 +40,7 @@ public class AudioInfo : Archive
 	public float pitchFuzz = 0.0f;
 	public bool loop = false;
 	public float fadeDuration = 0.0f;
+	public Transform parent = null;
 	#endregion
 	// ********************************************************************
 
@@ -87,6 +89,11 @@ public class AudioInfo : Archive
 	// ********************************************************************
 	public AudioInfo() { }
 	// ********************************************************************
+	public AudioInfo(AudioClip _clip) 
+	{ 
+		clip = _clip;
+	}
+	// ********************************************************************
 	public AudioInfo(AudioCategory _category) 
 	{ 
 		category = _category;
@@ -96,6 +103,23 @@ public class AudioInfo : Archive
 			fadeDuration = 1.0f;
 			loop = true;
 		}
+	}
+	// ********************************************************************
+	public AudioInfo(AudioClip _clip, AudioCategory _category) 
+	{ 
+		clip = _clip;
+		category = _category;
+		if (_category == AudioCategory.MUSIC)
+		{
+			overrideChannelLimit = AudioChannelOverride.REPLACE;
+			fadeDuration = 1.0f;
+			loop = true;
+		}
+	}
+	// ********************************************************************
+	public string GetID()
+	{
+		return id.NullOrEmpty() ? clip.name : id;
 	}
 	// ********************************************************************
 	#endregion

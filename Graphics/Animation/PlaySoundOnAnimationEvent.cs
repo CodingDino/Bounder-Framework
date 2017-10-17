@@ -24,35 +24,11 @@ using BounderFramework;
 public class PlaySoundOnAnimationEvent : MonoBehaviour 
 {
 	// ********************************************************************
-	#region Class: SoundData
-	// ********************************************************************
-	[System.Serializable]
-	public class SoundData
-	{
-		[Tooltip("Clip you want to play")]
-		public AudioClip clip = null;
-		[Tooltip("ID for this audio info (defaults to clip name)")]
-		public string id = "";
-		[Tooltip("Audio info for the clip to use")]
-		public AudioInfo info = new AudioInfo();
-		[Tooltip("Should the audio be parented to this object?")]
-		public bool parent = false;
-
-		public string GetID()
-		{
-			return id.NullOrEmpty() ? clip.name : id;
-		}
-	}
-	#endregion
-	// ********************************************************************
-
-
-	// ********************************************************************
 	#region Exposed Data Members 
 	// ********************************************************************
 	[SerializeField]
-	[Tooltip("Parameters you want to change.")]
-	private List<SoundData> m_sounds = new List<SoundData>();
+	[Tooltip("Audio info to play")]
+	private List<AudioInfo> m_audioInfo = new List<AudioInfo>();
 	#endregion
 	// ********************************************************************
 
@@ -60,7 +36,7 @@ public class PlaySoundOnAnimationEvent : MonoBehaviour
 	// ********************************************************************
 	#region Private Data Members 
 	// ********************************************************************
-	private Dictionary<string,SoundData> m_soundMap = new Dictionary<string, SoundData>();
+	private Dictionary<string,AudioInfo> m_soundMap = new Dictionary<string, AudioInfo>();
 	private Dictionary<string,AudioObject> m_activeSounds = new Dictionary<string, AudioObject>();
 	#endregion
 	// ********************************************************************
@@ -71,9 +47,9 @@ public class PlaySoundOnAnimationEvent : MonoBehaviour
 	// ********************************************************************
 	void Awake()
 	{
-		for (int i = 0; i < m_sounds.Count; ++i)
+		for (int i = 0; i < m_audioInfo.Count; ++i)
 		{
-			SoundData sound = m_sounds[i];
+			AudioInfo sound = m_audioInfo[i];
 			string id = sound.GetID();
 			if (m_soundMap.ContainsKey(id))
 				Debug.LogError("Duplicate ID found: "+id);
@@ -97,12 +73,10 @@ public class PlaySoundOnAnimationEvent : MonoBehaviour
 			return;
 		}
 
-		SoundData sound = m_soundMap[_id];
+		AudioInfo sound = m_soundMap[_id];
 
-		AudioObject audio = AudioManager.Play(sound.clip, sound.info);
+		AudioObject audio = AudioManager.Play(sound);
 		m_activeSounds[_id] = audio;
-		if (sound.parent)
-			audio.transform.SetParent(transform);
 	}
 	// ********************************************************************
 	private void StopSound (string _id) 
@@ -120,7 +94,10 @@ public class PlaySoundOnAnimationEvent : MonoBehaviour
 		}
 
 		AudioObject audio = m_activeSounds[_id];
-		if (audio.gameObject.activeSelf && audio.audioSource.isPlaying && audio.audioClip.name == m_soundMap[_id].clip.name)
+		if (   audio != null
+		    && audio.gameObject.activeSelf 
+		    && audio.audioSource.isPlaying 
+		    && audio.audioClip.name == m_soundMap[_id].clip.name)
 		{
 			audio.Fade(false);
 		}

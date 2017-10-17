@@ -134,6 +134,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_playOnEnable: 0
   m_audioInfo:
+    id: 
     clip: {fileID: 0}
     category: 1
     overrideChannelLimit: 0
@@ -143,3 +144,4 @@ MonoBehaviour:
     pitchFuzz: 0.25
     loop: 0
     fadeDuration: 0
+    parent: {fileID: 0}
