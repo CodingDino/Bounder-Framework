@@ -9,27 +9,29 @@
 
 
 // ************************************************************************ 
-// Imports 
+#region Imports
 // ************************************************************************ 
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+#endregion
+// ************************************************************************
 
 
 // ************************************************************************ 
-// Class: ObjectPool
+#region Class:  ObjectPool
 // ************************************************************************
 [System.Serializable]
 public class ObjectPool : IncrementalLoader
 {
-
-
 	// ********************************************************************
-	// Private Data Members 
+	#region Private Data Members 
 	// ********************************************************************
 	private List<ObjectPoolObject> m_available = new List<ObjectPoolObject>();
 	private List<ObjectPoolObject> m_inUse = new List<ObjectPoolObject>();
 	private GameObject m_prefab;
+	#endregion
+	// ****************************************************************
 
 
 	// ****************************************************************
@@ -43,27 +45,24 @@ public class ObjectPool : IncrementalLoader
 
 
 	// ********************************************************************
-	// Implement: IncrementalLoader 
+	#region IncrementalLoader Methods
 	// ********************************************************************
 	private float m_progress;
 	public float GetProgress() { return m_progress; }
 	public string GetCurrentAction() { return "Allocating objects"; }
-
-	
 	// ********************************************************************
-	// Function:	Constructor
-	// Purpose:		Sets the prefab for this object pool
+	#endregion
+	// ********************************************************************
+
+
+	// ********************************************************************
+	#region Public Methods
 	// ********************************************************************
 	public ObjectPool(GameObject _prefab = null, int _toAllocate = 0)
 	{
 		m_prefab = _prefab;
 		AllocateImmediate(_toAllocate);
 	}
-	
-
-	// ********************************************************************
-	// Function:	ObjectBecameAvailable()
-	// Purpose:		Moves object from in use to available
 	// ********************************************************************
 	public void ObjectBecameAvailable (ObjectPoolObject _object) 
 	{
@@ -71,11 +70,6 @@ public class ObjectPool : IncrementalLoader
 		m_inUse.Remove(_object);
 		m_available.Add(_object);
 	}
-	
-	
-	// ********************************************************************
-	// Function:	ObjectBecameUnavailable()
-	// Purpose:		Moves object from available to in use
 	// ********************************************************************
 	public void ObjectBecameUnavailable (ObjectPoolObject _object) 
 	{
@@ -83,11 +77,6 @@ public class ObjectPool : IncrementalLoader
 		m_available.Remove(_object);
 		m_inUse.Add(_object);
 	}
-
-
-	// ********************************************************************
-	// Function:	ObjectDestroyed()
-	// Purpose:		Removes object from all pools
 	// ********************************************************************
 	public void ObjectDestroyed (ObjectPoolObject _object) 
 	{
@@ -95,12 +84,6 @@ public class ObjectPool : IncrementalLoader
 		m_available.Remove(_object);
 		m_inUse.Remove(_object);
 	}
-
-	
-	// ********************************************************************
-	// Function:	RequestObject()
-	// Purpose:		Returns a recycled object if available, or creates a 
-	//				new one if not.
 	// ********************************************************************
 	public GameObject RequestObject()
 	{
@@ -118,11 +101,42 @@ public class ObjectPool : IncrementalLoader
 		toReturn.gameObject.SetActive(true); // Will mark it as unavailable
 		return toReturn.gameObject;
 	}
-
-	
 	// ********************************************************************
-	// Function:	CreateObject()
-	// Purpose:		Creates an available objects from the supplied prefab.
+	public IEnumerator Allocate (int _numToAllocate) 
+	{
+		m_progress = 0.0f;
+		for (int i = 0; i < _numToAllocate; ++i)
+		{
+			m_progress = ((float)i)/((float)_numToAllocate);
+			m_available.Add(CreateObject());
+			yield return null;
+		}
+		m_progress = 1.0f;
+	}
+	// ********************************************************************
+	public void AllocateImmediate (int _numToAllocate) 
+	{
+		for (int i = 0; i < _numToAllocate; ++i)
+		{
+			m_available.Add(CreateObject());
+		}
+	}
+	// ********************************************************************
+	public void RecycleAll()
+	{
+		// Walk backwards through list so we can remove from it safely
+		for (int iObject = m_inUse.Count-1; iObject >= 0; --iObject)
+		{
+			m_inUse[iObject].gameObject.SetActive(false);
+		}
+	}
+	// ********************************************************************
+	#endregion
+	// ********************************************************************
+
+
+	// ********************************************************************
+	#region Private Methods 
 	// ********************************************************************
 	private ObjectPoolObject CreateObject(bool _active = true)
 	{
@@ -143,31 +157,11 @@ public class ObjectPool : IncrementalLoader
 		newObject.SetActive(_active);
 		return objectPoolObject;
 	}
-	
-	
 	// ********************************************************************
-	// Function:	Allocate()
-	// Purpose:		Creates a specified number of available objects
-	//				from the supplied prefab. Spread over several frames.
+	#endregion
 	// ********************************************************************
-	public IEnumerator Allocate (int _numToAllocate) 
-	{
-		m_progress = 0.0f;
-		for (int i = 0; i < _numToAllocate; ++i)
-		{
-			m_progress = ((float)i)/((float)_numToAllocate);
-			m_available.Add(CreateObject());
-			yield return null;
-		}
-		m_progress = 1.0f;
-	}
-	public void AllocateImmediate (int _numToAllocate) 
-	{
-		for (int i = 0; i < _numToAllocate; ++i)
-		{
-			m_available.Add(CreateObject());
-		}
-	}
 
 
 }
+#endregion
+// ************************************************************************
