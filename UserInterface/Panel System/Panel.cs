@@ -39,6 +39,7 @@ public class Panel : MonoBehaviour
 	// ********************************************************************
 	private PanelState m_state = PanelState.HIDDEN;
 	private List<Button> m_disabledButtons = new List<Button>();
+	private GraphicRaycaster m_raycaster = null;
 	#endregion
 	// ********************************************************************
 
@@ -57,6 +58,20 @@ public class Panel : MonoBehaviour
 	// ********************************************************************
 	public string group { get { return m_group; } }
 	public PanelState state { get { return m_state; } }
+	public bool interactable { 
+		set 
+		{ 
+			if (m_raycaster != null) 
+				m_raycaster.enabled = value; 
+		} 
+		get 
+		{ 
+			if (m_raycaster != null) 
+				return m_raycaster.enabled; 
+			else 
+				return false; 
+		} 
+	}
 	#endregion
 	// ********************************************************************
 
@@ -81,6 +96,7 @@ public class Panel : MonoBehaviour
 	// ********************************************************************
 	public void Initialise (PanelData _data)  
 	{ 
+		m_raycaster = GetComponent<GraphicRaycaster>();
 		PanelState startingState = _data != null ? _data.startingState : PanelState.HIDDEN;
 		ChangeState(startingState, true, true);
 		_Initialise(_data);
@@ -163,7 +179,7 @@ public class Panel : MonoBehaviour
 	{
 		if (_newState == m_state && !_forceApply)
 			return;
-		if ((_newState & PanelState.LEGAL) == 0)
+		if (!PanelState.LEGAL.Contains(_newState))
 		{
 			Debug.LogError("Panel.ChangeState("+_newState+") - unrecognised state");
 			return;
@@ -175,6 +191,7 @@ public class Panel : MonoBehaviour
 		if (_instant)
 			GetComponent<Animator>().SetTrigger("InstantChange");
 		gameObject.SetActive(IsVisible());
+		interactable = m_state == PanelState.SHOWN;
 		_ChangeState(_newState, oldState);
 		if (OnPanelStateChanged != null)
 			OnPanelStateChanged(name, _newState, oldState);

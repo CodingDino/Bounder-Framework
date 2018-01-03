@@ -196,6 +196,14 @@ public class PanelManager : Singleton<PanelManager>
 		return instance.m_activePanelMap.Count;
 	}
 	// ********************************************************************
+	public static void SetActivePanelInteraction(bool _interactable)
+	{
+		foreach (KeyValuePair<string,Panel> panel in instance.m_activePanelMap)
+		{
+			panel.Value.interactable = _interactable;
+		}
+	}
+	// ********************************************************************
 	#endregion
 	// ********************************************************************
 
