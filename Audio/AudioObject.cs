@@ -46,6 +46,7 @@ public class AudioObject : MonoBehaviour
 	private AudioSource m_audioSource;
 	private bool m_fading = false;
 	private bool m_hasPlayed = false;
+	private bool m_usingObjectPool = false;
 	#endregion
 	// ********************************************************************
 
@@ -90,7 +91,7 @@ public class AudioObject : MonoBehaviour
 					m_hasPlayed = true;
 				}
 			}
-		else if (!m_audioSource.isPlaying)
+		else if (!m_audioSource.isPlaying && m_usingObjectPool)
 			gameObject.SetActive(false); // Triggers object pool to recycle
 	}
 	// ********************************************************************
@@ -121,6 +122,8 @@ public class AudioObject : MonoBehaviour
 		// Apply Audio Mixer
 		AudioCategorySettings settings = AudioManager.GetAudioSettings(m_audioInfo.category);
 		m_audioSource.outputAudioMixerGroup = settings.group;
+
+		m_usingObjectPool = GetComponent<ObjectPoolObject>() != null;
 	}
 	// ********************************************************************
 	public Coroutine Fade(bool _on) 
@@ -156,7 +159,8 @@ public class AudioObject : MonoBehaviour
 		if (!_on)
 		{
 			m_audioSource.Stop();
-			gameObject.SetActive(false); // Triggers object pool to recycle
+			if (m_usingObjectPool)
+				gameObject.SetActive(false); // Triggers object pool to recycle
 		}
 
 		m_fading = false;
