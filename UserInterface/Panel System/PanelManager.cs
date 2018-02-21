@@ -27,8 +27,8 @@ public class PanelManager : Singleton<PanelManager>
 	#region Private Data Members 
 	// ********************************************************************
 	private Dictionary<string, List<Panel>> m_groupStacks = new Dictionary<string, List<Panel>>();
-	private Dictionary<string,Panel> m_activePanelMap = new Dictionary<string,Panel>();
-	private Dictionary<string,Panel> m_closingPanels = new Dictionary<string,Panel>();
+	private List<Panel> m_activePanels = new List<Panel>();
+	private List<Panel> m_closingPanels = new List<Panel>();
 	#endregion
 	// ********************************************************************
 
@@ -121,7 +121,7 @@ public class PanelManager : Singleton<PanelManager>
 			}
 
 			newPanel.Initialise(_data);
-			instance.m_activePanelMap[newPanel.name] = newPanel;
+			instance.m_activePanels.Add(newPanel);
 			if (!instance.m_groupStacks.ContainsKey(newPanel.group))
 				instance.m_groupStacks[newPanel.group] = new List<Panel>();
 
@@ -145,42 +145,67 @@ public class PanelManager : Singleton<PanelManager>
 	public static bool ClosePanel (string _id) 
 	{
 		// If it isn't open we can't close it
-		if (instance == null || !instance.m_activePanelMap.ContainsKey(_id))
+		if (instance == null || !IsPanelActive(_id))
 		{
 			Debug.LogError("PanelManager.ClosePanel("+_id+") - no panel found of this name.");
 			return false;
 		}
 
-		if (!instance.m_closingPanels.ContainsKey(_id))
-			instance.StartCoroutine(instance._ClosePanel(instance.m_activePanelMap[_id]));
+		if (!IsPanelClosing(_id))
+			instance.StartCoroutine(instance._ClosePanel(GetActivePanel(_id)));
 		return true;
 	}
 	// ********************************************************************
 	public static bool ClosePanel (Panel _panel) 
 	{
 		// If it isn't open we can't close it
-		if (!instance.m_activePanelMap.ContainsValue(_panel))
+		if (!instance.m_activePanels.Contains(_panel))
 		{
 			Debug.LogError("PanelManager.ClosePanel("+_panel+") - no panel found.");
 			return false;
 		}
 
-		if (!instance.m_closingPanels.ContainsValue(_panel))
+		if (!instance.m_closingPanels.Contains(_panel))
 			instance.StartCoroutine(instance._ClosePanel(_panel));
 		return true;
 	}
 	// ********************************************************************
 	public static void CloseAllPanels()
 	{
-		foreach (KeyValuePair<string,Panel> panel in instance.m_activePanelMap)
+		for (int i = 0; i < instance.m_activePanels.Count; ++i)
 		{
-			ClosePanel(panel.Key);
+			ClosePanel(instance.m_activePanels[i]);
 		}
 	}
 	// ********************************************************************
-	public static bool IsPanelOpen(string _panelName)
+	public static Panel GetActivePanel(string _panelName)
 	{
-		return instance.m_activePanelMap.ContainsKey(_panelName);
+		for (int i = 0; i < instance.m_activePanels.Count; ++i)
+		{
+			if (instance.m_activePanels[i].name == _panelName)
+				return instance.m_activePanels[i];
+		}
+		return null;
+	}
+	// ********************************************************************
+	public static bool IsPanelActive(string _panelName)
+	{
+		for (int i = 0; i < instance.m_activePanels.Count; ++i)
+		{
+			if (instance.m_activePanels[i].name == _panelName)
+				return true;
+		}
+		return false;
+	}
+	// ********************************************************************
+	public static bool IsPanelClosing(string _panelName)
+	{
+		for (int i = 0; i < instance.m_closingPanels.Count; ++i)
+		{
+			if (instance.m_closingPanels[i].name == _panelName)
+				return true;
+		}
+		return false;
 	}
 	// ********************************************************************
 	public static int NumPanelsOpenInGroup(string _group)
@@ -193,14 +218,14 @@ public class PanelManager : Singleton<PanelManager>
 	// ********************************************************************
 	public static int NumPanelsOpen()
 	{
-		return instance.m_activePanelMap.Count;
+		return instance.m_activePanels.Count;
 	}
 	// ********************************************************************
 	public static void SetActivePanelInteraction(bool _interactable)
 	{
-		foreach (KeyValuePair<string,Panel> panel in instance.m_activePanelMap)
+		for (int i = 0; i < instance.m_activePanels.Count; ++i)
 		{
-			panel.Value.interactable = _interactable;
+			instance.m_activePanels[i].interactable = _interactable;
 		}
 	}
 	// ********************************************************************
@@ -213,7 +238,7 @@ public class PanelManager : Singleton<PanelManager>
 	// ********************************************************************
 	private IEnumerator _ClosePanel(Panel _panel)
 	{
-		m_closingPanels[_panel.name] = _panel;
+		m_closingPanels.Add(_panel);
 		_panel.Hide();
 		while (_panel.IsVisible())
 			yield return null;
@@ -221,12 +246,12 @@ public class PanelManager : Singleton<PanelManager>
 		// Clean up panel
 		string group = _panel.group;
 		_panel.Uninitialise();
-		m_activePanelMap.Remove(_panel.name);
+		m_activePanels.Remove(_panel);
 		if (!group.NullOrEmpty())
 			m_groupStacks[group].Remove(_panel);
 		if (OnPanelClosed != null)
 			OnPanelClosed(_panel.name);
-		m_closingPanels.Remove(_panel.name);
+		m_closingPanels.Remove(_panel);
 		Destroy(_panel.gameObject);
 
 		// Re-show next panel in the group
