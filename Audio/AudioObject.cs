@@ -80,11 +80,14 @@ public class AudioObject : MonoBehaviour
 		m_audioSource = GetComponent<AudioSource>();
 	}
 	// ********************************************************************
-	void OnEnable()
+	IEnumerator Start()
 	{
 		// Register self with AudioManager
 		if (!m_usingObjectPool)
 		{
+			while (SystemManager.initialised == false)
+				yield return null;
+			
 			AudioManager.RegisterAudioObject(this);
 		}
 	}
