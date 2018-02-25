@@ -138,6 +138,11 @@ public class DialoguePanel : Panel
 		DialoguePanelData castData = _data as DialoguePanelData;
 		if (castData != null)
 		{
+			LogManager.Log("DialoguePanel _Initialise with conversation "+castData.conversation.name, 
+			           LogCategory.UI, 
+			           LogSeverity.WARNING, 
+			           "Dialogue", 
+			           gameObject);
 			m_currentConversation = castData.conversation;
 		}
 		m_previousCursor = InputManager.cursor;
@@ -158,6 +163,11 @@ public class DialoguePanel : Panel
 	// ********************************************************************
 	protected override void _ChangeState(PanelState _newState, PanelState _oldState)
 	{
+		LogManager.Log("DialoguePanel _ChangeState new state = "+_newState, 
+		                   LogCategory.UI, 
+		                   LogSeverity.WARNING, 
+		                   "Dialogue", 
+		                   gameObject);
 		if (_newState == PanelState.SHOWN)
 			StartCurrentConversation();
 		if (IsVisible())
@@ -233,6 +243,12 @@ public class DialoguePanel : Panel
 	{
 		if (m_currentConversation == null)
 			return false;
+		
+		LogManager.Log("DialoguePanel: Starting conversation "+m_currentConversation.name, 
+		               LogCategory.UI, 
+		               LogSeverity.WARNING, 
+		               "Dialogue", 
+		               gameObject);
 
 		m_currentFrame = m_currentConversation.frames[0];
 
@@ -250,7 +266,11 @@ public class DialoguePanel : Panel
     // ********************************************************************
 	private IEnumerator DisplayFrame()
 	{
-//		Debug.Log("DialoguePanel: Showing Frame "+m_currentFrame);
+		LogManager.Log("DialoguePanel: Showing Frame "+m_currentFrame, 
+		               LogCategory.UI, 
+		               LogSeverity.WARNING, 
+		               "Dialogue", 
+		               gameObject);
 
 		// Initialize stuff for new frame
 		m_shouldSkip = false;
@@ -294,6 +314,12 @@ public class DialoguePanel : Panel
 	// ********************************************************************
 	private IEnumerator ChangePortraits(int _side, Animator _portrait)
 	{
+		LogManager.Log("DialoguePanel: ChangePortraits to "+_portrait.name, 
+		               LogCategory.UI, 
+		               LogSeverity.WARNING, 
+		               "Dialogue", 
+		               gameObject);
+		
 		Animator currentMover = m_portraitMovers[_side];
 
 		if (m_characterAnimator[_side] == null || m_characterAnimator[_side].name != _portrait.name)
@@ -308,6 +334,7 @@ public class DialoguePanel : Panel
 				m_characterAnimator[_side] = null;
 			}
 
+			// TODO: Instantiating these each time? Couldn't we create and disable/recycle them?
 			GameObject characterObject = GameObject.Instantiate(_portrait.gameObject);
 			characterObject.name = _portrait.name;
 			Vector3 localPos = characterObject.transform.localPosition;
@@ -325,6 +352,12 @@ public class DialoguePanel : Panel
         // Initialize stuff for new section
         m_currentSection = m_currentFrame.sections[m_sectionIndex];
 		m_displayIndex = 0;
+
+		LogManager.Log("DialoguePanel: DisplaySection "+m_currentSection.text, 
+		               LogCategory.UI, 
+		               LogSeverity.WARNING, 
+		               "Dialogue", 
+		               gameObject);
 
 		m_currentTextSettings = new DialogueTextSettings();
 		m_currentTextSettings.Merge(m_currentFrame.character.textSettings);
@@ -376,8 +409,7 @@ public class DialoguePanel : Panel
 				m_characterAnimator[side].SetBool("Talk", false);
 			}
 		}
-		
-		// TODO: Trigger special animations and effects
+
         // TODO: Wait for animation to finish if we triggered a special animation.
 
         // TODO: Some kind of manual "wait" system? (for cutscenes)
@@ -391,7 +423,6 @@ public class DialoguePanel : Panel
         }
         else
         {
-            // TODO: Bring up choices if applicable
             m_shouldSkip = false;
 
             if (m_currentFrame.displayChoices)
@@ -405,13 +436,21 @@ public class DialoguePanel : Panel
                     {
                         validLinks.Add(i);
                     }
-                }
-//                Debug.Log("Choices found for frame " + m_currentFrame.id + ": " + validLinks.Count);
+				}
+				LogManager.Log("Choices found for frame " + m_currentFrame.id + ": " + validLinks.Count, 
+				                   LogCategory.UI, 
+				                   LogSeverity.WARNING, 
+				                   "Dialogue", 
+				                   gameObject);
                 for (int i = 0; i < validLinks.Count; ++i)
                 {
                     int index = validLinks[i];
-                    DialogueLink link = m_currentFrame.links[index];
-//                    Debug.Log("Creating button for "+index+" link conv: " + link.linkedConversation + " frame: " + link.linkedFrame);
+					DialogueLink link = m_currentFrame.links[index];
+					LogManager.Log("Creating button for "+index+" link frame: " + link.linkedFrame.name, 
+					           LogCategory.UI, 
+					           LogSeverity.WARNING, 
+					           "Dialogue", 
+					           gameObject);
                     GameObject choiceButton = GameObject.Instantiate(m_choiceButtonPrototype) as GameObject;
                     choiceButton.transform.SetParent(m_choiceRoot.transform);
                     choiceButton.GetComponentInChildren<Text>().text = link.text;
@@ -422,8 +461,12 @@ public class DialoguePanel : Panel
 				StartCoroutine(ShowChoices(true));
             }
             else
-            {
-//				Debug.Log("DialoguePanel: Setting m_waitingForNextFrame = true for "+m_currentFrame);
+			{
+				LogManager.Log("DialoguePanel: Setting m_waitingForNextFrame = true for "+m_currentFrame, 
+				       LogCategory.UI, 
+				       LogSeverity.WARNING, 
+				       "Dialogue", 
+				       gameObject);
                 m_waitingForNextFrame = true;
                 m_waitingIcon.SetActive(true);
             }
@@ -445,6 +488,11 @@ public class DialoguePanel : Panel
 			if (!profile.choicesMade.Contains(_link.linkedFrame.name))
 				profile.choicesMade.Add(_link.linkedFrame.name);
 		}
+		LogManager.Log("DialoguePanel: MakeChoice "+_link.linkedFrame.name, 
+		                       LogCategory.UI, 
+		                       LogSeverity.WARNING, 
+		                       "Dialogue", 
+		                       gameObject);
 		if (OnChoiceMade != null)
 			OnChoiceMade(_link);
 		FollowLink(_link.linkedFrame);
@@ -452,7 +500,11 @@ public class DialoguePanel : Panel
 	// ********************************************************************
     private void FollowLink(DialogueFrame _linkedFrame)
 	{
-//		Debug.Log("DialoguePanel: FollowLink "+_linkedFrame);
+		LogManager.Log("DialoguePanel: FollowLink "+_linkedFrame.name, 
+		               LogCategory.UI, 
+		               LogSeverity.WARNING, 
+		               "Dialogue", 
+		               gameObject);
 
 		if (_linkedFrame.conversation != m_currentConversation)
 			m_currentConversation = _linkedFrame.conversation;
@@ -481,7 +533,7 @@ public class DialoguePanel : Panel
         }
         
         yield return null;
-         }
+    }
     // ********************************************************************
     private void PrintText()
     {
