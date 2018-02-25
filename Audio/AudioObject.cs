@@ -80,17 +80,26 @@ public class AudioObject : MonoBehaviour
 		m_audioSource = GetComponent<AudioSource>();
 	}
 	// ********************************************************************
+	void OnEnable()
+	{
+		// Register self with AudioManager
+		if (!m_usingObjectPool)
+		{
+			AudioManager.RegisterAudioObject(this);
+		}
+	}
+	// ********************************************************************
 	void Update()
 	{
-			if (m_playOnEnable && !m_hasPlayed) 
+		if (m_playOnEnable && !m_hasPlayed) 
+		{
+			if (AudioManager.initialized) 
 			{
-				if (AudioManager.initialized) 
-				{
-					Apply();
-					m_audioSource.Play();
-					m_hasPlayed = true;
-				}
+				Apply();
+				m_audioSource.Play();
+				m_hasPlayed = true;
 			}
+		}
 		else if (!m_audioSource.isPlaying && m_usingObjectPool)
 			gameObject.SetActive(false); // Triggers object pool to recycle
 	}
@@ -129,6 +138,14 @@ public class AudioObject : MonoBehaviour
 	public Coroutine Fade(bool _on) 
 	{
 		return StartCoroutine(Fade_CR(_on)); 
+	}
+	// ********************************************************************
+	public void Stop() 
+	{
+		StopAllCoroutines();
+		m_audioSource.Stop();
+		if (m_usingObjectPool)
+			gameObject.SetActive(false); // Triggers object pool to recycle
 	}
 	// ********************************************************************
 	#endregion
