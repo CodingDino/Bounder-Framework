@@ -11,9 +11,11 @@
 #region Imports
 // ************************************************************************
 using UnityEngine;
-using UnityEditor;
 using System;
 using System.Collections;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 #endregion
 // ************************************************************************
 
@@ -47,6 +49,7 @@ public class ShowInInspectorIf : PropertyAttribute
 // ************************************************************************ 
 #region Class: ShowInInspectorIfProperyDrawer
 // ************************************************************************ 
+#if UNITY_EDITOR
 [CustomPropertyDrawer(typeof(ShowInInspectorIf))]
 public class ShowInInspectorIfProperyDrawer : PropertyDrawer 
 {
@@ -98,6 +101,7 @@ public class ShowInInspectorIfProperyDrawer : PropertyDrawer
 		}
 	}
 }
+#endif
 // ************************************************************************
 #endregion
 // ************************************************************************
