@@ -378,17 +378,22 @@ public class DialoguePanel : Panel
 			float secondsToWait = 1.0f / textSpeed;
 
 			int side = -1;
+			string currentSpecial = "";
 
 			if (m_currentFrame.character.portrait != null)
 			{
 				side = (int) m_currentFrame.portraitSide;
 				// Set portrait emotion
 				m_characterAnimator[side].SetInteger("Emotion", (int)m_currentSection.emotion);
-				// Set portrait to talking animation
-				m_characterAnimator[side].SetBool("Talk", true);
 				// Set special animation triggers
 				if (m_currentSection.triggerAnimation > 0)
+				{
+					currentSpecial = "Special-"+m_currentSection.triggerAnimation;
 					m_characterAnimator[side].SetTrigger("Special-"+m_currentSection.triggerAnimation);
+				}
+				else
+					// Set portrait to talking animation ONLY if no special animation is playing.
+					m_characterAnimator[side].SetBool("Talk", true);
 			}
 
             while (m_displayIndex < m_currentSection.text.Length)
@@ -397,6 +402,17 @@ public class DialoguePanel : Panel
 				float currentSecondsToWait = secondsToWait;
 				if (textSymbolTime.ContainsKey(currentChar))
 					currentSecondsToWait = textSymbolTime[currentChar];
+
+				// if we were playing a special animation, see if it is time to start the talk animation
+				if (!currentSpecial.NullOrEmpty())
+				{
+					if(!m_characterAnimator[side].GetCurrentAnimatorStateInfo(1).IsName(currentSpecial))
+					{
+						currentSpecial = "";
+						m_characterAnimator[side].SetBool("Talk", true);
+					}
+				}
+
 				PrintText();
 				if (!m_shouldSkip)
 					yield return new WaitForSeconds(currentSecondsToWait);
