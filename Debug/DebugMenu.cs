@@ -184,7 +184,6 @@ public class DebugMenu : Singleton<DebugMenu>
 	private void ResetButtonPressed(string _id, GameObject _button)
 	{
 		// Reset to title screen
-		PanelManager.CloseAllPanels();
 		if (OnResetGame != null)
 			OnResetGame();
 		LoadingSceneManager.LoadScene(0);
