@@ -72,16 +72,16 @@ public class ProfileManager : Singleton<ProfileManager> {
 	}
 	public static void Load<T>(string saveID = "") where T : PlayerProfile
 	{
-		if (saveID == "")
-			saveID = profile.name;
-		
-		if (DebugMenu.demoMode)
+		if (saveID == "" && DebugMenu.demoMode)
 		{
 			Load(instance.m_demoProfile);
 		}
 		else
 		{
-			string jsonString = PlayerPrefs.GetString (saveID);
+			if (saveID == "")
+				saveID = profile.name;
+			
+			string jsonString = PlayerPrefs.GetString(saveID);
 			profile = JsonUtility.FromJson<T>(jsonString);
 			Load(profile, false);
 		}
