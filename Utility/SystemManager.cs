@@ -36,6 +36,7 @@ public class SystemManager :  Singleton<SystemManager>
 	#region Private Data Members
 	// ********************************************************************
 	private bool m_initialised = false;
+	private Dictionary<string,GameObject> m_systems = new Dictionary<string,GameObject>();
 	#endregion
 	// ********************************************************************
 
@@ -59,7 +60,18 @@ public class SystemManager :  Singleton<SystemManager>
 		{
 			for (int i = 0; i < m_prefabs.Length; ++i)
 			{
-				Instantiate(m_prefabs[i],transform);
+				if (!m_systems.ContainsKey(m_prefabs[i].name))
+				{
+					if (transform.Find(m_prefabs[i].name))
+					{
+						m_systems[m_prefabs[i].name] = transform.Find(m_prefabs[i].name).gameObject;
+					}
+					else
+					{
+						m_systems[m_prefabs[i].name] = Instantiate(m_prefabs[i],transform);
+						m_systems[m_prefabs[i].name].name = m_prefabs[i].name;
+					}
+				}
 			}
 			m_initialised = true;
 		}
