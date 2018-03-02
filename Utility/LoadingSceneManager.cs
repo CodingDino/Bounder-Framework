@@ -249,7 +249,10 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 				else
 					yield return SceneManager.LoadSceneAsync(_newScene, LoadSceneMode.Additive);
 			}
-			SceneManager.SetActiveScene(SceneManager.GetSceneByName(_newScene));
+			if (_newScene.NullOrEmpty())
+				SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(_buildIndex));
+			else
+				SceneManager.SetActiveScene(SceneManager.GetSceneByName(_newScene));
 		}
 
 		// PROCESSING_INCREMENTAL_LOADERS
