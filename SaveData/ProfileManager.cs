@@ -82,8 +82,7 @@ public class ProfileManager : Singleton<ProfileManager> {
 				saveID = profile.name;
 			
 			string jsonString = PlayerPrefs.GetString(saveID);
-			profile = JsonUtility.FromJson<T>(jsonString);
-			Load(profile, false);
+			Load(JsonUtility.FromJson<T>(jsonString), false);
 		}
 	}
 	public static void Load<T>(T _profile, bool _copy = true) where T : PlayerProfile
@@ -93,8 +92,13 @@ public class ProfileManager : Singleton<ProfileManager> {
 			profile = Instantiate(_profile);
 			profile.name = _profile.name + "-Copy";
 		}
-		instance.m_loadedData = true;
+		else
+		{
+			profile = _profile;
+		}
 		Debug.Log ("ProfileManager --- LOAD "+profile.name+" --- JSON String loaded: "+ profile.ToString());
+		profile.Validate();
+		instance.m_loadedData = true;
 		if (OnProfileLoaded != null)
 			OnProfileLoaded(profile);
 	}

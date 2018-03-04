@@ -45,7 +45,7 @@ public class PlayerProfile : ScriptableObject
 
 
 	// ********************************************************************
-	#region Public Data Members 
+	#region Public Methods 
 	// ********************************************************************
 	public bool IsFeatureAvailable(string _featureID)
 	{
@@ -67,6 +67,18 @@ public class PlayerProfile : ScriptableObject
 
 			return true;
 		}
+	}
+	// ********************************************************************
+	#endregion
+	// ********************************************************************
+
+
+	// ********************************************************************
+	#region Inherited Methods
+	// ********************************************************************
+	public virtual bool Validate()
+	{
+		return true;
 	}
 	// ********************************************************************
 	#endregion
