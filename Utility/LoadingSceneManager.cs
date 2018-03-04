@@ -41,6 +41,8 @@ public enum LoadingState
 	LOADING_NEW_SCENE,
 	PROCESSING_INCREMENTAL_LOADERS,
 	NEW_SCENE_LOADED,
+	HIDING_LOADING_SCREEN,
+	UNLOADING_LOADING_SCREEN,
 	REVEALING_NEW_SCENE,
 	LOADING_COMPLETE,
 	// ---
@@ -276,17 +278,31 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 				yield return null;
 		}
 
+		// HIDING_LOADING_SCREEN
+		{
+			Debug.Log("Loading Scene state: "+LoadingState.HIDING_LOADING_SCREEN);
+			if (OnStateChanged != null) 
+				OnStateChanged(LoadingState.HIDING_LOADING_SCREEN, _newScene, oldScene);
+
+			// Fade to black
+			yield return m_blackness.FadeIn();
+		}
+
+		// UNLOADING_LOADING_SCREEN
+		{
+			Debug.Log("Loading Scene state: "+LoadingState.UNLOADING_LOADING_SCREEN);
+			if (OnStateChanged != null) 
+				OnStateChanged(LoadingState.UNLOADING_LOADING_SCREEN, _newScene, oldScene);
+
+			// !!! unload loading screen
+			yield return SceneManager.UnloadSceneAsync(m_loadingScene);
+		}
+
 		// REVEALING_NEW_SCENE
 		{
 			Debug.Log("Loading Scene state: "+LoadingState.REVEALING_NEW_SCENE);
 			if (OnStateChanged != null) 
 				OnStateChanged(LoadingState.REVEALING_NEW_SCENE, _newScene, oldScene);
-
-			// Fade to black
-			yield return m_blackness.FadeIn();
-
-			// !!! unload loading screen
-			yield return SceneManager.UnloadSceneAsync(m_loadingScene);
 
 			// Fade to new screen
 			yield return m_blackness.FadeOut();
