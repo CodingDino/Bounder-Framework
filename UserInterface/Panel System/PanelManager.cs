@@ -76,17 +76,20 @@ public class PanelManager : Singleton<PanelManager>
 			return null;
 		}
 
+		string panelGroup = _prefab.group;
+		if (_data != null && !_data.panelGroup.NullOrEmpty())
+			panelGroup = _data.panelGroup;
 		PanelLimitOverride limitOverride = _data != null ? _data.limitOverride : PanelLimitOverride.REPLACE;
 
-		bool atLimit = (   !_prefab.group.NullOrEmpty() 
-			&&  instance.m_groupStacks.ContainsKey(_prefab.group)
-			&&  instance.m_groupStacks[_prefab.group].Count > 0 );
+		bool atLimit = (   !panelGroup.NullOrEmpty() 
+		                &&  instance.m_groupStacks.ContainsKey(panelGroup)
+		                &&  instance.m_groupStacks[panelGroup].Count > 0 );
 
 		// Hide existing panel if we are replacing it
 		Panel hidingPanel = null;
 		if (atLimit && limitOverride == PanelLimitOverride.REPLACE)
 		{
-			hidingPanel = instance.m_groupStacks[_prefab.group].Front();
+			hidingPanel = instance.m_groupStacks[panelGroup].Front();
 		}
 
 		// If we are allowed to show this new panel, do so
@@ -94,6 +97,7 @@ public class PanelManager : Singleton<PanelManager>
 		{
 			Panel newPanel = Instantiate<GameObject>(_prefab.gameObject,instance.transform,false).GetComponent<Panel>();
 			newPanel.name = _prefab.name;
+			newPanel.group = panelGroup;
 
 			// Set sibling position (if no data, gets left where created - on top)
 			if (_data != null)
@@ -122,16 +126,16 @@ public class PanelManager : Singleton<PanelManager>
 
 			newPanel.Initialise(_data);
 			instance.m_activePanels.Add(newPanel);
-			if (!instance.m_groupStacks.ContainsKey(newPanel.group))
-				instance.m_groupStacks[newPanel.group] = new List<Panel>();
+			if (!instance.m_groupStacks.ContainsKey(panelGroup))
+				instance.m_groupStacks[panelGroup] = new List<Panel>();
 
 			if (atLimit && limitOverride == PanelLimitOverride.WAIT )
 			{
-				instance.m_groupStacks[newPanel.group].Add(newPanel);
+				instance.m_groupStacks[panelGroup].Add(newPanel);
 			}
 			else
 			{
-				instance.m_groupStacks[newPanel.group].AddAtFront(newPanel);
+				instance.m_groupStacks[panelGroup].AddAtFront(newPanel);
 				instance.StartCoroutine(instance._OpenPanel(newPanel,hidingPanel));
 			}
 

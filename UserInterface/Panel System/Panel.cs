@@ -56,7 +56,7 @@ public class Panel : MonoBehaviour
 	// ********************************************************************
 	#region Properties 
 	// ********************************************************************
-	public string group { get { return m_group; } }
+	public string group { get { return m_group; } set { m_group = value; } }
 	public PanelState state { get { return m_state; } }
 	public bool interactable { 
 		set 

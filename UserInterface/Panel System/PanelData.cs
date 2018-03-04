@@ -44,6 +44,7 @@ public class PanelData
 	public PanelLimitOverride limitOverride = PanelLimitOverride.REPLACE;
 	public SiblingPosition siblingPosition = SiblingPosition.TOP;
 	public int siblingIndex = 0; 
+	public string panelGroup = ""; 
 	#endregion
 	// ********************************************************************
 
