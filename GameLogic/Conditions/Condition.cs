@@ -42,6 +42,8 @@ public class Condition : ScriptableObject
 	// ********************************************************************
 	[SerializeField]
 	private int m_quantity = 1;
+	[SerializeField]
+	private bool m_incrementalProgress = false;
 	#endregion
 	// ********************************************************************
 
@@ -51,7 +53,6 @@ public class Condition : ScriptableObject
 	#region Private Data Members 
 	// ********************************************************************
 	private Progress m_progress = null;
-	private bool m_incrementalProgress = false;
 	#endregion
 	// ********************************************************************
 
