@@ -61,7 +61,9 @@ public class ShowInInspectorIfProperyDrawer : PropertyDrawer
 		GUI.enabled = enabled;
 		if (enabled)
 		{
+			++EditorGUI.indentLevel;
 			EditorGUI.PropertyField(_position, _property, _label, true);
+			--EditorGUI.indentLevel;
 		}
 
 		GUI.enabled = wasEnabled;
