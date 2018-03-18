@@ -38,7 +38,8 @@ public class ButtonPlaySFX : MonoBehaviour
 	// ********************************************************************
 	public void PlayClick () 
 	{
-		AudioManager.Play(m_SFX,AudioCategory.EFFECTS);
+		AudioObject audio = AudioManager.Play(m_SFX,AudioCategory.EFFECTS);
+		audio.audioSource.ignoreListenerPause = true;
 	}
 	// ********************************************************************
 	#endregion
