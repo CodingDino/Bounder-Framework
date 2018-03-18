@@ -47,6 +47,7 @@ public class AudioObject : MonoBehaviour
 	private bool m_fading = false;
 	private bool m_hasPlayed = false;
 	private bool m_usingObjectPool = false;
+	private bool m_paused = true;
 	#endregion
 	// ********************************************************************
 
@@ -103,7 +104,7 @@ public class AudioObject : MonoBehaviour
 				m_hasPlayed = true;
 			}
 		}
-		else if (!m_audioSource.isPlaying && m_usingObjectPool)
+		else if (!m_audioSource.isPlaying && m_usingObjectPool && !AudioListener.pause && !m_paused)
 			gameObject.SetActive(false); // Triggers object pool to recycle
 	}
 	// ********************************************************************
@@ -111,6 +112,16 @@ public class AudioObject : MonoBehaviour
 	{
 		m_fading = false;
 		m_hasPlayed = false;
+	}
+	// ********************************************************************
+	void OnApplicationFocus(bool hasFocus)
+	{
+		m_paused = !hasFocus;
+	}
+	// ********************************************************************
+	void OnApplicationPause(bool pauseStatus)
+	{
+		m_paused = pauseStatus;
 	}
 	// ********************************************************************
 	#endregion
