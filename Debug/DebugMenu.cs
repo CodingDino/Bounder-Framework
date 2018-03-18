@@ -444,6 +444,7 @@ public class DebugMenu : Singleton<DebugMenu>
 		float oldTimeScale = m_timeScale;
 		m_timeScale = Time.timeScale;
 		Time.timeScale = oldTimeScale;
+		AudioListener.pause = Time.timeScale == 0;
 	}
 
 	public static void Show(bool _show)
@@ -457,6 +458,7 @@ public class DebugMenu : Singleton<DebugMenu>
 			instance.m_timeScale = Time.timeScale;
 			Time.timeScale = oldTimeScale;
 		}
+		AudioListener.pause = _show;
 	}
 	public static bool Shown()
 	{
