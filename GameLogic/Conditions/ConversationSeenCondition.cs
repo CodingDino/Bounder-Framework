@@ -20,7 +20,7 @@ using UnityEngine;
 // ************************************************************************ 
 #region Class: ConversationSeenCondition
 // ************************************************************************
-[CreateAssetMenu(fileName = "ConversationSeenCondition", menuName = "Conditions/ConversationSeenCondition", order = 1)]
+[CreateAssetMenu(fileName = "ConversationSeenCondition", menuName = "Bounder/Conditions/ConversationSeenCondition", order = 1)]
 public class ConversationSeenCondition : Condition 
 {
 	// ********************************************************************

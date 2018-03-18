@@ -20,7 +20,7 @@ using UnityEngine;
 // ************************************************************************ 
 #region Class: ConditionCollection
 // ************************************************************************
-[CreateAssetMenu(fileName = "ConditionCollection", menuName = "Conditions/ConditionCollection", order = 0)]
+[CreateAssetMenu(fileName = "ConditionCollection", menuName = "Bounder/Conditions/ConditionCollection", order = 0)]
 public class ConditionCollection : Condition 
 {
 	// ********************************************************************

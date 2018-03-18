@@ -20,7 +20,7 @@ using UnityEngine;
 // ************************************************************************ 
 #region Class: ChoiceMadeCondition
 // ************************************************************************
-[CreateAssetMenu(fileName = "ChoiceMadeCondition", menuName = "Conditions/ChoiceMadeCondition", order = 1)]
+[CreateAssetMenu(fileName = "ChoiceMadeCondition", menuName = "Bounder/Conditions/ChoiceMadeCondition", order = 1)]
 public class ChoiceMadeCondition : Condition 
 {
 	// ********************************************************************

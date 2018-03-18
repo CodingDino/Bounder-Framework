@@ -25,7 +25,7 @@ using System;
 // Class: DialogueConversation
 // ************************************************************************ 
 [System.Serializable]
-[CreateAssetMenu(fileName = "Data", menuName = "Dialogue/DialogueConversation", order = 1)]
+[CreateAssetMenu(fileName = "Data", menuName = "Bounder/Dialogue/DialogueConversation", order = 1)]
 public class DialogueConversation : ScriptableObject 
 {
 	// ********************************************************************

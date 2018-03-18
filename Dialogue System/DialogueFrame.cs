@@ -23,7 +23,7 @@ using UnityEditor;
 // Class: DialogueFrame
 // ************************************************************************ 
 [System.Serializable]
-[CreateAssetMenu(fileName = "Data", menuName = "Dialogue/DialogueFrame", order = 1)]
+[CreateAssetMenu(fileName = "Data", menuName = "Bounder/Dialogue/DialogueFrame", order = 1)]
 public class DialogueFrame : ScriptableObject 
 {
     public string id;

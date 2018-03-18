@@ -21,7 +21,7 @@ using BounderFramework;
 // ************************************************************************ 
 #region Class: LoadSceneCondition
 // ************************************************************************
-[CreateAssetMenu(fileName = "LoadSceneCondition", menuName = "Conditions/LoadSceneCondition", order = 1)]
+[CreateAssetMenu(fileName = "LoadSceneCondition", menuName = "Bounder/Conditions/LoadSceneCondition", order = 1)]
 public class LoadSceneCondition : Condition 
 {
 	// ********************************************************************

@@ -18,7 +18,7 @@ using UnityEngine;
 // Class: DialogueNPCSettings
 // ************************************************************************ 
 [System.Serializable]
-[CreateAssetMenu(fileName = "Data", menuName = "Dialogue/DialogueCharacter", order = 1)]
+[CreateAssetMenu(fileName = "Data", menuName = "Bounder/Dialogue/DialogueCharacter", order = 1)]
 public class DialogueCharacter : ScriptableObject 
 {
 	public string displayName;
