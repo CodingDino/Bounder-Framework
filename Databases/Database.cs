@@ -70,7 +70,7 @@ public class Database<T> : Singleton<Database<T>> where T : UnityEngine.Object
 	// ********************************************************************
 	#region Monobehavior Methods
 	// ********************************************************************
-	void Start()
+	protected void Start()
 	{
 		SetupPreloadedAssets();
 	}
