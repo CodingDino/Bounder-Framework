@@ -137,6 +137,7 @@ public class DebugMenu : Singleton<DebugMenu>
 	public static event DemoModeToggle OnDemoModeToggle;
 	public delegate void ResetGame();
 	public static event ResetGame OnResetGame;
+	public static void TriggerResetEvent() { if (OnResetGame != null) OnResetGame(); }
 
 
 	// ********************************************************************
