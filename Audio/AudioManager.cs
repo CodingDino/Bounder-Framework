@@ -114,6 +114,16 @@ public class AudioManager : Database<AudioClip>
 		}
 	}
 	// ********************************************************************
+	void OnEnable()
+	{
+		DebugMenu.OnResetGame += FadeOutAllAudio;
+	}
+	// ********************************************************************
+	void OnDisable()
+	{
+		DebugMenu.OnResetGame -= FadeOutAllAudio;
+	}
+	// ********************************************************************
 	#endregion
 	// ********************************************************************
 
@@ -227,6 +237,9 @@ public class AudioManager : Database<AudioClip>
 	public static List<AudioObject> GetActiveAudioForCategory(AudioCategory _category)
 	{
 		List<AudioObject> audioObjects = new List<AudioObject>();
+		if (!(instance as AudioManager).m_audioObjectPools.ContainsKey(_category))
+			return audioObjects;
+
 		List<ObjectPoolObject> objectPoolObjects = (instance as AudioManager).m_audioObjectPools[_category].activeObjects;
 		for (int i = 0; i < objectPoolObjects.Count; ++i)
 		{
@@ -251,6 +264,14 @@ public class AudioManager : Database<AudioClip>
 		for (int i = 0; i < audioObjects.Count; ++i)
 		{
 			audioObjects[i].Fade(false);
+		}
+	}
+	// ********************************************************************
+	public static void FadeOutAllAudio()
+	{
+		for (int i = 0; i < (int)AudioCategory.NUM; ++i)
+		{
+			FadeOutCategory((AudioCategory)i);
 		}
 	}
 	// ********************************************************************
