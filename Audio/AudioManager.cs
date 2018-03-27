@@ -177,8 +177,15 @@ public class AudioManager : Database<AudioClip>
 			AudioObject oldObject = (instance as AudioManager).m_audioObjectPools[_info.category].FirstActive.GetComponent<AudioObject>();
 
 			// If we're trying to replace it with the same thing, don't.
-			if (oldObject.audioClip.ToString() == _info.clip.ToString())
+			if (oldObject.audioClip == _info.clip)
+			{
+				if (oldObject.fading == true)
+				{
+					oldObject.StopFade();
+					oldObject.Fade(true); // turn it back on if it was fading out
+				}
 				return null;
+			}
 
 			oldObject.Fade(false);
 		}

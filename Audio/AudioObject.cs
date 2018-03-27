@@ -69,6 +69,10 @@ public class AudioObject : MonoBehaviour
 		get { return m_audioInfo; }
 		set { m_audioInfo = value; }
 	}
+	// ********************************************************************
+	public bool fading {
+		get { return m_fading; }
+	}
 	#endregion
 	// ********************************************************************
 
@@ -152,6 +156,12 @@ public class AudioObject : MonoBehaviour
 	public Coroutine Fade(bool _on) 
 	{
 		return StartCoroutine(Fade_CR(_on)); 
+	}
+	// ********************************************************************
+	public void StopFade() 
+	{
+		StopAllCoroutines();
+		m_fading = false;
 	}
 	// ********************************************************************
 	public void Stop() 
