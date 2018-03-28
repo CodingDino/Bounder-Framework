@@ -72,7 +72,7 @@ namespace Fiftytwo
             {
                 var mailAdress = new MailAddress( email );
 
-                return true;
+                return mailAdress != null;
             }
             catch( FormatException )
             {
