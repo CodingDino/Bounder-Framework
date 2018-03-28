@@ -68,7 +68,7 @@ public class InputManager : Singleton<InputManager>
 	#region Exposed Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private ControlScheme m_controlScheme;
+	private ControlScheme m_controlScheme = ControlScheme.MOUSE_KEYBOARD;
 	[SerializeField]
 	private Animator[] m_cursorPrefabs;
 	#endregion
@@ -106,6 +106,32 @@ public class InputManager : Singleton<InputManager>
 	// ********************************************************************
 	void Start()
 	{
+		// Determine control scheme
+		switch(SystemInfo.deviceType)
+		{
+		case DeviceType.Handheld:
+			m_controlScheme = ControlScheme.TOUCH;
+			break;
+		case DeviceType.Desktop:
+			if (Input.GetJoystickNames().Length > 0)
+			{
+				m_controlScheme = ControlScheme.CONTROLLER;
+			}
+			else if (Input.mousePresent)
+			{
+				m_controlScheme = ControlScheme.MOUSE_KEYBOARD;
+			}
+			break;
+		case DeviceType.Console:
+			m_controlScheme = ControlScheme.CONTROLLER;
+			break;
+		default:
+			Debug.LogError("Unrecognized device type - unable to determine proper control scheme");
+			break;
+		}
+		// TODO: Real time change between control schemes
+
+
 		if (m_cursorPrefabs != null && m_cursorPrefabs.Length > 0)
 		{
 			Cursor.visible = false;
@@ -123,6 +149,7 @@ public class InputManager : Singleton<InputManager>
 	{
 		if (controlScheme == ControlScheme.MOUSE_KEYBOARD && m_cursor != null)
 		{
+			m_cursor.gameObject.SetActive(true);
 			Vector2 currentScreenPoint = new Vector3(Input.mousePosition.x, 
 			                                             Input.mousePosition.y, 
 			                                             0);
@@ -135,6 +162,10 @@ public class InputManager : Singleton<InputManager>
 				m_cursor.SetBool("Click",Input.GetMouseButton(0));
 
 			Cursor.visible = false;
+		}
+		else
+		{
+			m_cursor.gameObject.SetActive(false);
 		}
 	}
 	// ********************************************************************
