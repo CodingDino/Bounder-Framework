@@ -47,7 +47,7 @@ public class AudioObject : MonoBehaviour
 	private bool m_fading = false;
 	private bool m_hasPlayed = false;
 	private bool m_usingObjectPool = false;
-	private bool m_paused = true;
+	private bool m_paused = false;
 	#endregion
 	// ********************************************************************
 
