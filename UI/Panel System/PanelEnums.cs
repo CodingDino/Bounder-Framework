@@ -26,10 +26,14 @@ public enum PanelState
 	HIDDEN 		= 1<<1,	// 2
 	SHOWING		= 1<<2,	// 4
 	SHOWN		= 1<<3,	// 8
+	CLOSED		= 1<<4, // 16
 	// ==========
 	VISIBLE 	= SHOWING | SHOWN | HIDING,
+	INVISIBLE 	= HIDDEN | CLOSED,
+	CLOSING 	= HIDING | HIDDEN | CLOSED,
 	TRANSITION 	= SHOWING | HIDING,
-	LEGAL		= HIDING | HIDDEN | SHOWING | SHOWN
+	ACTIVE		= HIDING | HIDDEN | SHOWING | SHOWN,
+	LEGAL		= HIDING | HIDDEN | SHOWING | SHOWN | CLOSED,
 }
 #endregion
 // ************************************************************************
