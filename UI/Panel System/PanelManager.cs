@@ -233,6 +233,16 @@ public class PanelManager : Singleton<PanelManager>
 		}
 	}
 	// ********************************************************************
+	public static PanelState GetStateForPanel(string _panelName)
+	{
+		for (int i = 0; i < instance.m_activePanels.Count; ++i)
+		{
+			if (instance.m_activePanels[i].name == _panelName)
+				return instance.m_activePanels[i].state;
+		}
+		return PanelState.CLOSED;
+	}
+	// ********************************************************************
 	#endregion
 	// ********************************************************************
 
