@@ -97,6 +97,14 @@ public class AudioObject : MonoBehaviour
 		}
 	}
 	// ********************************************************************
+	void OnDestroy()
+	{
+		if (!m_usingObjectPool)
+		{
+			AudioManager.RegisterAudioObject(this, false);
+		}
+	}
+	// ********************************************************************
 	void Update()
 	{
 		if (m_playOnEnable && !m_hasPlayed) 
