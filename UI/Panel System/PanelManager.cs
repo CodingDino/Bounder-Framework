@@ -176,9 +176,10 @@ public class PanelManager : Singleton<PanelManager>
 	// ********************************************************************
 	public static void CloseAllPanels()
 	{
-		for (int i = 0; i < instance.m_activePanels.Count; ++i)
+		List<Panel> activePanels = instance.m_activePanels.Copy();
+		for (int i = 0; i < activePanels.Count; ++i)
 		{
-			ClosePanel(instance.m_activePanels[i]);
+			ClosePanel(activePanels[i]);
 		}
 	}
 	// ********************************************************************
@@ -252,6 +253,7 @@ public class PanelManager : Singleton<PanelManager>
 	// ********************************************************************
 	private IEnumerator _ClosePanel(Panel _panel)
 	{
+		Debug.Log("Closing panel: "+_panel.name);
 		m_closingPanels.Add(_panel);
 		_panel.Hide();
 		while (_panel.IsVisible())
