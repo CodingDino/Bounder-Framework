@@ -71,6 +71,19 @@ public class InputManager : Singleton<InputManager>
 	private ControlScheme m_controlScheme = ControlScheme.MOUSE_KEYBOARD;
 	[SerializeField]
 	private Animator[] m_cursorPrefabs;
+	[SerializeField]
+	private bool m_shouldTimeOut = false;
+	[SerializeField]
+	[ShowInInspectorIf("m_shouldTimeOut")]
+	private Panel m_quitPanelPrefab;
+	[SerializeField]
+	[ShowInInspectorIf("m_shouldTimeOut")]
+	private float m_secondsToDemoExitPopup = 100;
+	[SerializeField]
+	[ShowInInspectorIf("m_shouldTimeOut")]
+	private float m_secondsToDemoTimeOut = 500;
+	[SerializeField]
+	private List<string> m_excludedScenesForTimeOut = new List<string>();
 	#endregion
 	// ********************************************************************
 
@@ -81,6 +94,8 @@ public class InputManager : Singleton<InputManager>
 	private Dictionary<string, Animator> m_cursorMap = new Dictionary<string,Animator>();
 	private Animator m_cursor;
 	private string m_defaultCursor;
+	private Vector3 m_mousePositionLastFrame;
+	private float m_lastInputDetected;
 	#endregion
 	// ********************************************************************
 
@@ -177,6 +192,51 @@ public class InputManager : Singleton<InputManager>
 	void OnDisable()
 	{
 		Events.RemoveListener<ChangeCursorEvent>(OnChangeCursorEvent);
+	}
+	// ********************************************************************
+	void Update()
+	{
+
+		switch (InputManager.controlScheme)
+		{
+		case ControlScheme.MOUSE_KEYBOARD:
+			if(Input.anyKey || Input.GetMouseButton(0) || Input.GetMouseButton(0) || Input.mousePosition != m_mousePositionLastFrame)
+			{
+				m_lastInputDetected = Time.realtimeSinceStartup;
+			}
+			m_mousePositionLastFrame = Input.mousePosition;
+			break;
+		case ControlScheme.CONTROLLER:
+			if (Input.anyKey) // TODO: handle joystick axis
+			{
+				m_lastInputDetected = Time.realtimeSinceStartup;
+			}
+			break;
+		case ControlScheme.TOUCH:
+			if(Input.touchCount > 0)
+			{
+				m_lastInputDetected = Time.realtimeSinceStartup;
+			}
+			break;
+		default:
+			break;
+		}
+
+		string currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+
+		if (m_shouldTimeOut && !m_excludedScenesForTimeOut.Contains(currentSceneName))
+		{
+			if (Time.realtimeSinceStartup >= m_lastInputDetected + m_secondsToDemoExitPopup && PanelManager.GetStateForPanel(m_quitPanelPrefab.name) == PanelState.CLOSED)
+			{
+				PanelManager.OpenPanel(m_quitPanelPrefab);
+			}
+			if (Time.realtimeSinceStartup >= m_lastInputDetected + m_secondsToDemoTimeOut)
+			{
+				PanelManager.ClosePanel(m_quitPanelPrefab.name);
+				DebugMenu.TriggerResetEvent();
+				LoadingSceneManager.LoadScene(0); // Load title
+			}
+		}
 	}
 	// ********************************************************************
 	#endregion
