@@ -140,7 +140,7 @@ public class DialoguePanel : Panel
 		{
 			LogManager.Log("DialoguePanel _Initialise with conversation "+castData.conversation.name, 
 			           LogCategory.UI, 
-			           LogSeverity.WARNING, 
+			           LogSeverity.LOG, 
 			           "Dialogue", 
 			           gameObject);
 			m_currentConversation = castData.conversation;
@@ -165,7 +165,7 @@ public class DialoguePanel : Panel
 	{
 		LogManager.Log("DialoguePanel _ChangeState new state = "+_newState, 
 		                   LogCategory.UI, 
-		                   LogSeverity.WARNING, 
+		               LogSeverity.LOG, 
 		                   "Dialogue", 
 		                   gameObject);
 		if (_newState == PanelState.SHOWN)
@@ -246,7 +246,7 @@ public class DialoguePanel : Panel
 		
 		LogManager.Log("DialoguePanel: Starting conversation "+m_currentConversation.name, 
 		               LogCategory.UI, 
-		               LogSeverity.WARNING, 
+		               LogSeverity.LOG, 
 		               "Dialogue", 
 		               gameObject);
 
@@ -268,7 +268,7 @@ public class DialoguePanel : Panel
 	{
 		LogManager.Log("DialoguePanel: Showing Frame "+m_currentFrame, 
 		               LogCategory.UI, 
-		               LogSeverity.WARNING, 
+		               LogSeverity.LOG, 
 		               "Dialogue", 
 		               gameObject);
 
@@ -316,7 +316,7 @@ public class DialoguePanel : Panel
 	{
 		LogManager.Log("DialoguePanel: ChangePortraits to "+_portrait.name, 
 		               LogCategory.UI, 
-		               LogSeverity.WARNING, 
+		               LogSeverity.LOG, 
 		               "Dialogue", 
 		               gameObject);
 		
@@ -355,7 +355,7 @@ public class DialoguePanel : Panel
 
 		LogManager.Log("DialoguePanel: DisplaySection "+m_currentSection.text, 
 		               LogCategory.UI, 
-		               LogSeverity.WARNING, 
+		               LogSeverity.LOG, 
 		               "Dialogue", 
 		               gameObject);
 
@@ -455,7 +455,7 @@ public class DialoguePanel : Panel
 				}
 				LogManager.Log("Choices found for frame " + m_currentFrame.id + ": " + validLinks.Count, 
 				                   LogCategory.UI, 
-				                   LogSeverity.WARNING, 
+				               LogSeverity.LOG, 
 				                   "Dialogue", 
 				                   gameObject);
                 for (int i = 0; i < validLinks.Count; ++i)
@@ -464,7 +464,7 @@ public class DialoguePanel : Panel
 					DialogueLink link = m_currentFrame.links[index];
 					LogManager.Log("Creating button for "+index+" link frame: " + link.linkedFrame.name, 
 					           LogCategory.UI, 
-					           LogSeverity.WARNING, 
+					               LogSeverity.LOG, 
 					           "Dialogue", 
 					           gameObject);
                     GameObject choiceButton = GameObject.Instantiate(m_choiceButtonPrototype) as GameObject;
@@ -480,7 +480,7 @@ public class DialoguePanel : Panel
 			{
 				LogManager.Log("DialoguePanel: Setting m_waitingForNextFrame = true for "+m_currentFrame, 
 				       LogCategory.UI, 
-				       LogSeverity.WARNING, 
+				               LogSeverity.LOG, 
 				       "Dialogue", 
 				       gameObject);
                 m_waitingForNextFrame = true;
@@ -506,7 +506,7 @@ public class DialoguePanel : Panel
 		}
 		LogManager.Log("DialoguePanel: MakeChoice "+_link.linkedFrame.name, 
 		                       LogCategory.UI, 
-		                       LogSeverity.WARNING, 
+		               LogSeverity.LOG, 
 		                       "Dialogue", 
 		                       gameObject);
 		if (OnChoiceMade != null)
@@ -518,7 +518,7 @@ public class DialoguePanel : Panel
 	{
 		LogManager.Log("DialoguePanel: FollowLink "+_linkedFrame.name, 
 		               LogCategory.UI, 
-		               LogSeverity.WARNING, 
+		               LogSeverity.LOG, 
 		               "Dialogue", 
 		               gameObject);
 
