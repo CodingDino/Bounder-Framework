@@ -124,11 +124,8 @@ public class MessagePanel : Panel
 		if (m_positiveCallback != null)
 		{
 			m_positiveCallback();
-		}	
-		else
-		{
-			Close(); // close this panel
 		}
+		Close(); // close this panel
 	}
 	// ********************************************************************
 	public void NegativePressed()
@@ -137,10 +134,7 @@ public class MessagePanel : Panel
 		{
 			m_negativeCallback();
 		}
-		else
-		{
-			Close(); // close this panel
-		}
+		Close(); // close this panel
 	}
 	// ********************************************************************
 	#endregion
