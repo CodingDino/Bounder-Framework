@@ -1,9 +1,9 @@
 ﻿// ************************************************************************ 
-// File Name:   EnableComponentOnAnimationEvent.cs 
-// Purpose:    	Enable a component on animation event
+// File Name:   OrphanOnRaisedAnimationEvent.cs 
+// Purpose:    	Separates object from parent on event
 // Project:		Framework
 // Author:      Sarah Herzog  
-// Copyright: 	2017 Bounder Games
+// Copyright: 	2018 Bounder Games
 // ************************************************************************ 
 
 
@@ -19,37 +19,15 @@ using BounderFramework;
 
 
 // ************************************************************************ 
-#region Class: EnableComponentOnAnimationEvent
+#region Class: OrphanOnRaisedAnimationEvent
 // ************************************************************************
-public class EnableComponentOnAnimationEvent : MonoBehaviour 
+public class OrphanOnRaisedAnimationEvent : MonoBehaviour 
 {
-	// ********************************************************************
-	#region Class: ComponentData
-	// ********************************************************************
-	[System.Serializable]
-	private class ComponentData
-	{
-		public string id = "";
-		public MonoBehaviour component = null;
-		public bool enable = true;
-	}
-	#endregion
-	// ********************************************************************
-
-
 	// ********************************************************************
 	#region Exposed Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private List<ComponentData> m_components = new List<ComponentData>();
-	#endregion
-	// ********************************************************************
-
-
-	// ********************************************************************
-	#region Private Data Members 
-	// ********************************************************************
-	private Dictionary<string,ComponentData> m_componentMap = new Dictionary<string, ComponentData>();
+	private string m_id;
 	#endregion
 	// ********************************************************************
 
@@ -57,16 +35,14 @@ public class EnableComponentOnAnimationEvent : MonoBehaviour
 	// ********************************************************************
 	#region MonoBehaviour Methods
 	// ********************************************************************
-	void Awake()
+	void OnEnable()
 	{
-		for (int i = 0; i < m_components.Count; ++i)
-		{
-			ComponentData data = m_components[i];
-			if (m_componentMap.ContainsKey(data.id))
-				Debug.LogError("Duplicate ID found: "+data.id);
-			else
-				m_componentMap[data.id] = data;
-		}
+		Events.AddListener<AnimationEventEmpty>(Orphan);
+	}
+	// ********************************************************************
+	void OnDisable()
+	{
+		Events.RemoveListener<AnimationEventEmpty>(Orphan);
 	}
 	// ********************************************************************
 	#endregion
@@ -76,10 +52,12 @@ public class EnableComponentOnAnimationEvent : MonoBehaviour
 	// ********************************************************************
 	#region Private Methods 
 	// ********************************************************************
-	private void EnableComponent (string _id) 
+	private void Orphan (AnimationEventEmpty _event) 
 	{
-		ComponentData data = m_componentMap[_id];
-		data.component.enabled = data.enable;
+		if (_event.id == m_id)
+		{
+			transform.SetParent(null, true);
+		}
 	}
 	// ********************************************************************
 	#endregion

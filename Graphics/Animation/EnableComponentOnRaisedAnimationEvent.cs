@@ -1,9 +1,9 @@
 ﻿// ************************************************************************ 
-// File Name:   EnableComponentOnAnimationEvent.cs 
+// File Name:   EnableComponentOnRaisedAnimationEvent.cs 
 // Purpose:    	Enable a component on animation event
 // Project:		Framework
 // Author:      Sarah Herzog  
-// Copyright: 	2017 Bounder Games
+// Copyright: 	2018 Bounder Games
 // ************************************************************************ 
 
 
@@ -19,9 +19,9 @@ using BounderFramework;
 
 
 // ************************************************************************ 
-#region Class: EnableComponentOnAnimationEvent
+#region Class: EnableComponentOnRaisedAnimationEvent
 // ************************************************************************
-public class EnableComponentOnAnimationEvent : MonoBehaviour 
+public class EnableComponentOnRaisedAnimationEvent : MonoBehaviour 
 {
 	// ********************************************************************
 	#region Class: ComponentData
@@ -69,6 +69,16 @@ public class EnableComponentOnAnimationEvent : MonoBehaviour
 		}
 	}
 	// ********************************************************************
+	void OnEnable()
+	{
+		Events.AddListener<AnimationEventEmpty>(EnableComponent);
+	}
+	// ********************************************************************
+	void OnDisable()
+	{
+		Events.RemoveListener<AnimationEventEmpty>(EnableComponent);
+	}
+	// ********************************************************************
 	#endregion
 	// ********************************************************************
 
@@ -76,10 +86,13 @@ public class EnableComponentOnAnimationEvent : MonoBehaviour
 	// ********************************************************************
 	#region Private Methods 
 	// ********************************************************************
-	private void EnableComponent (string _id) 
+	private void EnableComponent (AnimationEventEmpty _event) 
 	{
-		ComponentData data = m_componentMap[_id];
-		data.component.enabled = data.enable;
+		if (m_componentMap.ContainsKey(_event.id))
+		{
+			ComponentData data = m_componentMap[_event.id];
+			data.component.enabled = data.enable;
+		}
 	}
 	// ********************************************************************
 	#endregion
