@@ -28,7 +28,16 @@ public class MoveToTarget : MonoBehaviour {
 	[SerializeField]
 	private bool m_useQueue;
 	[SerializeField]
+	private bool m_useSeparateEasing = false;
+	[SerializeField]
+	[ShowInInspectorIf("m_useSeparateEasing",false)]
 	private EasingFunction m_easingFunc;
+	[SerializeField]
+	[ShowInInspectorIf("m_useSeparateEasing",true)]
+	private EasingFunction m_easingFuncX;
+	[SerializeField]
+	[ShowInInspectorIf("m_useSeparateEasing",true)]
+	private EasingFunction m_easingFuncY;
 	[SerializeField]
 	private float m_duration = 0;
 	[SerializeField]
@@ -55,7 +64,10 @@ public class MoveToTarget : MonoBehaviour {
 	public bool hasTarget { get { return m_moving; } }
 	public bool isMoving { get { return m_moving; } }
 	public float duration { set { m_duration = value; }}
-	public float speed { set { m_speed = value; }}
+	public float speed { get {return m_speed;} set { m_speed = value; }}
+	public EasingFunction easingFunc { set { m_easingFunc = value; }}
+	public EasingFunction easingFuncX { set { m_easingFuncX = value; }}
+	public EasingFunction easingFuncY { set { m_easingFuncY = value; }}
 
 
 	// ********************************************************************
@@ -118,6 +130,11 @@ public class MoveToTarget : MonoBehaviour {
 	// ********************************************************************
 	IEnumerator Move() 
 	{
+		if (!m_useSeparateEasing)
+		{
+			m_easingFuncX = m_easingFunc;
+			m_easingFuncX = m_easingFunc;
+		}
 		if (m_transform == null)
 			m_transform = transform;
 		m_moving = true;
@@ -135,14 +152,21 @@ public class MoveToTarget : MonoBehaviour {
 			}
 			else
 			{
-				float mult = Easing.GetFunc(m_easingFunc)(currentTime,
-				                                          0,
-				                                          1,
-				                                          m_currentDuration);
-				m_transform.position = m_originPoint + m_diff * mult;
+				float multX = Easing.GetFunc(m_easingFuncX)(currentTime,
+				                                            0,
+				                                            1,
+				                                            m_currentDuration);
+				float multY = Easing.GetFunc(m_easingFuncY)(currentTime,
+				                                            0,
+				                                            1,
+				                                            m_currentDuration);
+				Vector3 position = m_transform.position;
+				position.x = m_originPoint.x + m_diff.x * multX;
+				position.y = m_originPoint.y + m_diff.y * multY;
+				m_transform.position = position;
 			}
 
-			yield return 1;
+			yield return null;
 		}
 
 	}
