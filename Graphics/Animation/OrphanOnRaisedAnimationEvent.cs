@@ -37,12 +37,12 @@ public class OrphanOnRaisedAnimationEvent : MonoBehaviour
 	// ********************************************************************
 	void OnEnable()
 	{
-		Events.AddListener<AnimationEventEmpty>(Orphan);
+		Events.AddListener<RaisedAnimationEvent>(Orphan);
 	}
 	// ********************************************************************
 	void OnDisable()
 	{
-		Events.RemoveListener<AnimationEventEmpty>(Orphan);
+		Events.RemoveListener<RaisedAnimationEvent>(Orphan);
 	}
 	// ********************************************************************
 	#endregion
@@ -52,7 +52,7 @@ public class OrphanOnRaisedAnimationEvent : MonoBehaviour
 	// ********************************************************************
 	#region Private Methods 
 	// ********************************************************************
-	private void Orphan (AnimationEventEmpty _event) 
+	private void Orphan (RaisedAnimationEvent _event) 
 	{
 		if (_event.id == m_id)
 		{

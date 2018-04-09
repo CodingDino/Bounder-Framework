@@ -21,27 +21,33 @@ using UnityEngine;
 // ************************************************************************ 
 #region Class: Animation Events
 // ************************************************************************
-public class AnimationEventEmpty : GameEvent
+[System.Serializable]
+public class RaisedAnimationEvent : GameEvent
 {
 	public string id;
-}
-// ************************************************************************
-public class AnimationEventString : GameEvent
-{
-	public string id;
-	public string value;
-}
-// ************************************************************************
-public class AnimationEventInt : GameEvent
-{
-	public string id;
-	public int value;
-}
-// ************************************************************************
-public class AnimationEventFloat : GameEvent
-{
-	public string id;
-	public float value;
+	public string valueString;
+	public int valueInt;
+	public float valueFloat;
+
+	public RaisedAnimationEvent(string _id)
+	{
+		id = _id;
+	}
+	public RaisedAnimationEvent(string _id, string _value)
+	{
+		id = _id;
+		valueString = _value;
+	}
+	public RaisedAnimationEvent(string _id, int _value)
+	{
+		id = _id;
+		valueInt = _value;
+	}
+	public RaisedAnimationEvent(string _id, float _value)
+	{
+		id = _id;
+		valueFloat = _value;
+	}
 }
 // ************************************************************************
 #endregion
@@ -57,7 +63,7 @@ public class RaiseAnimationEvent : MonoBehaviour
 	#region Exposed Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private string m_id;
+	private RaisedAnimationEvent[] m_events;
 	#endregion
 	// ********************************************************************
 
@@ -65,35 +71,16 @@ public class RaiseAnimationEvent : MonoBehaviour
 	// ********************************************************************
 	#region Private Methods 
 	// ********************************************************************
-	private void Callback () 
+	private void Callback (string _id) 
 	{
-		AnimationEventEmpty newEvent = new AnimationEventEmpty();
-		newEvent.id = m_id;
-		Events.Raise(newEvent);
-	}
-	// ********************************************************************
-	private void StringCallback (string _value) 
-	{
-		AnimationEventString newEvent = new AnimationEventString();
-		newEvent.id = m_id;
-		newEvent.value = _value;
-		Events.Raise(newEvent);
-	}
-	// ********************************************************************
-	private void IntCallback (int _value) 
-	{
-		AnimationEventInt newEvent = new AnimationEventInt();
-		newEvent.id = m_id;
-		newEvent.value = _value;
-		Events.Raise(newEvent);
-	}
-	// ********************************************************************
-	private void FloatCallback (float _value) 
-	{
-		AnimationEventFloat newEvent = new AnimationEventFloat();
-		newEvent.id = m_id;
-		newEvent.value = _value;
-		Events.Raise(newEvent);
+		for (int i = 0; i < m_events.Length; ++i)
+		{
+			if (m_events[i].id == _id)
+			{
+				Events.Raise(m_events[i]);
+				break;
+			}
+		}
 	}
 	// ********************************************************************
 	#endregion

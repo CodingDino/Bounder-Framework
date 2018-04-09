@@ -71,12 +71,12 @@ public class EnableComponentOnRaisedAnimationEvent : MonoBehaviour
 	// ********************************************************************
 	void OnEnable()
 	{
-		Events.AddListener<AnimationEventEmpty>(EnableComponent);
+		Events.AddListener<RaisedAnimationEvent>(EnableComponent);
 	}
 	// ********************************************************************
 	void OnDisable()
 	{
-		Events.RemoveListener<AnimationEventEmpty>(EnableComponent);
+		Events.RemoveListener<RaisedAnimationEvent>(EnableComponent);
 	}
 	// ********************************************************************
 	#endregion
@@ -86,7 +86,7 @@ public class EnableComponentOnRaisedAnimationEvent : MonoBehaviour
 	// ********************************************************************
 	#region Private Methods 
 	// ********************************************************************
-	private void EnableComponent (AnimationEventEmpty _event) 
+	private void EnableComponent (RaisedAnimationEvent _event) 
 	{
 		if (m_componentMap.ContainsKey(_event.id))
 		{
