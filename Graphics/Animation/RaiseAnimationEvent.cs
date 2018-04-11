@@ -78,9 +78,11 @@ public class RaiseAnimationEvent : MonoBehaviour
 			if (m_events[i].id == _id)
 			{
 				Events.Raise(m_events[i]);
-				break;
+				return;
 			}
 		}
+
+		Debug.LogError("No animation event found for "+_id);
 	}
 	// ********************************************************************
 	#endregion
