@@ -101,12 +101,20 @@ public static class ListExtension
 		}
 	}
 	// ********************************************************************
+	public static void RemoveDuplicates<T>(this List<T> _self, T _toRemove)
+	{
+		bool removed = true;
+		while (removed)
+		{
+			removed = _self.Remove(_toRemove);
+		}
+	}
+	// ********************************************************************
 	public static void AddWithoutDuplicates<T>(this List<T> _self, List<T> _toAdd)
 	{
 		for (int i = 0; i < _toAdd.Count; ++i)
 		{
-			if (!_self.Contains(_toAdd[i]))
-				_self.Add(_toAdd[i]);
+			_self.AddWithoutDuplicates(_toAdd[i]);
 		}
 	}
 	// ********************************************************************
