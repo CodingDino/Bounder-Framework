@@ -19,7 +19,7 @@ using BounderFramework;
 // ************************************************************************ 
 // Class: DraggableTrainPart
 // ************************************************************************
-public class MoveToTarget : MonoBehaviour {
+public class MoveToTarget : MonoBehaviour, ObjectPoolResetResponder {
 
 	
 	// ********************************************************************
@@ -80,6 +80,25 @@ public class MoveToTarget : MonoBehaviour {
 
 
 	// ********************************************************************
+	#region ObjectPoolResetResponder Methods 
+	// ********************************************************************
+	public void Reset()
+	{
+		m_originPoint = Vector3.zero;
+		m_targetPoint = Vector3.zero;
+		m_diff = Vector3.zero;
+		m_targetQueue.Clear();
+		m_startTime = 0;
+		m_moving = false;
+		m_currentDuration = 0;
+		StopAllCoroutines();
+	}
+	// ********************************************************************
+	#endregion
+	// ********************************************************************
+
+
+	// ********************************************************************
 	// Function:	MoveTo()
 	// Purpose:		Set new target or add to queue
 	// ********************************************************************
@@ -133,7 +152,7 @@ public class MoveToTarget : MonoBehaviour {
 		if (!m_useSeparateEasing)
 		{
 			m_easingFuncX = m_easingFunc;
-			m_easingFuncX = m_easingFunc;
+			m_easingFuncY = m_easingFunc;
 		}
 		if (m_transform == null)
 			m_transform = transform;

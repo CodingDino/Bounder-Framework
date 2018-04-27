@@ -12,6 +12,7 @@
 // ************************************************************************ 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 
 // ************************************************************************ 
@@ -48,6 +49,11 @@ public class ObjectPoolObject : MonoBehaviour
 	void OnEnable () 
 	{
 		Reserve();
+		ObjectPoolResetResponder[] responders = GetComponentsInChildren<ObjectPoolResetResponder>();
+		for (int i = 0; i < responders.Length; ++i)
+		{
+			responders[i].Reset();
+		}
 	}
 	// ********************************************************************
 	void OnDisable () 
