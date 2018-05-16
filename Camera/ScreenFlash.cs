@@ -35,7 +35,7 @@ public class ScreenFlashEvent : GameEvent
 	// ********************************************************************
 	public ScreenFlashEvent (float _duration = 0.5f) 
 	{
-		duration = +duration;
+		duration = _duration;
 	}
 	// ********************************************************************
 	#endregion
