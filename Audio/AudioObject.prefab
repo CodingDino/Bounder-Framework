@@ -145,3 +145,4 @@ MonoBehaviour:
     loop: 0
     fadeDuration: 0
     parent: {fileID: 0}
+    allowedDuplicates: 3

@@ -181,6 +181,17 @@ public class AudioManager : Database<AudioClip>
 		if (_info.overrideChannelLimit == AudioChannelOverride.NONE && !ChannelAvailable(_info.category))
 			return null;
 
+		// Check duplicate limit
+		List<AudioObject> categoryAudio = GetActiveAudioForCategory(_info.category);
+		int numActiveClips = 0;
+		for (int i = 0; i < categoryAudio.Count; ++i)
+		{
+			if (categoryAudio[i].audioClip == _info.clip)
+				++numActiveClips;
+		}
+		if (_info.allowedDuplicates <= numActiveClips)
+			return null;
+		
 		bool replacing = !ChannelAvailable(_info.category) && _info.overrideChannelLimit == AudioChannelOverride.REPLACE;
 		if (replacing)
 		{
@@ -250,6 +261,16 @@ public class AudioManager : Database<AudioClip>
 		}
 		audioObjects.AddRange( (instance as AudioManager).m_nonPooledObjects[_category]);
 		return audioObjects;
+	}
+	// ********************************************************************
+	public static void Stop(AudioInfo _audio)
+	{
+		List<AudioObject> audioObjects = AudioManager.GetActiveAudioForCategory(_audio.category);
+		for (int i = 0; i < audioObjects.Count; ++i)
+		{
+			if (audioObjects[i].audioClip == _audio.clip)
+				audioObjects[i].Stop();
+		}
 	}
 	// ********************************************************************
 	public static void StopCategory(AudioCategory _category)

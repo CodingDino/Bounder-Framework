@@ -41,6 +41,7 @@ public class AudioInfo : Archive
 	public bool loop = false;
 	public float fadeDuration = 0.0f;
 	public Transform parent = null;
+	public int allowedDuplicates = 3;
 	#endregion
 	// ********************************************************************
 
