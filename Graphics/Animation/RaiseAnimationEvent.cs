@@ -82,7 +82,7 @@ public class RaiseAnimationEvent : MonoBehaviour
 			}
 		}
 
-		Debug.LogError("No animation event found for "+_id);
+		Debug.LogError("No animation event found for id "+_id+" on objct "+name);
 	}
 	// ********************************************************************
 	#endregion
