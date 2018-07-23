@@ -79,7 +79,7 @@ public class SpawnOnAnimationEvent : MonoBehaviour
 		{
 			SpawnData spawn = m_objects[i];
 			if (m_spawnMap.ContainsKey(spawn.prefab.name))
-				Debug.LogError("Duplicate ID found: "+spawn.prefab.name);
+				Debug.LogWarning("Duplicate ID found: "+spawn.prefab.name);
 			else
 				m_spawnMap[spawn.prefab.name] = spawn;
 		}
@@ -96,7 +96,7 @@ public class SpawnOnAnimationEvent : MonoBehaviour
 	{
 		if (!m_spawnMap.ContainsKey(_id))
 		{
-			Debug.LogError("No data found for ID: "+_id);
+			Debug.LogWarning("No data found for ID: "+_id);
 			return;
 		}
 
