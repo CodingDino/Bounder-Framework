@@ -46,6 +46,23 @@ public static class VectorExtension
 		return _this;
 	}
 	// ********************************************************************
+	public static Vector2 Convolve(this Vector2 _this, Vector2 _other)
+	{
+		_this.x *= _other.x;
+		_this.y *= _other.y;
+
+		return _this;
+	}
+	// ********************************************************************
+	public static Vector3 Convolve(this Vector3 _this, Vector3 _other)
+	{
+		_this.x *= _other.x;
+		_this.y *= _other.y;
+		_this.z *= _other.z;
+
+		return _this;
+	}
+	// ********************************************************************
 	#endregion
 	// ********************************************************************
 
