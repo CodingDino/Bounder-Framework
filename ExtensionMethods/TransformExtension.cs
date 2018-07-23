@@ -86,6 +86,14 @@ public static class TransformExtension
 		return (_trans.rotation*_relativeTo).normalized;
 	}
 	// ********************************************************************
+	public static void SetGlobalScale (this Transform _transform, Vector3 _globalScale)
+	{
+		_transform.localScale = Vector3.one;
+		_transform.localScale = new Vector3 (_globalScale.x/_transform.lossyScale.x, 
+		                                     _globalScale.y/_transform.lossyScale.y, 
+		                                     _globalScale.z/_transform.lossyScale.z);
+	}
+	// ********************************************************************
 	#endregion
 	// ********************************************************************
 
