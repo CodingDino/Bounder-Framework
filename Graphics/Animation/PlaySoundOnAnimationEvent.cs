@@ -52,7 +52,7 @@ public class PlaySoundOnAnimationEvent : MonoBehaviour
 			AudioInfo sound = m_audioInfo[i];
 			string id = sound.GetID();
 			if (m_soundMap.ContainsKey(id))
-				Debug.LogError("Duplicate ID found: "+id);
+				Debug.LogWarning("Duplicate ID found: "+id);
 			else
 				m_soundMap[id] = sound;
 		}
@@ -69,7 +69,7 @@ public class PlaySoundOnAnimationEvent : MonoBehaviour
 	{
 		if (!m_soundMap.ContainsKey(_id))
 		{
-			Debug.LogError("No data found for ID: "+_id);
+			Debug.LogWarning("No data found for ID: "+_id);
 			return;
 		}
 
@@ -83,7 +83,7 @@ public class PlaySoundOnAnimationEvent : MonoBehaviour
 	{
 		if (!m_soundMap.ContainsKey(_id))
 		{
-			Debug.LogError("No data found for ID: "+_id);
+			Debug.LogWarning("No data found for ID: "+_id);
 			return;
 		}
 
