@@ -189,7 +189,7 @@ public class AudioManager : Database<AudioClip>
 			if (categoryAudio[i].audioClip == _info.clip)
 				++numActiveClips;
 		}
-		if (_info.allowedDuplicates <= numActiveClips)
+		if (_info.allowedDuplicates != 0 && _info.allowedDuplicates <= numActiveClips)
 			return null;
 		
 		bool replacing = !ChannelAvailable(_info.category) && _info.overrideChannelLimit == AudioChannelOverride.REPLACE;
