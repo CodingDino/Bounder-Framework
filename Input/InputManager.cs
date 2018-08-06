@@ -15,6 +15,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using BounderFramework;
+using Rewired;
 #endregion
 // ************************************************************************
 
@@ -28,8 +29,8 @@ public enum ControlScheme
 	NONE 			= 0,
 	TOUCH			= 1 << 0,
 	MOUSE_KEYBOARD	= 1 << 1,
-	CONTROLLER		= 1 << 2,
-	ALL				= TOUCH | MOUSE_KEYBOARD | CONTROLLER
+	GAMEPAD			= 1 << 2,
+	ALL				= TOUCH | MOUSE_KEYBOARD | GAMEPAD
 }
 // ************************************************************************
 #endregion
@@ -105,7 +106,25 @@ public class InputManager : Singleton<InputManager>
 	// ********************************************************************
 	public static ControlScheme controlScheme 
 	{ 
-		get { return instance.m_controlScheme; } 
+		get { 
+			ControllerType lastUsed = ReInput.controllers.GetLastActiveControllerType();
+
+			// Touch
+			if (SystemInfo.deviceType == DeviceType.Handheld)
+				return ControlScheme.TOUCH;
+
+			// Mouse and keyboard
+			if (lastUsed == ControllerType.Mouse || lastUsed == ControllerType.Keyboard)
+				return ControlScheme.MOUSE_KEYBOARD;
+
+			// Gamepad
+			if (lastUsed == ControllerType.Joystick)
+				return ControlScheme.GAMEPAD;
+
+			// Unknown control scheme
+			return ControlScheme.NONE;
+			return instance.m_controlScheme;
+		} 
 		set { instance.m_controlScheme = value; } 
 	}
 	public static string cursor
@@ -121,32 +140,6 @@ public class InputManager : Singleton<InputManager>
 	// ********************************************************************
 	void Start()
 	{
-		// Determine control scheme
-		switch(SystemInfo.deviceType)
-		{
-		case DeviceType.Handheld:
-			m_controlScheme = ControlScheme.TOUCH;
-			break;
-		case DeviceType.Desktop:
-			if (Input.GetJoystickNames().Length > 0)
-			{
-				m_controlScheme = ControlScheme.CONTROLLER;
-			}
-			else if (Input.mousePresent)
-			{
-				m_controlScheme = ControlScheme.MOUSE_KEYBOARD;
-			}
-			break;
-		case DeviceType.Console:
-			m_controlScheme = ControlScheme.CONTROLLER;
-			break;
-		default:
-			Debug.LogError("Unrecognized device type - unable to determine proper control scheme");
-			break;
-		}
-		// TODO: Real time change between control schemes
-
-
 		if (m_cursorPrefabs != null && m_cursorPrefabs.Length > 0)
 		{
 			Cursor.visible = false;
@@ -156,13 +149,13 @@ public class InputManager : Singleton<InputManager>
 			}
 			m_defaultCursor = m_cursorPrefabs[0].name;
 
-			StartCoroutine(SwapCursors(m_defaultCursor));
+			SwapCursors(m_defaultCursor);
 		}
 	}
 	// ********************************************************************
 	void OnGUI () 
 	{
-		if (controlScheme == ControlScheme.MOUSE_KEYBOARD && m_cursor != null)
+		if (InputManager.controlScheme == ControlScheme.MOUSE_KEYBOARD && m_cursor != null)
 		{
 			m_cursor.gameObject.SetActive(true);
 			Vector2 currentScreenPoint = new Vector3(Input.mousePosition.x, 
@@ -196,34 +189,17 @@ public class InputManager : Singleton<InputManager>
 	// ********************************************************************
 	void Update()
 	{
+		// Check for changed input
+		bool anyButtonPressed = ReInput.controllers.GetAnyButton();
+		bool mousePositionChanged = Input.mousePosition != m_mousePositionLastFrame;
+		if (anyButtonPressed || mousePositionChanged)
+			m_lastInputDetected = Time.realtimeSinceStartup;
 
-		switch (InputManager.controlScheme)
-		{
-		case ControlScheme.MOUSE_KEYBOARD:
-			if(Input.anyKey || Input.GetMouseButton(0) || Input.GetMouseButton(0) || Input.mousePosition != m_mousePositionLastFrame)
-			{
-				m_lastInputDetected = Time.realtimeSinceStartup;
-			}
-			m_mousePositionLastFrame = Input.mousePosition;
-			break;
-		case ControlScheme.CONTROLLER:
-			if (Input.anyKey) // TODO: handle joystick axis
-			{
-				m_lastInputDetected = Time.realtimeSinceStartup;
-			}
-			break;
-		case ControlScheme.TOUCH:
-			if(Input.touchCount > 0)
-			{
-				m_lastInputDetected = Time.realtimeSinceStartup;
-			}
-			break;
-		default:
-			break;
-		}
+		// Record mouse position
+		m_mousePositionLastFrame = Input.mousePosition;
 
+		// Determine if time out has been reached
 		string currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-
 		if (m_shouldTimeOut && !m_excludedScenesForTimeOut.Contains(currentSceneName))
 		{
 			if (Time.realtimeSinceStartup >= m_lastInputDetected + m_secondsToDemoExitPopup && PanelManager.GetStateForPanel(m_quitPanelPrefab.name) == PanelState.CLOSED)
@@ -248,7 +224,8 @@ public class InputManager : Singleton<InputManager>
 	// ********************************************************************
 	private void OnChangeCursorEvent(ChangeCursorEvent _event)
 	{
-		if (controlScheme != ControlScheme.MOUSE_KEYBOARD)
+		ControllerType lastUsed = ReInput.controllers.GetLastActiveControllerType();
+		if (lastUsed != ControllerType.Mouse && lastUsed != ControllerType.Keyboard)
 			return;
 
 		if (_event.cursorID == cursor)
@@ -270,10 +247,10 @@ public class InputManager : Singleton<InputManager>
 				return;
 			}
 		}
-		StartCoroutine(SwapCursors(toSwap));
+		SwapCursors(toSwap);
 	}
 	// ********************************************************************
-	private IEnumerator SwapCursors(string _new)
+	private void SwapCursors(string _new)
 	{
 		Vector3 currentScreenPoint = new Vector3(Input.mousePosition.x, 
 		                                         Input.mousePosition.y, 
@@ -288,7 +265,7 @@ public class InputManager : Singleton<InputManager>
 			Destroy(m_cursor.gameObject);
 		m_cursor = pendingCursor;
 		m_cursor.SetBool("Active", true);
-		yield return null;
+		return;
 	}
 	// ********************************************************************
 	#endregion
