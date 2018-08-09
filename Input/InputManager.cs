@@ -60,6 +60,29 @@ public class ChangeCursorEvent : GameEvent
 
 
 // ************************************************************************ 
+#region Class: ControlSchemeChangedEvent
+// ************************************************************************
+public class ControlSchemeChangedEvent : GameEvent 
+{
+	public ControlScheme previousScheme = ControlScheme.NONE;
+	public ControlScheme newScheme = ControlScheme.NONE;
+
+	public ControlSchemeChangedEvent(ControlScheme _previousScheme, ControlScheme _newScheme)
+	{
+		previousScheme = _previousScheme;
+		newScheme = _newScheme;
+	}
+	public ControlSchemeChangedEvent(ControlScheme _newScheme = ControlScheme.NONE)
+	{
+		newScheme = _newScheme;
+	}
+}
+// ************************************************************************
+#endregion
+// ************************************************************************
+
+
+// ************************************************************************ 
 #region Class: InputManager
 // ************************************************************************
 public class InputManager : Singleton<InputManager> 
@@ -88,13 +111,14 @@ public class InputManager : Singleton<InputManager>
 
 
 	// ********************************************************************
-	#region Exposed Data Members 
+	#region Private Data Members 
 	// ********************************************************************
 	private Dictionary<string, Animator> m_cursorMap = new Dictionary<string,Animator>();
 	private Animator m_cursor;
 	private string m_defaultCursor;
 	private Vector3 m_mousePositionLastFrame;
 	private float m_lastInputDetected;
+	private ControlScheme m_lastControlScheme;
 	#endregion
 	// ********************************************************************
 
@@ -208,6 +232,14 @@ public class InputManager : Singleton<InputManager>
 				DebugMenu.TriggerResetEvent();
 				LoadingSceneManager.LoadScene(0); // Load title
 			}
+		}
+
+		// Determine if input type has changed
+		ControlScheme newScheme = controlScheme;
+		if (m_lastControlScheme != newScheme)
+		{
+			Events.Raise(new ControlSchemeChangedEvent(m_lastControlScheme, newScheme));
+			m_lastControlScheme = newScheme;
 		}
 	}
 	// ********************************************************************
