@@ -69,8 +69,6 @@ public class InputManager : Singleton<InputManager>
 	#region Exposed Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private ControlScheme m_controlScheme = ControlScheme.MOUSE_KEYBOARD;
-	[SerializeField]
 	private Animator[] m_cursorPrefabs;
 	[SerializeField]
 	private bool m_shouldTimeOut = false;
@@ -123,9 +121,7 @@ public class InputManager : Singleton<InputManager>
 
 			// Unknown control scheme
 			return ControlScheme.NONE;
-			return instance.m_controlScheme;
 		} 
-		set { instance.m_controlScheme = value; } 
 	}
 	public static string cursor
 	{
