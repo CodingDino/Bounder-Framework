@@ -127,7 +127,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 	// ********************************************************************
 	#region MonoBehaviour Methods
 	// ********************************************************************
-	void Start()
+	void Awake()
 	{
 		if (m_transform == null)
 			m_transform = transform;
