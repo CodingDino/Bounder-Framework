@@ -174,7 +174,7 @@ public class Panel : MonoBehaviour
 	// ********************************************************************
 	public void Close ()
 	{
-		PanelManager.ClosePanel(name);
+		PanelManager.ClosePanel(this);
 	}
 	// ********************************************************************
 	public IEnumerator CloseAfterDelay (float _delay)
