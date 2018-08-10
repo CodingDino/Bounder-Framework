@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using BounderFramework;
 #endregion
 // ************************************************************************
@@ -30,6 +31,14 @@ public class Panel : MonoBehaviour
 	// ********************************************************************
 	[SerializeField]
 	private string m_group = "";
+	[SerializeField]
+	private bool m_initOnStart = false;
+	[SerializeField]
+	private PanelState m_initialState = PanelState.HIDDEN;
+	[SerializeField]
+	private GameObject m_firstSelected = null;
+	[SerializeField]
+	private bool m_closeOnCancel = false;
 	#endregion
 	// ********************************************************************
 
@@ -72,8 +81,25 @@ public class Panel : MonoBehaviour
 				return false; 
 		} 
 	}
+	public bool closeOnCancel { get { return m_closeOnCancel; } }
 	#endregion
 	// ********************************************************************
+
+
+	// ********************************************************************
+	#region MonoBehaviour Methods 
+	// ********************************************************************
+	void Start ()  
+	{ 
+		if (m_initOnStart)
+		{
+			PanelManager.AddPanel(this);
+		}
+	}
+	// ********************************************************************
+	#endregion
+	// ********************************************************************
+
 
 
 	// ********************************************************************
@@ -94,10 +120,10 @@ public class Panel : MonoBehaviour
 		return PanelState.VISIBLE.Contains(m_state); 
 	}
 	// ********************************************************************
-	public void Initialise (PanelData _data)  
+	public void Initialise (PanelData _data = null)  
 	{ 
 		m_raycaster = GetComponent<GraphicRaycaster>();
-		PanelState startingState = _data != null ? _data.startingState : PanelState.HIDDEN;
+		PanelState startingState = _data != null ? _data.startingState : m_initialState;
 		ChangeState(startingState, true, true);
 		_Initialise(_data);
 	}
@@ -192,6 +218,13 @@ public class Panel : MonoBehaviour
 			GetComponent<Animator>().SetTrigger("InstantChange");
 		gameObject.SetActive(IsVisible());
 		interactable = m_state == PanelState.SHOWN;
+
+		// Set initial selected object
+		if (m_state == PanelState.SHOWN && m_firstSelected != null)
+		{
+			EventSystem.current.SetSelectedGameObject(m_firstSelected);
+		}
+
 		_ChangeState(_newState, oldState);
 		if (OnPanelStateChanged != null)
 			OnPanelStateChanged(name, _newState, oldState);

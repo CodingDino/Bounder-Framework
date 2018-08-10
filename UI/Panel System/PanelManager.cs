@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using BounderFramework;
+using Rewired;
 #endregion
 // ************************************************************************
 
@@ -29,6 +30,7 @@ public class PanelManager : Singleton<PanelManager>
 	private Dictionary<string, List<Panel>> m_groupStacks = new Dictionary<string, List<Panel>>();
 	private List<Panel> m_activePanels = new List<Panel>();
 	private List<Panel> m_closingPanels = new List<Panel>();
+	private IList<Player> m_players;
 	#endregion
 	// ********************************************************************
 
@@ -46,6 +48,29 @@ public class PanelManager : Singleton<PanelManager>
 
 	// ********************************************************************
 	#region MonoBehaviour Methods 
+	// ********************************************************************
+	void Start()
+	{
+		m_players = ReInput.players.GetPlayers();
+	}
+	// ********************************************************************
+	void Update()
+	{
+		int numPlayers = 1; // TODO: Update to support multiple player UI functions
+		for (int iPlayer = 0; iPlayer < numPlayers; ++iPlayer)
+		{
+			if(m_players[iPlayer].GetButtonDown("Cancel"))
+			{
+				// Attempt to close top level panel if it allows this
+				Panel topPanel = m_activePanels.Back();
+				if (topPanel != null && topPanel.closeOnCancel)
+				{
+					ClosePanel(topPanel);
+					break; // If multiple players are pressing cancel, don't process it twice.
+				}
+			}
+		}
+	}
 	// ********************************************************************
 	void OnEnable()
 	{
@@ -242,6 +267,39 @@ public class PanelManager : Singleton<PanelManager>
 				return instance.m_activePanels[i].state;
 		}
 		return PanelState.CLOSED;
+	}
+	// ********************************************************************
+	public static Panel AddPanel(Panel _panel)
+	{
+		string panelGroup = _panel.group;
+
+		bool atLimit = (   !panelGroup.NullOrEmpty() 
+		                &&  instance.m_groupStacks.ContainsKey(panelGroup)
+		                &&  instance.m_groupStacks[panelGroup].Count > 0 );
+
+		// Hide existing panel if we are replacing it
+		Panel hidingPanel = null;
+		if (atLimit)
+		{
+			hidingPanel = instance.m_groupStacks[panelGroup].Front();
+		}
+
+		// If we are allowed to show this new panel, do so
+		Panel newPanel = _panel;
+		newPanel.name = _panel.name;
+		newPanel.group = panelGroup;
+
+		// Set sibling position (if no data, gets left where created - on top)
+		newPanel.Initialise();
+		instance.m_activePanels.Add(newPanel);
+		if (!instance.m_groupStacks.ContainsKey(panelGroup))
+			instance.m_groupStacks[panelGroup] = new List<Panel>();
+
+		instance.m_groupStacks[panelGroup].AddAtFront(newPanel);
+		instance.StartCoroutine(instance._OpenPanel(newPanel,hidingPanel));
+
+		Debug.Log("Opening new panel: "+_panel.name);
+		return newPanel;
 	}
 	// ********************************************************************
 	#endregion
