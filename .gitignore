@@ -13,6 +13,7 @@ Builds/*
 !*.*.meta
 # Include: Text mesh pro files:
 !*TextMesh*
+!*.dll
  
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
