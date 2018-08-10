@@ -16,6 +16,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using BounderFramework;
+using Rewired;
+
 #endregion
 // ************************************************************************
 
@@ -110,6 +112,7 @@ public class DialoguePanel : Panel
 	private Animator[] m_characterAnimator = new Animator[2];
 	private string m_previousSections;
 	private string m_previousCursor;
+	private Player m_player;
 	#endregion
 	// ********************************************************************
 
@@ -147,6 +150,7 @@ public class DialoguePanel : Panel
 		}
 		m_previousCursor = InputManager.cursor;
 		Events.Raise(new ChangeCursorEvent("TalkingCursor"));
+		m_player = ReInput.players.GetPlayer(0);
 	}
 	// ********************************************************************
 	protected override void _Hide()
@@ -186,7 +190,7 @@ public class DialoguePanel : Panel
 		if (state != PanelState.SHOWN)
 			return;
 
-		if (Input.anyKeyDown || Input.GetMouseButtonDown(0))
+		if (m_player.GetAnyButtonDown())
         {
             if (m_waitingForNextFrame)
 			{
