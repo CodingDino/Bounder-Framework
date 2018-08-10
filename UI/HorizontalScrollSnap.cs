@@ -16,6 +16,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using BounderFramework;
+using Rewired;
 
 
 // ************************************************************************ 
@@ -55,14 +56,8 @@ public class HorizontalScrollSnap : MonoBehaviour
 	[Tooltip("How long it takes to scroll to a target.")]
 	private float m_lerpDuration = 0.25f;
 	[SerializeField]
-	[Tooltip("Use arrow keys to scroll")]
-	private bool m_UseArrowKeys = true;
-	[SerializeField]
-	[Tooltip("Use WASD keys to scroll")]
-	private bool m_UseWASD = true;
-	[SerializeField]
-	[Tooltip("Use scroll wheel to scroll")]
-	private bool m_UseScrollWheel = true;
+	[Tooltip("Horizontal scroll axis action")]
+	private string m_scrollAxis = "SelectH";
 	[SerializeField]
 	[Tooltip("What control schemes allow drag scrolling")]
 	private ControlScheme m_dragScrollControlScheme = ControlScheme.TOUCH;
@@ -88,6 +83,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 	private Vector2 m_touchStartPoint;
 	private Vector2 m_contentsStartPoint;
 	private int m_centerItem = 0;
+	private Player m_player;
 
 
 	// ********************************************************************
@@ -118,6 +114,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 	// ********************************************************************
 	void Start()
 	{
+		m_player = ReInput.players.GetPlayer(0);
 		InitializeScreens();
 	}
 
@@ -166,38 +163,13 @@ public class HorizontalScrollSnap : MonoBehaviour
 	// ********************************************************************
 	void LateUpdate()
 	{
-		if (m_UseArrowKeys)
+		if (!m_lerp && m_player.GetAxis(m_scrollAxis) < 0)
 		{
-			if (Input.GetKeyDown(KeyCode.LeftArrow))
-			{
-				PreviousScreen();
-			}
-			if (Input.GetKeyDown(KeyCode.RightArrow))
-			{
-				NextScreen();
-			}
+			PreviousScreen();
 		}
-
-		if (m_UseWASD)
+		if (!m_lerp && m_player.GetAxis(m_scrollAxis) > 0)
 		{
-			if (Input.GetKeyDown(KeyCode.A))
-			{
-				PreviousScreen();
-			}
-			if (Input.GetKeyDown(KeyCode.D))
-			{
-				NextScreen();
-			}
-		}
-
-		if (m_UseScrollWheel)
-		{
-			float scroll = Input.GetAxis("Mouse ScrollWheel");
-			int numScreens = Mathf.CeilToInt(scroll*10.0f);
-			if (numScreens != 0)
-			{
-				ChangeScreen(numScreens);
-			}
+			NextScreen();
 		}
 
 		if (m_lerp)
@@ -295,7 +267,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 
 		if (screenIndex == -1)
 		{
-			Debug.LogError("Failed to scroll to target - not found in screens");
+			Debug.LogWarning("Failed to scroll to target - not found in screens");
 			return;
 		}
 		Vector2 targetPos = m_screensContainer.localPosition;
