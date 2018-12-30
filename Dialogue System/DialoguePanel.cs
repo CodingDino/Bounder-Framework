@@ -471,9 +471,15 @@ public class DialoguePanel : Panel
 					               LogSeverity.LOG, 
 					           "Dialogue", 
 					           gameObject);
-                    GameObject choiceButton = GameObject.Instantiate(m_choiceButtonPrototype) as GameObject;
+					GameObject choiceButton = GameObject.Instantiate(m_choiceButtonPrototype) as GameObject;
                     choiceButton.transform.SetParent(m_choiceRoot.transform);
-                    choiceButton.GetComponentInChildren<Text>().text = link.text;
+
+					// Setup button
+					ButtonSetup setup = choiceButton.GetComponent<ButtonSetup>();
+					setup.SetText(link.text);
+					setup.SetIcon(link.icon);
+					if (link.animation)
+						setup.SetAnimation(link.animation);
 					AddListenerForChoice(choiceButton.transform.GetComponentInChildren<Button>(), link);
                     m_choices.Add(choiceButton.GetComponent<Animator>());
                 }

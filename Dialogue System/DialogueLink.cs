@@ -23,6 +23,8 @@ public class DialogueLink
 	public DialogueFrame linkedFrame;
 	public List<Condition> conditions = new List<Condition>();
     public string text;
+	public Sprite icon = null;
+	public RuntimeAnimatorController animation = null;
 	public bool saveChoice;
 
     public bool MeetsConditions()
