@@ -190,7 +190,7 @@ public class DialoguePanel : Panel
 		if (state != PanelState.SHOWN)
 			return;
 
-		if (m_player.GetAnyButtonDown())
+		if (m_player.GetButtonDown("Confirm"))
         {
             if (m_waitingForNextFrame)
 			{
