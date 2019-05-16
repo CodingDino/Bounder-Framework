@@ -79,7 +79,7 @@ public class ProfileManager : Singleton<ProfileManager> {
 		else
 		{
 			if (saveID == "")
-				saveID = profile.name;
+				saveID = "previous"; // so this can be reloaded in the debug menu at events if a crash happens
 			
 			string jsonString = PlayerPrefs.GetString(saveID);
 			Load(JsonUtility.FromJson<T>(jsonString), false);
