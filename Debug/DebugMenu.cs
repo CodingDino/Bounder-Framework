@@ -1,4 +1,6 @@
-﻿// ************************************************************************ 
+﻿#if UNITY_EDITOR || DEVELOPMENT_BUILD
+
+// ************************************************************************ 
 // File Name:   DebugMenu.cs 
 // Purpose:    	Basic debugging functionality
 // Project:		Framework
@@ -57,14 +59,36 @@ public class DebugMenu : Singleton<DebugMenu>
     // ********************************************************************
     // Exposed Data Members 
     // ********************************************************************
+    
+    [Header("Settings")]
+    [SerializeField]
+    private bool m_useRichText = true;
+    [SerializeField]
+    private string m_debugKey = "]";
+    [SerializeField]
+    private bool m_openWith4FingerTouch = true;
+    [SerializeField]
+    private float m_touchCooldown = 0.5f;
+    [SerializeField]
+    private int m_numLogsKept = 100;
+    [SerializeField]
+    private Text m_versionText;
+    [SerializeField]
+    private bool m_showVersionText = true;
+    [SerializeField]
+    private string m_versionNumber;
+    [SerializeField]
+    private bool m_demoMode = true;
+    [SerializeField]
+    private bool m_eventMode = true;
+
+    [Header("Elements")]
     [SerializeField]
     private GameObject m_visibleElements;
     [SerializeField]
     private Text m_consoleTextBox;
     [SerializeField]
     private Scrollbar m_scrollbar;
-    [SerializeField]
-    private bool m_useRichText = true;
     [SerializeField]
     private Image m_showErrorButton;
     [SerializeField]
@@ -74,25 +98,9 @@ public class DebugMenu : Singleton<DebugMenu>
     [SerializeField]
     private Image m_jumpToBottomButton;
     [SerializeField]
-    private string m_debugKey = "]";
-    [SerializeField]
-    private bool m_openWith4FingerTouch = true;
-    [SerializeField]
-    private float m_touchCooldown = 0.5f;
+    private Transform m_buttonGrid;
     [SerializeField]
     private GameObject m_buttonPrototype;
-    [SerializeField]
-	private Transform m_buttonGrid;
-	[SerializeField]
-	private int m_numLogsKept = 100;
-	[SerializeField]
-	private bool m_demoMode = true;
-	[SerializeField]
-	private Text m_versionText;
-	[SerializeField]
-	private bool m_showVersionText = true;
-	[SerializeField]
-	private string m_versionNumber;
 
 
     // ********************************************************************
@@ -108,13 +116,12 @@ public class DebugMenu : Singleton<DebugMenu>
     private List<GameObject> m_debugButtons = new List<GameObject>();
     private List<DebugButtonCallback> m_debugButtonCallbacks = new List<DebugButtonCallback>();
     private float m_last4FingerTouch = 0;
-	private GameObject m_demoButton;
 
 
-	// ********************************************************************
-	// Properties 
-	// ********************************************************************
-	public static bool demoMode 
+    // ********************************************************************
+    // Properties 
+    // ********************************************************************
+    public static bool demoMode 
 	{
 		get 
 		{ 
@@ -126,16 +133,31 @@ public class DebugMenu : Singleton<DebugMenu>
 				               "DebugMenu");
 			}
 			return instance != null ? instance.m_demoMode : false; 
-		} 
-	}
+		}
+    }
+    public static bool eventMode
+    {
+        get
+        {
+            if (instance == null)
+            {
+                LogManager.Log("Attempt to access property while uninitialised.",
+                               LogCategory.INPUT,
+                               LogSeverity.ERROR,
+                               "DebugMenu");
+            }
+            return instance != null ? instance.m_eventMode : false;
+        }
+    }
 
 
-	// ********************************************************************
-	// Delegates 
-	// ********************************************************************
-	public delegate void DemoModeToggle(bool _demoActive);
-	public static event DemoModeToggle OnDemoModeToggle;
-	public delegate void ResetGame();
+    // ********************************************************************
+    // Delegates 
+    // ********************************************************************
+    public delegate void ModeToggle(bool _modeActive);
+	public static event ModeToggle OnDemoModeToggle;
+    public static event ModeToggle OnEventModeToggle;
+    public delegate void ResetGame();
 	public static event ResetGame OnResetGame;
 	public static void TriggerResetEvent() { if (OnResetGame != null) OnResetGame(); }
 
@@ -146,18 +168,31 @@ public class DebugMenu : Singleton<DebugMenu>
 	void Start()
 	{
 		// Create demo button
-		m_demoButton = AddButton("demo", "Demo", DemoButtonPressed);
-		m_demoButton.GetComponent<Image>().color = m_demoMode ? Color.green : Color.red;
+		GameObject demoButton = AddButton("demo", "Demo Mode", DemoButtonPressed);
+        demoButton.GetComponent<Image>().color = m_demoMode ? Color.green : Color.red;
 
-		// TODO: Create reset button
-		AddButton("reset", "Reset", ResetButtonPressed);
+        // Create event button
+        GameObject eventButton = AddButton("event", "Event Mode", EventButtonPressed);
+        eventButton.GetComponent<Image>().color = m_eventMode ? Color.green : Color.red;
 
-		// Setup Version Text
-		m_versionText.text = "v" + m_versionNumber;
-		if (m_demoMode)
-			m_versionText.text += " DEMO";
-		m_versionText.enabled = m_showVersionText;
+
+        // TODO: Create reset button
+        AddButton("reset", "Reset", ResetButtonPressed);
+
+
+        SetupVersionText();
 	}
+
+
+    private void SetupVersionText()
+    {
+        m_versionText.text = "v" + m_versionNumber;
+        if (m_demoMode)
+            m_versionText.text += " DEMO";
+        if (m_eventMode)
+            m_versionText.text += " EVENT";
+        m_versionText.enabled = m_showVersionText;
+    }
 
 
 	// ********************************************************************
@@ -166,23 +201,38 @@ public class DebugMenu : Singleton<DebugMenu>
 	private void DemoButtonPressed(string _id, GameObject _button)
 	{
 		m_demoMode = !m_demoMode;
-		m_demoButton.GetComponent<Image>().color = m_demoMode ? Color.green : Color.red;
-		m_versionText.text = "v" + m_versionNumber;
-		if (m_demoMode)
-			m_versionText.text += " DEMO";
+        _button.GetComponent<Image>().color = m_demoMode ? Color.green : Color.red;
+        SetupVersionText();
 
-		// Perform game-specific actions on demo mode toggle
-		if (OnDemoModeToggle != null)
+        // Perform game-specific actions on demo mode toggle
+        if (OnDemoModeToggle != null)
 			OnDemoModeToggle(m_demoMode);
 
 		ResetButtonPressed(_id, _button);
-	}
+    }
 
 
-	// ********************************************************************
-	// Function:	ResetButtonPressed()
-	// ********************************************************************
-	private void ResetButtonPressed(string _id, GameObject _button)
+    // ********************************************************************
+    // Function:	EventButtonPressed()
+    // ********************************************************************
+    private void EventButtonPressed(string _id, GameObject _button)
+    {
+        m_eventMode = !m_eventMode;
+        _button.GetComponent<Image>().color = m_demoMode ? Color.green : Color.red;
+        SetupVersionText();
+
+        // Perform game-specific actions on demo mode toggle
+        if (OnEventModeToggle != null)
+            OnEventModeToggle(m_eventMode);
+
+        ResetButtonPressed(_id, _button);
+    }
+
+
+    // ********************************************************************
+    // Function:	ResetButtonPressed()
+    // ********************************************************************
+    private void ResetButtonPressed(string _id, GameObject _button)
 	{
 		// Reset to title screen
 		if (OnResetGame != null)
@@ -466,3 +516,5 @@ public class DebugMenu : Singleton<DebugMenu>
 		return instance.m_visibleElements.activeSelf;
 	}
 }
+
+#endif
