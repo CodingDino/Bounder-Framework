@@ -44,7 +44,7 @@ public static class ListExtension
 	public static T Random<T>(this List<T> _self)
 	{
 		if (_self.Count > 0)
-			return _self[Random.Range(0,_self.Count)];
+			return _self[UnityEngine.Random.Range(0,_self.Count)];
 		else
 			return default(T);
 	}
@@ -55,7 +55,7 @@ public static class ListExtension
 		while (n > 1)
 		{
 			--n;
-			int k = Random.Range(0,n+1);
+			int k = UnityEngine.Random.Range(0,n+1);
 			T swap = _self[k];
 			_self[k] = _self[n];
 			_self[n] = swap;
