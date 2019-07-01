@@ -76,24 +76,28 @@ public class PanelManager : Singleton<PanelManager>
 	{
 		if (s_instance != this)
 			return;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 		DebugMenu.OnResetGame += CloseAllPanels;
+#endif
 	}
 	// ********************************************************************
 	void OnDisable()
 	{
 		if (s_instance != this)
 			return;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 		DebugMenu.OnResetGame -= CloseAllPanels;
-	}
-	// ********************************************************************
-	#endregion
-	// ********************************************************************
+#endif
+    }
+    // ********************************************************************
+    #endregion
+    // ********************************************************************
 
 
-	// ********************************************************************
-	#region Public Methods 
-	// ********************************************************************
-	public static Panel OpenPanel (Panel _prefab, PanelData _data = null)
+    // ********************************************************************
+    #region Public Methods 
+    // ********************************************************************
+    public static Panel OpenPanel (Panel _prefab, PanelData _data = null)
 	{
 		if (_prefab == null)
 		{
@@ -302,12 +306,12 @@ public class PanelManager : Singleton<PanelManager>
 		return newPanel;
 	}
 	// ********************************************************************
-	#endregion
+#endregion
 	// ********************************************************************
 
 
 	// ********************************************************************
-	#region Private Methods 
+#region Private Methods 
 	// ********************************************************************
 	private IEnumerator _ClosePanel(Panel _panel)
 	{
@@ -350,7 +354,7 @@ public class PanelManager : Singleton<PanelManager>
 		_panel.Show();
 	}
 	// ********************************************************************
-	#endregion
+#endregion
 	// ********************************************************************
 
 }

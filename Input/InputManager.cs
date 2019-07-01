@@ -229,7 +229,9 @@ public class InputManager : Singleton<InputManager>
 			if (Time.realtimeSinceStartup >= m_lastInputDetected + m_secondsToDemoTimeOut)
 			{
 				PanelManager.ClosePanel(m_quitPanelPrefab.name);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 				DebugMenu.TriggerResetEvent();
+#endif
 				LoadingSceneManager.LoadScene(0); // Load title
 			}
 		}
@@ -243,12 +245,12 @@ public class InputManager : Singleton<InputManager>
 		}
 	}
 	// ********************************************************************
-	#endregion
+#endregion
 	// ********************************************************************
 
 
 	// ********************************************************************
-	#region Private Methods 
+#region Private Methods 
 	// ********************************************************************
 	private void OnChangeCursorEvent(ChangeCursorEvent _event)
 	{
@@ -296,7 +298,7 @@ public class InputManager : Singleton<InputManager>
 		return;
 	}
 	// ********************************************************************
-	#endregion
+#endregion
 	// ********************************************************************
 
 }

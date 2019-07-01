@@ -71,12 +71,14 @@ public class ProfileManager : Singleton<ProfileManager> {
 		Load<T>(saveID);
 	}
 	public static void Load<T>(string saveID = "") where T : PlayerProfile
-	{
+    {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 		if (saveID == "" && DebugMenu.demoMode)
 		{
 			Load(instance.m_demoProfile);
 		}
 		else
+#endif
 		{
 			if (saveID == "")
 				saveID = "previous"; // so this can be reloaded in the debug menu at events if a crash happens

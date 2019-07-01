@@ -115,21 +115,25 @@ public class AudioManager : Database<AudioClip>
 	}
 	// ********************************************************************
 	void OnEnable()
-	{
+    {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 		DebugMenu.OnResetGame += FadeOutAllAudio;
+#endif
 	}
 	// ********************************************************************
 	void OnDisable()
-	{
+    {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 		DebugMenu.OnResetGame -= FadeOutAllAudio;
+#endif
 	}
 	// ********************************************************************
-	#endregion
+#endregion
 	// ********************************************************************
 
 
 	// ********************************************************************
-	#region Public Methods
+#region Public Methods
 	// ********************************************************************
 	public static AudioCategorySettings GetAudioSettings(AudioCategory _category) 
 	{ 
@@ -299,7 +303,7 @@ public class AudioManager : Database<AudioClip>
 		}
 	}
 	// ********************************************************************
-	#endregion
+#endregion
 	// ********************************************************************
 }
 #endregion
