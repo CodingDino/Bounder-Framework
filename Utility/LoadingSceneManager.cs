@@ -16,7 +16,6 @@ using System.Collections;
 using System.Collections.Generic;
 using BounderFramework;
 using UnityEngine.SceneManagement;
-using AssetBundles;
 #endregion
 // ************************************************************************
 
@@ -63,10 +62,6 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 	// ********************************************************************
 	[SerializeField]
 	private string m_loadingScene = "";
-	[SerializeField]
-	private bool m_useAssetBundles = false;
-	[SerializeField]
-	private string m_loadingSceneBundle = "";
 	[SerializeField]
 	private FadeSprite m_blackness;
 	[SerializeField]
@@ -173,17 +168,9 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 			if (OnStateChanged != null) 
 				OnStateChanged(LoadingState.OPENING_LOADING_SCREEN, _newScene, oldScene);
 
-			// Load loading screen
-			if (m_useAssetBundles)
-			{
-				AssetBundleLoadOperation loadOp = AssetBundleManager.LoadLevelAsync(m_loadingSceneBundle.ToLower(), m_loadingScene, true);
-				yield return StartCoroutine(loadOp);
-			}
-			else
-			{
-				yield return SceneManager.LoadSceneAsync(m_loadingScene, LoadSceneMode.Additive);
-			}
-		}
+            // Load loading screen
+            yield return SceneManager.LoadSceneAsync(m_loadingScene, LoadSceneMode.Additive);
+        }
 
 		// HIDING_SCREEN_COVER
 		{
@@ -227,9 +214,6 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 
 			// Clear databses to allow asset unloading
 			Events.Raise(new ClearDatabaseForSceneChangeEvent());
-			// Unload inactive asset bundles to free up memory
-			if (m_useAssetBundles)
-				AssetBundleManager.UnloadAllAssetBundles();
 		}
 
 		// LOADING_NEW_SCENE
@@ -239,18 +223,11 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 				OnStateChanged(LoadingState.LOADING_NEW_SCENE, _newScene, oldScene);
 
 			// Load level async
-			if (m_useAssetBundles)
-			{
-				AssetBundleLoadOperation loadOp = AssetBundleManager.LoadLevelAsync(_assetBundle, _newScene, true);
-				yield return StartCoroutine(loadOp);
-			}
+			if (_newScene.NullOrEmpty())
+				yield return SceneManager.LoadSceneAsync(_buildIndex, LoadSceneMode.Additive);
 			else
-			{
-				if (_newScene.NullOrEmpty())
-					yield return SceneManager.LoadSceneAsync(_buildIndex, LoadSceneMode.Additive);
-				else
-					yield return SceneManager.LoadSceneAsync(_newScene, LoadSceneMode.Additive);
-			}
+				yield return SceneManager.LoadSceneAsync(_newScene, LoadSceneMode.Additive);
+
 			if (_newScene.NullOrEmpty())
 				SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(_buildIndex));
 			else
