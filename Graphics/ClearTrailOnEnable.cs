@@ -11,7 +11,7 @@
 #region Imports
 // ************************************************************************
 using UnityEngine;
-using System.Collections.Generic;
+using System.Collections;
 #endregion
 // ************************************************************************
 
@@ -27,7 +27,25 @@ public class ClearTrailOnEnable : MonoBehaviour
 	// ********************************************************************
 	void OnEnable()
 	{
-		GetComponent<TrailRenderer>().Clear();
+		StartCoroutine(TrailReset());
+	}
+	// ********************************************************************
+	#endregion
+	// ********************************************************************
+
+	// ********************************************************************
+	#region Private Methods 
+	// ********************************************************************
+	private IEnumerator TrailReset()
+	{
+		TrailRenderer trail = GetComponent<TrailRenderer>(); 
+		trail.Clear();
+
+		// Hack to make sure the trail doesn't register being teleported 
+		// to the object's new location
+		trail.enabled = false;
+		yield return null;
+		trail.enabled = true;
 	}
 	// ********************************************************************
 	#endregion
