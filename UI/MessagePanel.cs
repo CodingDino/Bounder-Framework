@@ -52,17 +52,17 @@ public class MessagePanel : Panel
 	#region Exposed Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private Text m_titleText;
+	private Text m_titleText = null;
 	[SerializeField]
-	private Text m_messageText;
+	private Text m_messageText = null;
 	[SerializeField]
-	private Text m_positiveButtonText;
+	private Text m_positiveButtonText = null;
 	[SerializeField]
-	private Text m_negativeButtonText;
+	private Text m_negativeButtonText = null;
 	[SerializeField]
-	private GameObject m_positiveButton;
+	private GameObject m_positiveButton = null;
 	[SerializeField]
-	private GameObject m_negativeButton;
+	private GameObject m_negativeButton = null;
 	#endregion
 	// ********************************************************************
 

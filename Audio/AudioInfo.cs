@@ -30,7 +30,7 @@ public class AudioInfo : Archive
 	// ********************************************************************
 	#region Public Data Members
 	// ********************************************************************
-	public string id;
+	public string id = "";
 	public AudioClip clip = null;
 	public AudioCategory category = AudioCategory.EFFECTS;
 	public AudioChannelOverride overrideChannelLimit = AudioChannelOverride.NONE;

@@ -27,7 +27,7 @@ public class ConditionCollection : Condition
 	#region Public Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private Condition[] m_conditions;
+	private Condition[] m_conditions = null;
 	#endregion
 	// ********************************************************************
 

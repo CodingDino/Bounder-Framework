@@ -31,7 +31,7 @@ public class HorizontalFOV : MonoBehaviour
 	[SerializeField]
 	private float orthoSize = 5;
 	[SerializeField]
-	private Camera FOVCamera;
+	private Camera FOVCamera = null;
 	#endregion
 	// ********************************************************************
 

@@ -27,7 +27,7 @@ public class OrphanOnRaisedAnimationEvent : MonoBehaviour
 	#region Exposed Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private string m_id;
+	private string m_id = "";
 	#endregion
 	// ********************************************************************
 

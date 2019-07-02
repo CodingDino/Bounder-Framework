@@ -33,7 +33,7 @@ public class TriggerRandomAnimation : MonoBehaviour
 	private List<AnimatorControllerParameterData> m_parameters = new List<AnimatorControllerParameterData>();
 	[SerializeField]
 	[Tooltip("Frequency range of triggers")]
-	private Vector2 m_triggerFrequencyRange;
+	private Vector2 m_triggerFrequencyRange = Vector2.zero;
 	#endregion
 	// ********************************************************************
 

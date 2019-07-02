@@ -26,7 +26,7 @@ public class MoveToTarget : MonoBehaviour, ObjectPoolResetResponder {
 	// Exposed Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private bool m_useQueue;
+	private bool m_useQueue = false;
 	[SerializeField]
 	private bool m_useSeparateEasing = false;
 	[SerializeField]
@@ -47,14 +47,14 @@ public class MoveToTarget : MonoBehaviour, ObjectPoolResetResponder {
 	// ********************************************************************
 	// Private Data Members 
 	// ********************************************************************
-	private Transform m_transform;
-	private Vector3 m_originPoint;
-	private Vector3 m_targetPoint;
-	private Vector3 m_diff;
+	private Transform m_transform = null;
+	private Vector3 m_originPoint = Vector3.zero;
+	private Vector3 m_targetPoint = Vector3.zero;
+	private Vector3 m_diff = Vector3.zero;
 	private Queue<Vector3> m_targetQueue = new Queue<Vector3>();
-	private float m_startTime;
+	private float m_startTime = 0f;
 	private bool m_moving = false;
-	private float m_currentDuration = 0;
+	private float m_currentDuration = 0f;
 
 
 	// ********************************************************************

@@ -26,11 +26,11 @@ public class ButtonSetup : MonoBehaviour
 	#region Exposed Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private Text m_text;
+	private Text m_text = null;
 	[SerializeField]
-	private Image m_icon;
+	private Image m_icon = null;
 	[SerializeField]
-	private Animator m_animator;
+	private Animator m_animator = null;
 	#endregion
 	// ********************************************************************
 

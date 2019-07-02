@@ -30,7 +30,7 @@ public class SetActiveOnAnimationEvent : MonoBehaviour {
 	// Exposed Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private GameObject m_object;
+	private GameObject m_object = null;
 	
 	
 	// ********************************************************************

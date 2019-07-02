@@ -28,7 +28,7 @@ public class LoadSceneCondition : Condition
 	#region Public Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private string m_sceneID;
+	private string m_sceneID = "";
 	[SerializeField]
 	private bool m_invert = false;
 	#endregion

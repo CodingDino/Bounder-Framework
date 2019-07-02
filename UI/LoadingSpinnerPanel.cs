@@ -62,7 +62,7 @@ public class LoadingSpinnerPanel : Panel
 	#region Exposed Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private Text m_loadingText;
+	private Text m_loadingText = null;
 	#endregion
 	// ********************************************************************
 

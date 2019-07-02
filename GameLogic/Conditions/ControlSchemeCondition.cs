@@ -27,7 +27,7 @@ public class ControlSchemeCondition : Condition
 	#region Public Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private ControlScheme m_controlScheme;
+	private ControlScheme m_controlScheme = ControlScheme.NONE;
 	#endregion
 	// ********************************************************************
 

@@ -30,7 +30,7 @@ public class RandomSprite : MonoBehaviour
 	// ********************************************************************
 	[SerializeField]
 	[Tooltip("List of sprites to choose from")]
-	private Sprite[] m_sprites;
+	private Sprite[] m_sprites = null;
 	#endregion
 	// ********************************************************************
 

@@ -28,7 +28,7 @@ public class ButtonPlaySFX : MonoBehaviour
 	#region Exposed Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private AudioClip m_SFX;
+	private AudioClip m_SFX = null;
 	#endregion
 	// ********************************************************************
 

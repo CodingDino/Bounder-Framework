@@ -23,7 +23,7 @@ public class SpriteToColour : MonoBehaviour {
 	// Serialized Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private Color m_colour;
+	private Color m_colour = Color.white;
 
 
 	// ********************************************************************

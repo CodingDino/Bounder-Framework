@@ -63,7 +63,7 @@ public class RaiseAnimationEvent : MonoBehaviour
 	#region Exposed Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private RaisedAnimationEvent[] m_events;
+	private RaisedAnimationEvent[] m_events = null;
 	#endregion
 	// ********************************************************************
 

@@ -21,13 +21,13 @@ public class TileScroll : MonoBehaviour {
 	// Serialized Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private Transform[] m_tiles;
+	private Transform[] m_tiles = null;
 	[SerializeField]
-	private Vector3 m_loopPoint;
+	private Vector3 m_loopPoint = Vector3.zero;
 	[SerializeField]
-	private Vector3 m_spacing;
+	private Vector3 m_spacing = Vector3.zero;
 	[SerializeField]
-	private Vector3 m_scrollSpeed;
+	private Vector3 m_scrollSpeed = Vector3.zero;
 
 	
 	// ********************************************************************

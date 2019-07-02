@@ -29,7 +29,7 @@ public class SetAnimationParameterOnEvent : MonoBehaviour
 	// ********************************************************************
 	[SerializeField]
 	[Tooltip("ID used in the events sent to this script")]
-	private string m_id;
+	private string m_id = "";
 	#endregion
 	// ********************************************************************
 
@@ -37,7 +37,7 @@ public class SetAnimationParameterOnEvent : MonoBehaviour
 	// ********************************************************************
 	#region Private Data Members 
 	// ********************************************************************
-	private Animator m_animator;
+	private Animator m_animator = null;
 	#endregion
 	// ********************************************************************
 

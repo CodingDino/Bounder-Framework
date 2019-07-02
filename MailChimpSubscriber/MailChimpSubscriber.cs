@@ -16,14 +16,14 @@ namespace Fiftytwo
         private const string DataFormat = "{{\"email_address\":\"{0}\", \"status\":\"subscribed\"}}";
 
         [SerializeField]
-        private string _apiKey;
+        private string _apiKey = "";
         [SerializeField]
-        private string _listId;
+        private string _listId = "";
 
         [SerializeField]
-        private UnityEvent _subscribeSuccess;
+        private UnityEvent _subscribeSuccess = null;
         [SerializeField]
-        private UnityEvent _subscribeError;
+        private UnityEvent _subscribeError = null;
 
 
         public void Subscribe ()

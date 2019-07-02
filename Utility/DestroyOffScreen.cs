@@ -40,7 +40,7 @@ public class DestroyOffScreen : MonoBehaviour {
 
 	private bool m_isOutside = false;
 	private float m_outsideStartTime = 0.0f;
-	private SpriteRenderer[] m_sprites;
+	private SpriteRenderer[] m_sprites = null;
 
 	void Start () {
 		m_sprites = GetComponentsInChildren<SpriteRenderer>();

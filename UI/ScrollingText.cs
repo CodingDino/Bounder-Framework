@@ -31,7 +31,7 @@ public class ScrollingText : MonoBehaviour {
 	[SerializeField]
 	private bool m_autoRemove = false;
 	[SerializeField]
-	private TextMesh m_textMesh;
+	private TextMesh m_textMesh = null;
 	[SerializeField]
 	private float m_speed = 1;
 	[SerializeField]
@@ -39,7 +39,7 @@ public class ScrollingText : MonoBehaviour {
 	[SerializeField]
 	private float m_scissorMax = 4;
 	[SerializeField]
-	private List<string> m_messages;
+	private List<string> m_messages = null;
 
 
 	// ********************************************************************

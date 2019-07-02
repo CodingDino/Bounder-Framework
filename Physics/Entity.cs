@@ -29,13 +29,13 @@ public class Entity : MonoBehaviour {
 	// Exposed Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private float m_startingMoveSpeed;
+	private float m_startingMoveSpeed = 0f;
 	[SerializeField]
-	private float m_startingTurnSpeed;
+	private float m_startingTurnSpeed = 0f;
 	[SerializeField]
-	private bool m_rotateToMatchFacing;
+	private bool m_rotateToMatchFacing = false;
 	[SerializeField]
-	private bool m_useRigidBodyVelocity;
+	private bool m_useRigidBodyVelocity = false;
 	[SerializeField]
 	private bool m_useZ = false;
 
@@ -43,16 +43,16 @@ public class Entity : MonoBehaviour {
     // ********************************************************************
     // Private Data Members 
 	// ********************************************************************
-	private float m_moveSpeed;
-	private float m_turnSpeed;
-	private Vector2 m_positionLastFrame;
+	private float m_moveSpeed = 0f;
+	private float m_turnSpeed = 0f;
+	private Vector2 m_positionLastFrame = Vector2.zero;
 	private float m_facing = 0.0f; // in degrees
 	private bool m_movedLastFrame = false;
 	private bool m_isMoving = false;
 
 	// Move Target
 	private bool m_moveTargetPossessed = false;
-	private Vector2 m_moveTargetPosition;
+	private Vector2 m_moveTargetPosition = Vector2.zero;
 	private bool m_moveTargetNotifyArrival = false;
 
 	// Turn Target

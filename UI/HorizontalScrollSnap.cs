@@ -11,12 +11,12 @@
 // ************************************************************************ 
 // Imports 
 // ************************************************************************ 
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using BounderFramework;
 using Rewired;
+using System.Collections.Generic;
 
 
 // ************************************************************************ 
@@ -39,7 +39,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 	// ********************************************************************	
 	[SerializeField]
 	[Tooltip("Layout group being controlled by scroller, used for pagination.")]
-	private HorizontalLayoutGroup m_layoutGroup;
+	private HorizontalLayoutGroup m_layoutGroup = null;
 	[SerializeField]
 	[Tooltip("Deceleration for the scroller, applied after the scroller is released.")]
 	private float m_deceleration = 0.001f;
@@ -67,23 +67,23 @@ public class HorizontalScrollSnap : MonoBehaviour
 	// ********************************************************************
 	// Private Data Members 
 	// ********************************************************************
-	private Transform m_screensContainer;
+	private Transform m_screensContainer = null;
 	private int m_screens = 1;
-	private System.Collections.Generic.List<Vector3> m_positions;
-	private ScrollRect m_scrollRect;
-	private Vector3 m_lerpTarget;
-	private Vector3 m_lerpStartPos;
-	private float m_lerpStartTime;
-	private float m_lerpCurrentDuration;
+	private List<Vector3> m_positions = null;
+	private ScrollRect m_scrollRect = null;
+	private Vector3 m_lerpTarget = Vector3.zero;
+	private Vector3 m_lerpStartPos = Vector3.zero;
+	private float m_lerpStartTime = 0f;
+	private float m_lerpCurrentDuration = 0f;
 	private bool m_lerp = false;
 	private bool m_momentumEffectivelyStopped = true;
 	private bool m_ignoringThisDrag = false;
 	private bool m_allowingThisDrag = false;
 	private bool m_currentlyDragging = false;
-	private Vector2 m_touchStartPoint;
-	private Vector2 m_contentsStartPoint;
+	private Vector2 m_touchStartPoint = Vector2.zero;
+	private Vector2 m_contentsStartPoint = Vector2.zero;
 	private int m_centerItem = 0;
-	private Player m_player;
+	private Player m_player = null;
 
 
 	// ********************************************************************
@@ -133,7 +133,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 
 		DistributePages();
 		
-		m_positions = new System.Collections.Generic.List<Vector3>();
+		m_positions = new List<Vector3>();
 		
 		if (m_screens > 0)
 		{
@@ -280,7 +280,7 @@ public class HorizontalScrollSnap : MonoBehaviour
 	// Function:	FindClosestFrom()
 	// Purpose:		Find the closest registered point to the point.
 	// ********************************************************************
-	private Vector3 FindClosestFrom(Vector3 start, System.Collections.Generic.List<Vector3> positions)
+	private Vector3 FindClosestFrom(Vector3 start, List<Vector3> positions)
 	{
 	    Vector3 closest = Vector3.zero;
 	    float distance = Mathf.Infinity;

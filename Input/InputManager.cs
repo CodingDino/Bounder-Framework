@@ -92,12 +92,12 @@ public class InputManager : Singleton<InputManager>
 	#region Exposed Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private Animator[] m_cursorPrefabs;
+	private Animator[] m_cursorPrefabs = null;
 	[SerializeField]
 	private bool m_shouldTimeOut = false;
 	[SerializeField]
 	[ShowInInspectorIf("m_shouldTimeOut")]
-	private Panel m_quitPanelPrefab;
+	private Panel m_quitPanelPrefab = null;
 	[SerializeField]
 	[ShowInInspectorIf("m_shouldTimeOut")]
 	private float m_secondsToDemoExitPopup = 100;
@@ -114,11 +114,11 @@ public class InputManager : Singleton<InputManager>
 	#region Private Data Members 
 	// ********************************************************************
 	private Dictionary<string, Animator> m_cursorMap = new Dictionary<string,Animator>();
-	private Animator m_cursor;
-	private string m_defaultCursor;
-	private Vector3 m_mousePositionLastFrame;
-	private float m_lastInputDetected;
-	private ControlScheme m_lastControlScheme;
+	private Animator m_cursor = null;
+	private string m_defaultCursor = "";
+	private Vector3 m_mousePositionLastFrame = Vector3.zero;
+	private float m_lastInputDetected = 0f;
+	private ControlScheme m_lastControlScheme = ControlScheme.NONE;
 	#endregion
 	// ********************************************************************
 

@@ -82,11 +82,9 @@ public class AudioManager : Database<AudioClip>
 	#region Exposed Data Members
 	// ********************************************************************
 	[SerializeField]
-	private string m_audioFolder;
+	private GameObject m_audioObjectPrefab = null;
 	[SerializeField]
-	private GameObject m_audioObjectPrefab;
-	[SerializeField]
-	private AudioCategorySettings[] m_audioCategorySettings;
+	private AudioCategorySettings[] m_audioCategorySettings = null;
 	#endregion
 	// ********************************************************************
 

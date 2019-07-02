@@ -54,10 +54,10 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 	private bool m_clamp = false;
 	[SerializeField]
 	[Tooltip("Padding for clamping, to keep parts of the object from going out of bounds")]
-	private Vector2 m_clampPadding;
+	private Vector2 m_clampPadding = Vector2.zero;
 	[SerializeField]
 	[Tooltip("Bounds for clamping. Uses screen bounds if zero.")]
-	private Rect m_clampBounds;
+	private Rect m_clampBounds = Rect.zero;
 	// ********************************************************************
 	[Header("Movement")]
 	[SerializeField]

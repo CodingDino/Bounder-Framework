@@ -70,15 +70,13 @@ public class DialoguePanel : Panel
 	#region Exposed Data Members 
 	// ********************************************************************
     [SerializeField]
-    private GameObject m_dialoguePanel;
+    private Text m_textObject = null;
     [SerializeField]
-    private Text m_textObject;
-    [SerializeField]
-    private Text m_portraitText;
+    private Text m_portraitText = null;
     [SerializeField]
     private float m_defaultTextSpeed = 30.0f;
     [SerializeField]
-    private GameObject m_waitingIcon;
+    private GameObject m_waitingIcon = null;
     [SerializeField]
 	private Animator[] m_portraitMovers = new Animator[2];
 	[SerializeField]
@@ -96,11 +94,11 @@ public class DialoguePanel : Panel
 	// ********************************************************************
 	#region Private Data Members 
 	// ********************************************************************
-    private DialogueConversation m_currentConversation;
-    private DialogueFrame m_currentFrame;
-    private int m_sectionIndex;
-    private DialogueSection m_currentSection;
-	private DialogueTextSettings m_currentTextSettings;
+    private DialogueConversation m_currentConversation = null;
+    private DialogueFrame m_currentFrame = null;
+    private int m_sectionIndex = 0;
+    private DialogueSection m_currentSection = null;
+	private DialogueTextSettings m_currentTextSettings = null;
     private int m_displayIndex = 0;
     private bool m_shouldSkip = false;
     private bool m_waitingForNextFrame = false;
@@ -110,8 +108,8 @@ public class DialoguePanel : Panel
     private int m_frameCount = 0;
 	private List<Animator> m_choices = new List<Animator>();
 	private Animator[] m_characterAnimator = new Animator[2];
-	private string m_previousSections;
-	private string m_previousCursor;
+	private string m_previousSections = "";
+	private string m_previousCursor = "";
 	private Player m_player;
 	#endregion
 	// ********************************************************************

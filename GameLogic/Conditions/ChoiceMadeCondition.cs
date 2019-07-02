@@ -27,7 +27,7 @@ public class ChoiceMadeCondition : Condition
 	#region Public Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private string m_choiceID;
+	private string m_choiceID = "";
 	[SerializeField]
 	private bool m_invert = false;
 	#endregion

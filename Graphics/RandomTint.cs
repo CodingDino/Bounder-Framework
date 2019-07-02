@@ -45,7 +45,7 @@ public class RandomTint : MonoBehaviour
 	private List<SpriteRenderer> m_sprites = new List<SpriteRenderer>();
 	[SerializeField]
 	[Tooltip("List of tints to choose from")]
-	private Color[] m_tints;
+	private Color[] m_tints = null;
 	[SerializeField]
 	[Tooltip("Should the random tint be applied on start")]
 	private bool m_applyOnStart = true;

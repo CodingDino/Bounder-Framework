@@ -27,7 +27,7 @@ public class ConversationSeenCondition : Condition
 	#region Public Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private string m_conversationID;
+	private string m_conversationID = "";
 	[SerializeField]
 	private bool m_invert = false;
 	#endregion

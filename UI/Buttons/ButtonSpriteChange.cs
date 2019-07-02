@@ -59,7 +59,7 @@ public class ButtonSpriteChange : MonoBehaviour
 	#region Exposed Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private Image m_image;
+	private Image m_image = null;
 	#endregion
 	// ********************************************************************
 

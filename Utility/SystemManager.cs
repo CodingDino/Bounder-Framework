@@ -27,7 +27,7 @@ public class SystemManager :  Singleton<SystemManager>
 	#region Exposed Data Members
 	// ********************************************************************
 	[SerializeField]
-	private GameObject[] m_prefabs;
+	private GameObject[] m_prefabs = null;
 	#endregion
 	// ********************************************************************
 

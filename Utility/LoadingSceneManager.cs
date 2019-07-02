@@ -63,7 +63,7 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
 	[SerializeField]
 	private string m_loadingScene = "";
 	[SerializeField]
-	private FadeSprite m_blackness;
+	private FadeSprite m_blackness = null;
 	[SerializeField]
 	private float m_minDuration = 1.5f;
 	#endregion

@@ -72,11 +72,11 @@ public class DebugMenu : Singleton<DebugMenu>
     [SerializeField]
     private int m_numLogsKept = 100;
     [SerializeField]
-    private Text m_versionText;
+    private Text m_versionText = null;
     [SerializeField]
     private bool m_showVersionText = true;
     [SerializeField]
-    private string m_versionNumber;
+    private string m_versionNumber = "v1.0";
     [SerializeField]
     private bool m_demoMode = true;
     [SerializeField]
@@ -84,23 +84,23 @@ public class DebugMenu : Singleton<DebugMenu>
 
     [Header("Elements")]
     [SerializeField]
-    private GameObject m_visibleElements;
+    private GameObject m_visibleElements = null;
     [SerializeField]
-    private Text m_consoleTextBox;
+    private Text m_consoleTextBox = null;
     [SerializeField]
-    private Scrollbar m_scrollbar;
+    private Scrollbar m_scrollbar = null;
     [SerializeField]
-    private Image m_showErrorButton;
+    private Image m_showErrorButton = null;
     [SerializeField]
-    private Image m_showWarningsButton;
+    private Image m_showWarningsButton = null;
     [SerializeField]
-    private Image m_showLogsButton;
+    private Image m_showLogsButton = null;
     [SerializeField]
-    private Image m_jumpToBottomButton;
+    private Image m_jumpToBottomButton = null;
     [SerializeField]
-    private Transform m_buttonGrid;
+    private Transform m_buttonGrid = null;
     [SerializeField]
-    private GameObject m_buttonPrototype;
+    private GameObject m_buttonPrototype = null;
 
 
     // ********************************************************************

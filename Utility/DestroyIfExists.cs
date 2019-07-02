@@ -13,7 +13,7 @@ using System.Collections.Generic;
 public class DestroyIfExists : MonoBehaviour {
 
 	[SerializeField]
-	private string m_ID;
+	private string m_ID = "";
 
 	private static List<string> s_ExistingIDs = new List<string>();
 

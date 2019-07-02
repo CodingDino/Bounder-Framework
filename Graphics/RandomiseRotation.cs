@@ -44,9 +44,9 @@ public class RandomiseRotation : MonoBehaviour
 	#region Exposed Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private float m_lowerAngleBound;
+	private float m_lowerAngleBound = 0f;
 	[SerializeField]
-	private float m_upperAngleBound;
+	private float m_upperAngleBound = 0f;
 	[SerializeField]
 	[Tooltip("Should the random rotation be applied on start")]
 	private bool m_applyOnStart = true;
