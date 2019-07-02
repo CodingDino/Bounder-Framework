@@ -78,7 +78,7 @@ public class DebugMenu : Singleton<DebugMenu>
     [SerializeField]
     private string m_versionNumber = "v1.0";
     [SerializeField]
-    private bool m_demoMode = true;
+    private bool m_previewMode = true;
     [SerializeField]
     private bool m_eventMode = true;
 
@@ -121,7 +121,7 @@ public class DebugMenu : Singleton<DebugMenu>
     // ********************************************************************
     // Properties 
     // ********************************************************************
-    public static bool demoMode 
+    public static bool previewMode 
 	{
 		get 
 		{ 
@@ -132,7 +132,7 @@ public class DebugMenu : Singleton<DebugMenu>
 				               LogSeverity.ERROR, 
 				               "DebugMenu");
 			}
-			return instance != null ? instance.m_demoMode : false; 
+			return instance != null ? instance.m_previewMode : false; 
 		}
     }
     public static bool eventMode
@@ -155,7 +155,7 @@ public class DebugMenu : Singleton<DebugMenu>
     // Delegates 
     // ********************************************************************
     public delegate void ModeToggle(bool _modeActive);
-	public static event ModeToggle OnDemoModeToggle;
+	public static event ModeToggle OnPreviewModeToggle;
     public static event ModeToggle OnEventModeToggle;
     public delegate void ResetGame();
 	public static event ResetGame OnResetGame;
@@ -167,9 +167,9 @@ public class DebugMenu : Singleton<DebugMenu>
 	// ********************************************************************
 	void Start()
 	{
-		// Create demo button
-		GameObject demoButton = AddButton("demo", "Demo Mode", DemoButtonPressed);
-        demoButton.GetComponent<Image>().color = m_demoMode ? Color.green : Color.red;
+		// Create preview button
+		GameObject previewButton = AddButton("preview", "Preview Mode", PreviewButtonPressed);
+        previewButton.GetComponent<Image>().color = m_previewMode ? Color.green : Color.red;
 
         // Create event button
         GameObject eventButton = AddButton("event", "Event Mode", EventButtonPressed);
@@ -187,8 +187,8 @@ public class DebugMenu : Singleton<DebugMenu>
     private void SetupVersionText()
     {
         m_versionText.text = "v" + m_versionNumber;
-        if (m_demoMode)
-            m_versionText.text += " DEMO";
+        if (m_previewMode)
+            m_versionText.text += " PERVIEW";
         if (m_eventMode)
             m_versionText.text += " EVENT";
         m_versionText.enabled = m_showVersionText;
@@ -196,17 +196,17 @@ public class DebugMenu : Singleton<DebugMenu>
 
 
 	// ********************************************************************
-	// Function:	DemoButtonPressed()
+	// Function:	PreviewButtonPressed()
 	// ********************************************************************
-	private void DemoButtonPressed(string _id, GameObject _button)
+	private void PreviewButtonPressed(string _id, GameObject _button)
 	{
-		m_demoMode = !m_demoMode;
-        _button.GetComponent<Image>().color = m_demoMode ? Color.green : Color.red;
+		m_previewMode = !m_previewMode;
+        _button.GetComponent<Image>().color = m_previewMode ? Color.green : Color.red;
         SetupVersionText();
 
-        // Perform game-specific actions on demo mode toggle
-        if (OnDemoModeToggle != null)
-			OnDemoModeToggle(m_demoMode);
+        // Perform game-specific actions on preview mode toggle
+        if (OnPreviewModeToggle != null)
+			OnPreviewModeToggle(m_previewMode);
 
 		ResetButtonPressed(_id, _button);
     }
@@ -218,10 +218,10 @@ public class DebugMenu : Singleton<DebugMenu>
     private void EventButtonPressed(string _id, GameObject _button)
     {
         m_eventMode = !m_eventMode;
-        _button.GetComponent<Image>().color = m_demoMode ? Color.green : Color.red;
+        _button.GetComponent<Image>().color = m_previewMode ? Color.green : Color.red;
         SetupVersionText();
 
-        // Perform game-specific actions on demo mode toggle
+        // Perform game-specific actions on event mode toggle
         if (OnEventModeToggle != null)
             OnEventModeToggle(m_eventMode);
 
@@ -243,7 +243,7 @@ public class DebugMenu : Singleton<DebugMenu>
 		// Remove all non-default buttons
 		for (int i = 0; i < instance.m_debugButtons.Count; ++i)
 		{
-			if (instance.m_debugButtons[i].name != "demo" && instance.m_debugButtons[i].name != "reset" )
+			if (instance.m_debugButtons[i].name != "preview" && instance.m_debugButtons[i].name != "reset" )
 			{
 				GameObject button = instance.m_debugButtons[i];
 				instance.m_debugButtons.RemoveAt(i);

@@ -73,7 +73,7 @@ public class ProfileManager : Singleton<ProfileManager> {
 	public static void Load<T>(string saveID = "") where T : PlayerProfile
     {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-		if (saveID == "" && DebugMenu.demoMode)
+		if (saveID == "" && DebugMenu.previewMode)
 		{
 			Load(instance.m_demoProfile);
 		}
