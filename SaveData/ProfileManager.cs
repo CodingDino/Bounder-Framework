@@ -26,8 +26,6 @@ public class ProfileManager : Singleton<ProfileManager> {
 	[SerializeField]
 	private PlayerProfile m_baseProfile = null;
 	[SerializeField]
-	private PlayerProfile m_demoProfile = null;
-	[SerializeField]
 	private PlayerProfile m_profile = null;
 
 	private bool m_loadedData = false;
@@ -37,10 +35,10 @@ public class ProfileManager : Singleton<ProfileManager> {
 	// ********************************************************************
 	public static PlayerProfile profile { 
 		get {
-			if (instance == null) return null;
-			if (instance.m_profile == null)
-				instance.m_profile = instance.m_baseProfile;
-			return instance.m_profile;
+			if (instance == null) 
+				return null;
+			else
+				return instance.m_profile;
 		} 
 		set {
 			instance.m_profile = value;
@@ -65,55 +63,58 @@ public class ProfileManager : Singleton<ProfileManager> {
 	// ********************************************************************
 	
 	// ********************************************************************
-	public static void Load<T>(int slot) where T : PlayerProfile
+	public static T Load<T>(int slot) where T : PlayerProfile
 	{
 		string saveID = "SaveSlot" + slot.ToString();
-		Load<T>(saveID);
+		return Load<T>(saveID);
 	}
-	public static void Load<T>(string saveID = "") where T : PlayerProfile
+	public static T Load<T>(string saveID = "") where T : PlayerProfile
     {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-		if (saveID == "" && DebugMenu.previewMode)
-		{
-			Load(instance.m_demoProfile);
-		}
+		string jsonString = PlayerPrefs.GetString(saveID);
+
+		// If there was a stored profile, load it, otherwise load the base profile
+		if (!jsonString.NullOrEmpty())
+			return Load(JsonUtility.FromJson<T>(jsonString), false);
 		else
-#endif
-		{
-			if (saveID == "")
-				saveID = "previous"; // so this can be reloaded in the debug menu at events if a crash happens
-			
-			string jsonString = PlayerPrefs.GetString(saveID);
-			Load(JsonUtility.FromJson<T>(jsonString), false);
-		}
+			return Load(instance.m_baseProfile as T, true, saveID);
 	}
-	public static void Load<T>(T _profile, bool _copy = true) where T : PlayerProfile
+	public static T Load<T>(T _profile, bool _copy = true, string copyName = "") where T : PlayerProfile
 	{
+		if (_profile == null)
+		{
+			_profile = instance.m_baseProfile as T;
+		}
 		if (_copy)
 		{
-			profile = Instantiate(_profile);
-			profile.name = _profile.name + "-Copy";
+			instance.m_profile = Instantiate(_profile);
+			if (copyName.NullOrEmpty())
+				instance.m_profile.name = _profile.name + "-Copy";
+			else
+				instance.m_profile.name = copyName;
 		}
 		else
 		{
-			profile = _profile;
+			instance.m_profile = _profile;
 		}
-		Debug.Log ("ProfileManager --- LOAD "+profile.name+" --- JSON String loaded: "+ profile.ToString());
-		profile.Validate();
+		Debug.Log ("ProfileManager --- LOAD "+instance.m_profile.name+" --- JSON String loaded: "+ instance.m_profile.ToString());
+		instance.m_profile.Validate();
 		instance.m_loadedData = true;
 		if (OnProfileLoaded != null)
-			OnProfileLoaded(profile);
+			OnProfileLoaded(instance.m_profile);
+
+		return instance.m_profile as T;
 	}
 	// ********************************************************************
 
 
 	// ********************************************************************
-	public static void Save(string saveID = "")
+	public static void Save<T>(string saveID = "") where T : PlayerProfile
 	{
 		if (saveID == "")
 			saveID = profile.name;
 
-		string json = JsonUtility.ToJson(profile);
+		T castProfile = (T)profile;
+		string json = JsonUtility.ToJson(castProfile);
 
 		PlayerPrefs.SetString(saveID, json);
 		PlayerPrefs.Save();
@@ -137,12 +138,10 @@ public class ProfileManager : Singleton<ProfileManager> {
 		Debug.Log("ProfileManager --- CLEAR "+saveID);
 		PlayerPrefs.DeleteKey(saveID);
 	}
-	// ********************************************************************
-
-	
-	// ********************************************************************
-	public static void ClearAll()
+	[ContextMenu("Clear All Save Data")]
+	public void ClearAll()
 	{
+		Debug.Log("ProfileManager --- CLEAR ALL SAVE DATA");
 		PlayerPrefs.DeleteAll();
 	}
 	// ********************************************************************
@@ -164,8 +163,15 @@ public class ProfileManager : Singleton<ProfileManager> {
 	}
 	public static T GetProfile<T>(string saveID) where T : PlayerProfile
 	{
-		string jsonString = PlayerPrefs.GetString (saveID);
-		T thisProfile = JsonUtility.FromJson<T>(jsonString);
+		string jsonString = PlayerPrefs.GetString(saveID);
+
+		Debug.Log("Json for save "+saveID+": "+jsonString);
+
+		if (jsonString.NullOrEmpty())
+			return null;
+
+		T thisProfile = Instantiate(instance.m_baseProfile as T);
+		JsonUtility.FromJsonOverwrite(jsonString, thisProfile);
 		if (thisProfile != null)
 			thisProfile.name = saveID;
 		return thisProfile;
