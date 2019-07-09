@@ -57,6 +57,12 @@ public class ConditionCollection : Condition
 		for (int i = 0; i < m_conditions.Length; ++i)
 		{
 			m_conditions[i].Register(_register);
+
+			// Listen to children
+			if (_register)
+				m_conditions[i].OnConditionTriggered += OnChildConditionTriggered;
+			else
+				m_conditions[i].OnConditionTriggered -= OnChildConditionTriggered;
 		}
 	}
 	// ********************************************************************
@@ -86,6 +92,20 @@ public class ConditionCollection : Condition
 		{
 			m_conditions[i].AddProgress(_toAdd);
 		}
+	}
+	// ********************************************************************
+	#endregion
+	// ********************************************************************
+
+
+	// ********************************************************************
+	#region Private Functions
+	// ********************************************************************
+	private void OnChildConditionTriggered(Condition _condition)
+	{
+		Debug.LogWarning("OnChildConditionTriggered");
+		if (Evaluate() == true)
+			Trigger();
 	}
 	// ********************************************************************
 	#endregion

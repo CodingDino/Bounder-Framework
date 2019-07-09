@@ -43,6 +43,7 @@ public class Condition : ScriptableObject
 	[SerializeField]
 	private int m_quantity = 1;
 	[SerializeField]
+	[Tooltip("Should this condition be tracked from the point in time where it became active? Default false, means it will just look at the current player state.")]
 	private bool m_incrementalProgress = false;
 	#endregion
 	// ********************************************************************
