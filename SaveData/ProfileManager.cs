@@ -16,15 +16,12 @@ using Bounder.Framework;
 // ************************************************************************ 
 // Class: ProfileManager
 // ************************************************************************ 
-public class ProfileManager : Singleton<ProfileManager> {
+public class ProfileManager : Singleton<ProfileManager> 
+{
 	
 	// ********************************************************************
 	// Private Data Members 
 	// ********************************************************************
-	[SerializeField]
-	private SettingsManager m_buildConfigManager = null;
-	[SerializeField]
-	private SettingsManager m_gameModeManager = null;
 	[SerializeField]
 	private PlayerProfile m_profile = null;
 
