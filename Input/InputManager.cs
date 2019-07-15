@@ -11,10 +11,9 @@
 #region Imports
 // ************************************************************************
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using BounderFramework;
+using Bounder.Framework;
 using Rewired;
 #endregion
 // ************************************************************************
@@ -150,6 +149,10 @@ public class InputManager : Singleton<InputManager>
 	public static string cursor
 	{
 		get { return instance.m_cursor == null ? "" : instance.m_cursor.name; }
+	}
+	public static float timeSinceLastInput
+	{
+		get { return Time.realtimeSinceStartup - instance.m_lastInputDetected; }
 	}
 	#endregion
 	// ********************************************************************

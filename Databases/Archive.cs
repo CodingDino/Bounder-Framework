@@ -20,7 +20,7 @@ using System.Collections.Generic;
 // ************************************************************************ 
 // Class: JSON 
 // ************************************************************************ 
-namespace BounderFramework { 
+namespace Bounder.Framework { 
 
 	public interface Archive {
 		bool Load(JSON _JSON);

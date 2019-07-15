@@ -11,8 +11,7 @@
 // Imports 
 // ************************************************************************ 
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+using Bounder.Framework;
 
 
 // ************************************************************************ 
@@ -63,7 +62,7 @@ public class ObjectPoolObject : MonoBehaviour
 	// ********************************************************************
 	void OnDestroy () 
 	{
-		if (!m_shuttingDown && !BounderFramework.LoadingSceneManager.loading && m_pool != null && m_pool.activeObjects.Contains(this))
+		if (!m_shuttingDown && !LoadingSceneManager.loading && m_pool != null && m_pool.activeObjects.Contains(this))
 			Debug.LogWarning("ObjectPoolObject destroyed - should simply disable so it can be reused!");
 		if (m_pool != null)
 			m_pool.ObjectDestroyed(this);

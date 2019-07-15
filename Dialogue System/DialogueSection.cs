@@ -13,7 +13,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Text;
-using BounderFramework;
+using Bounder.Framework;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif

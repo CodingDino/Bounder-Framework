@@ -47,7 +47,7 @@ public class ConversationSeenCondition : Condition
 	// ********************************************************************
 	public override int GetProgress_Cumulative() 
 	{
-		PlayerProfile profile = ProfileManager.GetProfile<PlayerProfile>();
+		PlayerProfile profile = ProfileManager.GetActiveProfile<PlayerProfile>();
 		if (profile == null)
 		{
 			Debug.LogError("ConversationSeenCondition.GetProgress(): Could not find profile.");

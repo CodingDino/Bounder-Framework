@@ -5,7 +5,7 @@
 // Author:      Sarah Herzog  
 // Copyright: 	2017 Bounder Games
 // ************************************************************************ 
-// TODO: Allow different arrangements such as && and ||
+
 
 // ************************************************************************ 
 #region Imports
@@ -24,8 +24,22 @@ using UnityEngine;
 public class ConditionCollection : Condition 
 {
 	// ********************************************************************
+	#region Enum: Operation
+	// ********************************************************************
+	public enum Operation
+	{
+		AND,
+		OR
+	}
+	#endregion
+	// ********************************************************************
+
+
+	// ********************************************************************
 	#region Public Data Members 
 	// ********************************************************************
+	[SerializeField]
+	private Operation m_operation = Operation.AND;
 	[SerializeField]
 	private Condition[] m_conditions = null;
 	#endregion
@@ -68,11 +82,33 @@ public class ConditionCollection : Condition
 	// ********************************************************************
 	public override bool Evaluate() 
 	{
-		bool evaluation = true;
+		bool evaluation = false;
+
+		// Default different based on operation
+		switch (m_operation)
+		{
+			case Operation.AND:
+				evaluation = true;
+				break;
+			case Operation.OR:
+				evaluation = false;
+				break;
+		}
+
+		// Check all sub-conditions, based on operation
 		for (int i = 0; i < m_conditions.Length; ++i)
 		{
-			evaluation = evaluation && m_conditions[i].Evaluate();
+			switch (m_operation)
+			{
+				case Operation.AND:
+					evaluation = evaluation && m_conditions[i].Evaluate();
+					break;
+				case Operation.OR:
+					evaluation = evaluation || m_conditions[i].Evaluate();
+					break;
+			}
 		}
+		
 		return evaluation; 
 	}
 	// ********************************************************************

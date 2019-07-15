@@ -14,8 +14,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using BounderFramework;
+using Bounder.Framework;
 using Rewired;
 
 #endregion
@@ -45,12 +44,6 @@ public class DialoguePanelData : PanelData
 	: base(_startingState, _limitOverride)
 	{
 		conversation = _conversation;
-	}
-	// ********************************************************************
-	public DialoguePanelData(JSON _JSON)
-		: base(_JSON)
-	{
-//		_JSON["conversationID"].Get(ref conversationID);
 	}
 	// ********************************************************************
 	#endregion
@@ -128,11 +121,6 @@ public class DialoguePanel : Panel
 
 	// ********************************************************************
 	#region Panel Methods 
-	// ********************************************************************
-	protected override PanelData _CreatePanelData(JSON _JSON)
-	{
-		return new DialoguePanelData(_JSON);
-	}
 	// ********************************************************************
 	protected override void _Initialise(PanelData _data) 
 	{
@@ -508,7 +496,7 @@ public class DialoguePanel : Panel
 	{
 		if (_link.saveChoice)
 		{
-			PlayerProfile profile = ProfileManager.GetProfile<PlayerProfile>();
+			PlayerProfile profile = ProfileManager.GetActiveProfile<PlayerProfile>();
 			if (!profile.choicesMade.Contains(_link.linkedFrame.name))
 				profile.choicesMade.Add(_link.linkedFrame.name);
 		}

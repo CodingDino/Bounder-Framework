@@ -12,7 +12,7 @@
 // ************************************************************************ 
 using UnityEngine;
 using System.Collections.Generic;
-using BounderFramework;
+using Bounder.Framework;
 #if UNITY_EDITOR
 using System.IO;
 using UnityEditor;

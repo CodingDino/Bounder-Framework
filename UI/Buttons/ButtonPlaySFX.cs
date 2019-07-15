@@ -10,10 +10,8 @@
 // ************************************************************************ 
 #region Imports
 // ************************************************************************
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using BounderFramework;
+using Bounder.Framework;
 #endregion
 // ************************************************************************
 

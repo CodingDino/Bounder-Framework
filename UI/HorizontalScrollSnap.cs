@@ -14,7 +14,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using BounderFramework;
 using Rewired;
 using System.Collections.Generic;
 
@@ -376,12 +375,6 @@ public class HorizontalScrollSnap : MonoBehaviour
 	{
 		if (OnDragStart != null) OnDragStart(gameObject);
 
-		LogManager.Log("OnBeginDrag()",
-		               LogCategory.INPUT,
-		               LogSeverity.LOG, 
-		               "HorizontalScrollSnap",
-		               gameObject);
-
 		m_currentlyDragging = true;
 		m_ignoringThisDrag = false;
 		m_allowingThisDrag = false;
@@ -398,12 +391,6 @@ public class HorizontalScrollSnap : MonoBehaviour
 	public void OnEndDrag(PointerEventData eventData)
 	{
 		if (OnDragEnd != null) OnDragEnd(gameObject);
-
-		LogManager.Log("OnEndDrag()",
-		               LogCategory.INPUT,
-		               LogSeverity.LOG, 
-		               "HorizontalScrollSnap",
-		               gameObject);
 
 		if (m_scrollRect.horizontal && !m_ignoringThisDrag)
 	    {
@@ -444,12 +431,6 @@ public class HorizontalScrollSnap : MonoBehaviour
 	// ********************************************************************
 	public void OnDrag(PointerEventData eventData)
 	{
-		LogManager.Log("OnDrag()",
-		               LogCategory.INPUT,
-		               LogSeverity.SPAMMY_LOG, 
-		               "HorizontalScrollSnap",
-		               gameObject);
-
 		if (m_allowDragOff)
 		{
 			Vector2 currentScreenPoint = Input.mousePosition;
@@ -470,12 +451,6 @@ public class HorizontalScrollSnap : MonoBehaviour
 
 				if (m_ignoringThisDrag)
 				{
-					LogManager.Log("Ignoring drag",
-					   LogCategory.INPUT,
-					   LogSeverity.LOG, 
-					   "HorizontalScrollSnap",
-					   gameObject);
-					
 					if (OnDragIgnore != null) 
 						OnDragIgnore(gameObject);
 

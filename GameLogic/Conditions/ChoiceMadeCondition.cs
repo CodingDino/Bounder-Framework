@@ -47,7 +47,7 @@ public class ChoiceMadeCondition : Condition
 	// ********************************************************************
 	public override int GetProgress_Cumulative() 
 	{
-		PlayerProfile profile = ProfileManager.GetProfile<PlayerProfile>();
+		PlayerProfile profile = ProfileManager.GetActiveProfile<PlayerProfile>();
 		if (profile == null)
 		{
 			Debug.LogError("ChoiceMadeCondition.GetProgress(): Could not find profile.");
