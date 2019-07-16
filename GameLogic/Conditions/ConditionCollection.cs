@@ -139,7 +139,6 @@ public class ConditionCollection : Condition
 	// ********************************************************************
 	private void OnChildConditionTriggered(Condition _condition)
 	{
-		Debug.LogWarning("OnChildConditionTriggered");
 		if (Evaluate() == true)
 			Trigger();
 	}
