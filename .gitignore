@@ -1,12 +1,6 @@
 # =============== #
 # Unity generated #
 # =============== #
-[Tt]emp/
-[Oo]bj/
-[Bb]uild
-[Ll]ibrary/
-sysinfo.txt
-Builds/*
 # Ignore: name DOT meta
 *.meta
 # Include: name DOT extension DOT meta
