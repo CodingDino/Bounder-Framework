@@ -25,8 +25,6 @@ public class ProfileManager : Singleton<ProfileManager>
 	[SerializeField]
 	private PlayerProfile m_profile = null;
 
-	private bool m_loadedData = false;
-
 	// ********************************************************************
 	// Properties 
 	// ********************************************************************
@@ -41,12 +39,12 @@ public class ProfileManager : Singleton<ProfileManager>
 			instance.m_profile = value;
 		}
 	}
-	public static bool loadedData { 
+	public static bool profileIsLoaded { 
 		get {
 			if (instance == null)
 				return false;
 			else
-				return instance.m_loadedData;
+				return instance.m_profile != null;
 		}
 	}
 	public static string lastPlayedID {
@@ -114,7 +112,6 @@ public class ProfileManager : Singleton<ProfileManager>
 		instance.m_profile = _profile;
 		Debug.Log ("ProfileManager --- LOAD "+instance.m_profile.name+" --- JSON String loaded: "+ instance.m_profile.ToString());
 		instance.m_profile.Validate();
-		instance.m_loadedData = true;
 		if (OnProfileLoaded != null)
 			OnProfileLoaded(instance.m_profile);
 
