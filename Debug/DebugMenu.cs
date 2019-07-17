@@ -185,7 +185,7 @@ namespace Bounder.Framework
                     // Update the version text
                     SetupVersionText();
 
-                    // Reload the menu
+                    // Reload the game
                     ResetButtonPressed();
                     break;
                 }
@@ -198,23 +198,30 @@ namespace Bounder.Framework
         // ********************************************************************
         private void ResetButtonPressed(string _id = "", GameObject _button = null)
         {
+            ToggleVisibility();
+
+            // Remove all buttons
+            for (int i = instance.m_debugButtons.Count - 1; i >= 0; --i)
+            {
+                RemoveButton(instance.m_debugButtons[i].name);
+            }
+
+            // Add default buttons back in
+            // We have to wait one frame or we'll get button presses from the new buttons
+            StartCoroutine(WaitAndSetupButtons());
+
             // Reset to title screen
             if (OnResetGame != null)
                 OnResetGame();
-            LoadingSceneManager.LoadScene(0);
-            ToggleVisibility();
 
-            // Remove all non-default buttons
-            for (int i = 0; i < instance.m_debugButtons.Count; ++i)
-            {
-                if (instance.m_debugButtons[i].name != "preview" && instance.m_debugButtons[i].name != "reset")
-                {
-                    GameObject button = instance.m_debugButtons[i];
-                    instance.m_debugButtons.RemoveAt(i);
-                    instance.m_debugButtonCallbacks.RemoveAt(i);
-                    GameObject.Destroy(button);
-                }
-            }
+            LoadingSceneManager.LoadScene(0);
+        }
+        private IEnumerator WaitAndSetupButtons()
+        {
+            // Wait one frame for input to clear
+            yield return null;
+
+            SetupDefaultButtons();
         }
 
 
@@ -275,11 +282,13 @@ namespace Bounder.Framework
                     ToggleVisibility();
                 }
 
-                // Debug pause
+                // Debug pause - editor only
+#if UNITY_EDITOR
                 if (Input.GetKey(KeyCode.P))
                 {
                     Debug.Break();
                 }
+#endif
             }
         }
 
@@ -292,6 +301,7 @@ namespace Bounder.Framework
         {
             if (instance == null) return null;
 
+            //Debug.Log("Adding debug button " + _id);
             GameObject prototype = _prototype == null ? instance.m_buttonPrototype : _prototype;
             GameObject newButton = GameObject.Instantiate(prototype, instance.m_buttonGrid) as GameObject;
             newButton.transform.localScale = Vector3.one;
@@ -317,6 +327,7 @@ namespace Bounder.Framework
             {
                 if (instance.m_debugButtons[i].name == _id)
                 {
+                    //Debug.Log("Removing debug button " + _id);
                     GameObject button = instance.m_debugButtons[i];
                     instance.m_debugButtons.RemoveAt(i);
                     instance.m_debugButtonCallbacks.RemoveAt(i);
