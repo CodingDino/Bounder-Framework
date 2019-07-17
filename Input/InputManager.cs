@@ -92,19 +92,6 @@ public class InputManager : Singleton<InputManager>
 	// ********************************************************************
 	[SerializeField]
 	private Animator[] m_cursorPrefabs = null;
-	[SerializeField]
-	private bool m_shouldTimeOut = false;
-	[SerializeField]
-	[ShowInInspectorIf("m_shouldTimeOut")]
-	private Panel m_quitPanelPrefab = null;
-	[SerializeField]
-	[ShowInInspectorIf("m_shouldTimeOut")]
-	private float m_secondsToDemoExitPopup = 100;
-	[SerializeField]
-	[ShowInInspectorIf("m_shouldTimeOut")]
-	private float m_secondsToDemoTimeOut = 500;
-	[SerializeField]
-	private List<string> m_excludedScenesForTimeOut = new List<string>();
 	#endregion
 	// ********************************************************************
 
@@ -161,7 +148,7 @@ public class InputManager : Singleton<InputManager>
 	// ********************************************************************
 	#region MonoBehaviour Methods 
 	// ********************************************************************
-	void Start()
+	void Awake()
 	{
 		if (m_cursorPrefabs != null && m_cursorPrefabs.Length > 0)
 		{
@@ -220,24 +207,6 @@ public class InputManager : Singleton<InputManager>
 
 		// Record mouse position
 		m_mousePositionLastFrame = Input.mousePosition;
-
-		// Determine if time out has been reached
-		string currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-		if (m_shouldTimeOut && !m_excludedScenesForTimeOut.Contains(currentSceneName))
-		{
-			if (Time.realtimeSinceStartup >= m_lastInputDetected + m_secondsToDemoExitPopup && PanelManager.GetStateForPanel(m_quitPanelPrefab.name) == PanelState.CLOSED)
-			{
-				PanelManager.OpenPanel(m_quitPanelPrefab);
-			}
-			if (Time.realtimeSinceStartup >= m_lastInputDetected + m_secondsToDemoTimeOut)
-			{
-				PanelManager.ClosePanel(m_quitPanelPrefab.name);
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-				DebugMenu.TriggerResetEvent();
-#endif
-				LoadingSceneManager.LoadScene(0); // Load title
-			}
-		}
 
 		// Determine if input type has changed
 		ControlScheme newScheme = controlScheme;
