@@ -64,21 +64,46 @@ public class ProfileManager : Singleton<ProfileManager>
 	// ********************************************************************
 	#region Events 
 	// ********************************************************************
-	public delegate void ProfileLoaded(PlayerProfile _profile);
-	public static event ProfileLoaded OnProfileLoaded;
+	public delegate void ProfileCallback(PlayerProfile _profile);
+	public static event ProfileCallback OnProfileLoaded;
+	public static event ProfileCallback OnProfileUnLoaded;
 	#endregion
 	// ********************************************************************
 	
+	
+	// ********************************************************************
+	public static string GetNameFromSlot(int slot)
+	{
+		return "SaveSlot" + slot;
+	}
+	// ********************************************************************
+	public static T CopyProfile<T>(T toCopy, int slot) where T : PlayerProfile
+	{
+		return CopyProfile(toCopy, GetNameFromSlot(slot));
+	}
+	// ********************************************************************
+	public static T CopyProfile<T>(T toCopy, string newCopyName = "") where T : PlayerProfile
+	{
+		T thisProfile = Instantiate(toCopy);
+		if (!newCopyName.NullOrEmpty())
+			thisProfile.name = newCopyName;
+		return thisProfile;
+	}
+	// ********************************************************************
+
+
 	// ********************************************************************
 	public static T Load<T>(int slot) where T : PlayerProfile
 	{
-		return Load(GetProfile<T>(slot));
+		T toLoad = GetProfile<T>(slot);
+		return Load(toLoad);
 	}
 	public static T Load<T>(string saveID) where T : PlayerProfile
     {
-		return Load(GetProfile<T>(saveID));
+		T toLoad = GetProfile<T>(saveID);
+		return Load(toLoad);
 	}
-	public static T Load<T>(T _profile, bool _copy = true, string copyName = "") where T : PlayerProfile
+	public static T Load<T>(T _profile) where T : PlayerProfile
 	{
 		if (_profile == null)
 		{
@@ -86,18 +111,7 @@ public class ProfileManager : Singleton<ProfileManager>
 			return null;
 		}
 
-		if (_copy)
-		{
-			instance.m_profile = Instantiate(_profile);
-			if (copyName.NullOrEmpty())
-				instance.m_profile.name = _profile.name + "-Copy";
-			else
-				instance.m_profile.name = copyName;
-		}
-		else
-		{
-			instance.m_profile = _profile;
-		}
+		instance.m_profile = _profile;
 		Debug.Log ("ProfileManager --- LOAD "+instance.m_profile.name+" --- JSON String loaded: "+ instance.m_profile.ToString());
 		instance.m_profile.Validate();
 		instance.m_loadedData = true;
@@ -108,6 +122,16 @@ public class ProfileManager : Singleton<ProfileManager>
 	}
 	// ********************************************************************
 
+
+	// ********************************************************************
+	public static void UnloadActiveProfile()
+	{
+		PlayerProfile oldProfile = instance.m_profile;
+		instance.m_profile = null;
+		if (OnProfileUnLoaded != null)
+			OnProfileUnLoaded(oldProfile);
+	}
+	// ********************************************************************
 
 
 	// ********************************************************************
@@ -138,14 +162,17 @@ public class ProfileManager : Singleton<ProfileManager>
 	// ********************************************************************
 	public static void Save<T>() where T : PlayerProfile
 	{
-		string saveID = profile.name;
-
 		T castProfile = (T)profile;
-		string json = JsonUtility.ToJson(castProfile);
+		Save(castProfile);
+	}
+	public static void Save<T>(T _profile) where T : PlayerProfile
+	{
+		string saveID = _profile.name;
+		string json = JsonUtility.ToJson(_profile);
 
 		PlayerPrefs.SetString(saveID, json);
 		PlayerPrefs.Save();
-		Debug.Log ("ProfileManager --- SAVE "+profile.name+" --- JSON String saved: "+ json);
+		Debug.Log ("ProfileManager --- SAVE "+_profile.name+" --- JSON String saved: "+ json);
 	}
 	// ********************************************************************
 
@@ -157,7 +184,7 @@ public class ProfileManager : Singleton<ProfileManager>
 	}
 	public static void Clear(int slot)
 	{
-		string saveID = "SaveSlot" + slot.ToString();
+		string saveID = GetNameFromSlot(slot);
 		Clear (saveID);
 	}
 	public static void Clear(string saveID)
@@ -185,14 +212,12 @@ public class ProfileManager : Singleton<ProfileManager>
 	}
 	public static T GetProfile<T>(int slot) where T : PlayerProfile
 	{
-		string saveID = "SaveSlot" + slot.ToString();
+		string saveID = GetNameFromSlot(slot);
 		return GetProfile<T>(saveID);
 	}
 	public static T GetProfile<T>(string saveID) where T : PlayerProfile
 	{
 		string jsonString = PlayerPrefs.GetString(saveID);
-
-		Debug.Log("Json for save "+saveID+": "+jsonString);
 
 		if (jsonString.NullOrEmpty())
 			return null;
