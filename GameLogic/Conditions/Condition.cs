@@ -116,8 +116,16 @@ public class Condition : ScriptableObject
 		}
 	}
 	// ********************************************************************
+	public virtual bool RequiresSaveData()
+	{
+		return false;
+	}
+	// ********************************************************************
 	public virtual void Trigger() 
 	{
+		if (RequiresSaveData() && !ProfileManager.hasSaveData)
+			return;
+
 		if (OnConditionTriggered != null)
 			OnConditionTriggered(this);
 		if (OnConditionTriggeredGlobal != null)
