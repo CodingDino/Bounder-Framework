@@ -157,12 +157,11 @@ public class ProfileManager : Singleton<ProfileManager>
 
 
 	// ********************************************************************
-	public static void Save<T>() where T : PlayerProfile
+	public static void Save()
 	{
-		T castProfile = (T)profile;
-		Save(castProfile);
+		Save(profile);
 	}
-	public static void Save<T>(T _profile) where T : PlayerProfile
+	public static void Save(PlayerProfile _profile)
 	{
 		string saveID = _profile.name;
 		string json = JsonUtility.ToJson(_profile);
