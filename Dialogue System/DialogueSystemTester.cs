@@ -1,14 +1,21 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿namespace Bounder.Framework
+{
 
-public class DialogueSystemTester : MonoBehaviour {
+    using UnityEngine;
+    using System.Collections;
 
-	public DialogueConversation m_conversation;
-	public DialoguePanel m_dialoguePanel;
+    public class DialogueSystemTester : MonoBehaviour
+    {
 
-	// Use this for initialization
-	IEnumerator Start () {
-		yield return null;
-		PanelManager.OpenPanel(m_dialoguePanel, new DialoguePanelData(m_conversation));
-	}
+        public DialogueConversation m_conversation;
+        public DialoguePanel m_dialoguePanel;
+
+        // Use this for initialization
+        IEnumerator Start()
+        {
+            yield return null;
+            PanelManager.OpenPanel(m_dialoguePanel, new DialoguePanelData(m_conversation));
+        }
+    }
+
 }
