@@ -203,10 +203,12 @@ namespace Bounder.Framework
                         oldObject.StopFade();
                         oldObject.Fade(true); // turn it back on if it was fading out
                     }
-                    return null;
+                    return oldObject;
                 }
-
-                oldObject.Fade(false);
+                else
+                {
+                    oldObject.Fade(false);
+                }
             }
 
             GameObject audioGameObject = (instance as AudioManager).m_audioObjectPools[_info.category].RequestObject();
@@ -226,7 +228,6 @@ namespace Bounder.Framework
                 audioObject.audioSource.volume = 0;
                 audioObject.Fade(true);
             }
-
 
             return audioObject;
         }
@@ -249,7 +250,8 @@ namespace Bounder.Framework
         public static List<AudioObject> GetActiveAudioForCategory(AudioCategory _category)
         {
             List<AudioObject> audioObjects = new List<AudioObject>();
-            if (!(instance as AudioManager).m_audioObjectPools.ContainsKey(_category))
+
+            if (instance == null || !(instance as AudioManager).m_audioObjectPools.ContainsKey(_category))
                 return audioObjects;
 
             List<ObjectPoolObject> objectPoolObjects = (instance as AudioManager).m_audioObjectPools[_category].activeObjects;
