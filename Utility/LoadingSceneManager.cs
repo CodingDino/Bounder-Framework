@@ -151,7 +151,7 @@ namespace Bounder.Framework
 
             // COVERING_SCREEN
             {
-                Debug.Log("Loading Scene state: " + LoadingState.COVERING_SCREEN);
+                //Debug.Log("Loading Scene state: " + LoadingState.COVERING_SCREEN);
                 if (OnStateChanged != null)
                     OnStateChanged(LoadingState.COVERING_SCREEN, _newScene, oldScene);
 
@@ -161,7 +161,7 @@ namespace Bounder.Framework
 
             // OPENING_LOADING_SCREEN
             {
-                Debug.Log("Loading Scene state: " + LoadingState.OPENING_LOADING_SCREEN);
+                //Debug.Log("Loading Scene state: " + LoadingState.OPENING_LOADING_SCREEN);
                 if (OnStateChanged != null)
                     OnStateChanged(LoadingState.OPENING_LOADING_SCREEN, _newScene, oldScene);
 
@@ -171,7 +171,7 @@ namespace Bounder.Framework
 
             // HIDING_SCREEN_COVER
             {
-                Debug.Log("Loading Scene state: " + LoadingState.HIDING_SCREEN_COVER);
+                //Debug.Log("Loading Scene state: " + LoadingState.HIDING_SCREEN_COVER);
                 if (OnStateChanged != null)
                     OnStateChanged(LoadingState.HIDING_SCREEN_COVER, _newScene, oldScene);
 
@@ -183,7 +183,7 @@ namespace Bounder.Framework
 
             // CLOSING_PANELS
             {
-                Debug.Log("Loading Scene state: " + LoadingState.CLOSING_PANELS);
+                //Debug.Log("Loading Scene state: " + LoadingState.CLOSING_PANELS);
                 if (OnStateChanged != null)
                     OnStateChanged(LoadingState.CLOSING_PANELS, _newScene, oldScene);
 
@@ -194,7 +194,7 @@ namespace Bounder.Framework
 
             // UNLOADING_OLD_SCENE
             {
-                Debug.Log("Loading Scene state: " + LoadingState.UNLOADING_OLD_SCENE);
+                //Debug.Log("Loading Scene state: " + LoadingState.UNLOADING_OLD_SCENE);
                 if (OnStateChanged != null)
                     OnStateChanged(LoadingState.UNLOADING_OLD_SCENE, _newScene, oldScene);
 
@@ -205,7 +205,7 @@ namespace Bounder.Framework
 
             // UNLOADING_ASSETS
             {
-                Debug.Log("Loading Scene state: " + LoadingState.UNLOADING_ASSETS);
+                //Debug.Log("Loading Scene state: " + LoadingState.UNLOADING_ASSETS);
                 if (OnStateChanged != null)
                     OnStateChanged(LoadingState.UNLOADING_ASSETS, _newScene, oldScene);
 
@@ -215,7 +215,7 @@ namespace Bounder.Framework
 
             // LOADING_NEW_SCENE
             {
-                Debug.Log("Loading Scene state: " + LoadingState.LOADING_NEW_SCENE);
+                //Debug.Log("Loading Scene state: " + LoadingState.LOADING_NEW_SCENE);
                 if (OnStateChanged != null)
                     OnStateChanged(LoadingState.LOADING_NEW_SCENE, _newScene, oldScene);
 
@@ -233,7 +233,7 @@ namespace Bounder.Framework
 
             // PROCESSING_INCREMENTAL_LOADERS
             {
-                Debug.Log("Loading Scene state: " + LoadingState.PROCESSING_INCREMENTAL_LOADERS);
+                //Debug.Log("Loading Scene state: " + LoadingState.PROCESSING_INCREMENTAL_LOADERS);
                 if (OnStateChanged != null)
                     OnStateChanged(LoadingState.PROCESSING_INCREMENTAL_LOADERS, _newScene, oldScene);
 
@@ -244,7 +244,7 @@ namespace Bounder.Framework
 
             // NEW_SCENE_LOADED
             {
-                Debug.Log("Loading Scene state: " + LoadingState.NEW_SCENE_LOADED);
+                //Debug.Log("Loading Scene state: " + LoadingState.NEW_SCENE_LOADED);
                 if (OnStateChanged != null)
                     OnStateChanged(LoadingState.NEW_SCENE_LOADED, _newScene, oldScene);
 
@@ -254,7 +254,7 @@ namespace Bounder.Framework
 
             // HIDING_LOADING_SCREEN
             {
-                Debug.Log("Loading Scene state: " + LoadingState.HIDING_LOADING_SCREEN);
+                //Debug.Log("Loading Scene state: " + LoadingState.HIDING_LOADING_SCREEN);
                 if (OnStateChanged != null)
                     OnStateChanged(LoadingState.HIDING_LOADING_SCREEN, _newScene, oldScene);
 
@@ -264,7 +264,7 @@ namespace Bounder.Framework
 
             // UNLOADING_LOADING_SCREEN
             {
-                Debug.Log("Loading Scene state: " + LoadingState.UNLOADING_LOADING_SCREEN);
+                //Debug.Log("Loading Scene state: " + LoadingState.UNLOADING_LOADING_SCREEN);
                 if (OnStateChanged != null)
                     OnStateChanged(LoadingState.UNLOADING_LOADING_SCREEN, _newScene, oldScene);
 
@@ -274,7 +274,7 @@ namespace Bounder.Framework
 
             // REVEALING_NEW_SCENE
             {
-                Debug.Log("Loading Scene state: " + LoadingState.REVEALING_NEW_SCENE);
+                //Debug.Log("Loading Scene state: " + LoadingState.REVEALING_NEW_SCENE);
                 if (OnStateChanged != null)
                     OnStateChanged(LoadingState.REVEALING_NEW_SCENE, _newScene, oldScene);
 
@@ -284,7 +284,7 @@ namespace Bounder.Framework
 
             // LOADING_COMPLETE
             {
-                Debug.Log("Loading Scene state: " + LoadingState.LOADING_COMPLETE);
+                //Debug.Log("Loading Scene state: " + LoadingState.LOADING_COMPLETE);
                 if (OnStateChanged != null)
                     OnStateChanged(LoadingState.LOADING_COMPLETE, _newScene, oldScene);
             }

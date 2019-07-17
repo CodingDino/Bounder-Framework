@@ -168,7 +168,7 @@ public class PanelManager : Singleton<PanelManager>
 				instance.StartCoroutine(instance._OpenPanel(newPanel,hidingPanel));
 			}
 
-			Debug.Log("Opening new panel: "+_prefab.name);
+			//Debug.Log("Opening new panel: "+_prefab.name);
 			return newPanel;
 		}
 
@@ -315,7 +315,7 @@ public class PanelManager : Singleton<PanelManager>
 	// ********************************************************************
 	private IEnumerator _ClosePanel(Panel _panel)
 	{
-		Debug.Log("Closing panel: "+_panel.name);
+		//Debug.Log("Closing panel: "+_panel.name);
 		m_closingPanels.Add(_panel);
 		_panel.Hide();
 		while (_panel.IsVisible())
