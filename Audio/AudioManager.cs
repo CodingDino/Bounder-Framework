@@ -235,9 +235,9 @@ namespace Bounder.Framework
         public static void RegisterAudioObject(AudioObject _object, bool register = true)
         {
             if (register)
-                (instance as AudioManager).m_nonPooledObjects[_object.audioInfo.category].Add(_object);
+                (instance as AudioManager)?.m_nonPooledObjects[_object.audioInfo.category].Add(_object);
             else
-                (instance as AudioManager).m_nonPooledObjects[_object.audioInfo.category].Remove(_object);
+                (instance as AudioManager)?.m_nonPooledObjects[_object.audioInfo.category].Remove(_object);
         }
         // ********************************************************************
         public static bool ChannelAvailable(AudioCategory _category)
