@@ -188,8 +188,7 @@ public class ProfileManager : Singleton<ProfileManager>
 		Debug.Log("ProfileManager --- CLEAR "+saveID);
 		PlayerPrefs.DeleteKey(saveID);
 	}
-	[ContextMenu("Clear All Save Data")]
-	public void ClearAll()
+	public static void ClearAll()
 	{
 		Debug.Log("ProfileManager --- CLEAR ALL SAVE DATA");
 		PlayerPrefs.DeleteAll();
