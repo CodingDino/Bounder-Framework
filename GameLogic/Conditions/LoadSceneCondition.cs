@@ -26,7 +26,7 @@ public class LoadSceneCondition : Condition
 	#region Public Data Members 
 	// ********************************************************************
 	[SerializeField]
-	private string m_sceneID = "";
+	private string m_sceneIDContains = "";
 	[SerializeField]
 	private bool m_invert = false;
 	#endregion
@@ -46,7 +46,7 @@ public class LoadSceneCondition : Condition
 	// ********************************************************************
 	public override int GetProgress_Cumulative() 
 	{
-		bool active = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == m_sceneID;
+		bool active = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name.Contains(m_sceneIDContains);
 		return active != m_invert ? 1 : 0;
 	}
 	// ********************************************************************
@@ -59,12 +59,12 @@ public class LoadSceneCondition : Condition
 	// ********************************************************************
 	private void OnLoadingStateChanged(LoadingState _state, string _newScene, string _oldScene)
 	{
-		if (_state == LoadingState.LOADING_COMPLETE && _newScene == m_sceneID && !m_invert)
+		if (_state == LoadingState.LOADING_COMPLETE && _newScene.Contains(m_sceneIDContains) && !m_invert)
 		{
 			AddProgress();
 			Trigger();
 		}
-		else if (_state == LoadingState.LOADING_COMPLETE && _oldScene == m_sceneID && m_invert)
+		else if (_state == LoadingState.LOADING_COMPLETE && _oldScene.Contains(m_sceneIDContains) && m_invert)
 		{
 			AddProgress();
 			Trigger();
