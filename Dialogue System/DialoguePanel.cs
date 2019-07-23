@@ -207,7 +207,6 @@ namespace Bounder.Framework
                         if (ProfileManager.profile != null && !ProfileManager.profile.conversationsSeen.Contains(m_currentConversation.name))
                         {
                             ProfileManager.profile.conversationsSeen.Add(m_currentConversation.name);
-                            ProfileManager.Save();
                         }
                         if (OnConversationSeen != null)
                             OnConversationSeen(m_currentConversation);

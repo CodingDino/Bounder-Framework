@@ -17,6 +17,8 @@ namespace Bounder.Framework
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine.SceneManagement;
+    using UnityEngine.UI;
+    using TMPro;
     #endregion
     // ************************************************************************
 
@@ -30,10 +32,12 @@ namespace Bounder.Framework
         // ---
         COVERING_SCREEN = 0,
         OPENING_LOADING_SCREEN,
+        REVEALING_LOADING_SCREEN,
         CLOSING_PANELS,
         UNLOADING_OLD_SCENE,
         UNLOADING_ASSETS,
-        HIDING_SCREEN_COVER,
+        SAVING_GAME,
+        GAME_SAVED,
         LOADING_NEW_SCENE,
         PROCESSING_INCREMENTAL_LOADERS,
         NEW_SCENE_LOADED,
@@ -60,9 +64,15 @@ namespace Bounder.Framework
         [SerializeField]
         private string m_loadingScene = "";
         [SerializeField]
+        private string m_loadingSceneSave = "";
+        [SerializeField]
+        private string m_saveTextObjectName = "";
+        [SerializeField]
         private FadeSprite m_blackness = null;
         [SerializeField]
         private float m_minDuration = 1.5f;
+        [SerializeField]
+        private float m_saveDisplayDuration = 1.0f;
         #endregion
         // ********************************************************************
 
@@ -98,20 +108,20 @@ namespace Bounder.Framework
         // ********************************************************************
         #region Public Methods
         // ********************************************************************
-        public static bool LoadScene(int _sceneIndex)
+        public static bool LoadScene(int _sceneIndex, bool _save = false)
         {
             if (!instance.m_loading)
             {
-                instance.StartCoroutine(instance.CR_LoadScene("", "", _sceneIndex));
+                instance.StartCoroutine(instance.CR_LoadScene("", _sceneIndex, _save));
                 return true;
             }
             return false;
         }
-        public static bool LoadScene(string _newScene, string _bundle = "scenes")
+        public static bool LoadScene(string _newScene, bool _save = false)
         {
             if (!instance.m_loading)
             {
-                instance.StartCoroutine(instance.CR_LoadScene(_newScene, _bundle));
+                instance.StartCoroutine(instance.CR_LoadScene(_newScene, 0, _save));
                 return true;
             }
             return false;
@@ -141,7 +151,7 @@ namespace Bounder.Framework
         // ********************************************************************
         #region Private Methods
         // ********************************************************************
-        public IEnumerator CR_LoadScene(string _newScene, string _assetBundle, int _buildIndex = 0)
+        public IEnumerator CR_LoadScene(string _newScene, int _buildIndex = 0, bool _save = false)
         {
             Debug.Log("Loading Scene: " + _newScene);
             m_loading = true;
@@ -166,14 +176,21 @@ namespace Bounder.Framework
                     OnStateChanged(LoadingState.OPENING_LOADING_SCREEN, _newScene, oldScene);
 
                 // Load loading screen
-                yield return SceneManager.LoadSceneAsync(m_loadingScene, LoadSceneMode.Additive);
+                yield return SceneManager.LoadSceneAsync(_save ? m_loadingSceneSave : m_loadingScene, LoadSceneMode.Additive);
+
+                if (_save)
+                {
+                    // Inform player of save
+                    TMP_Text saveText = GameObject.Find(m_saveTextObjectName).GetComponent<TMP_Text>();
+                    saveText.text = "Saving...";
+                }
             }
 
             // HIDING_SCREEN_COVER
             {
                 //Debug.Log("Loading Scene state: " + LoadingState.HIDING_SCREEN_COVER);
                 if (OnStateChanged != null)
-                    OnStateChanged(LoadingState.HIDING_SCREEN_COVER, _newScene, oldScene);
+                    OnStateChanged(LoadingState.REVEALING_LOADING_SCREEN, _newScene, oldScene);
 
                 // Fade to loading screen
                 yield return m_blackness.FadeOut();
@@ -202,7 +219,6 @@ namespace Bounder.Framework
                 yield return SceneManager.UnloadSceneAsync(oldScene);
             }
 
-
             // UNLOADING_ASSETS
             {
                 //Debug.Log("Loading Scene state: " + LoadingState.UNLOADING_ASSETS);
@@ -211,6 +227,39 @@ namespace Bounder.Framework
 
                 // Clear databses to allow asset unloading
                 Events.Raise(new ClearDatabaseForSceneChangeEvent());
+            }
+
+            // SAVING_GAME
+            if (_save)
+            {
+                //Debug.Log("Loading Scene state: " + LoadingState.SAVING_GAME);
+                if (OnStateChanged != null)
+                    OnStateChanged(LoadingState.SAVING_GAME, _newScene, oldScene);
+
+                // Figure out how long to wait
+                float saveEndTime = Time.time + m_saveDisplayDuration;
+
+                // Triggering save
+                ProfileManager.Save();
+
+                // Wait a minimum time for player to see message
+                while (Time.time < saveEndTime)
+                    yield return null;
+            }
+
+            // GAME_SAVED
+            if (_save)
+            {
+                //Debug.Log("Loading Scene state: " + LoadingState.GAME_SAVED);
+                if (OnStateChanged != null)
+                    OnStateChanged(LoadingState.GAME_SAVED, _newScene, oldScene);
+
+                // Inform player of save complete
+                TMP_Text saveText = GameObject.Find(m_saveTextObjectName).GetComponent<TMP_Text>();
+                saveText.text = "Game saved!";
+
+                // Wait a minimum time for player to see message
+                yield return new WaitForSeconds(m_saveDisplayDuration);
             }
 
             // LOADING_NEW_SCENE
@@ -269,7 +318,7 @@ namespace Bounder.Framework
                     OnStateChanged(LoadingState.UNLOADING_LOADING_SCREEN, _newScene, oldScene);
 
                 // !!! unload loading screen
-                yield return SceneManager.UnloadSceneAsync(m_loadingScene);
+                yield return SceneManager.UnloadSceneAsync(_save ? m_loadingSceneSave : m_loadingScene);
             }
 
             // REVEALING_NEW_SCENE
