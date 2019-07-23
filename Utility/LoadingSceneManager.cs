@@ -196,8 +196,6 @@ namespace Bounder.Framework
                 yield return m_blackness.FadeOut();
             }
 
-            float endTime = Time.time + m_minDuration;
-
             // CLOSING_PANELS
             {
                 //Debug.Log("Loading Scene state: " + LoadingState.CLOSING_PANELS);
@@ -261,6 +259,8 @@ namespace Bounder.Framework
                 // Wait a minimum time for player to see message
                 yield return new WaitForSeconds(m_saveDisplayDuration);
             }
+
+            float endTime = Time.time + m_minDuration;
 
             // LOADING_NEW_SCENE
             {
