@@ -333,8 +333,12 @@ public class PanelManager : Singleton<PanelManager>
 		Destroy(_panel.gameObject);
 
 		// Re-show next panel in the group
-		if (!group.NullOrEmpty() && m_groupStacks[group].Count > 0)
+		// If the next panel on the stack is already closing, leave it alone.
+		// It will trigger the next one on the stack when it finishes closing.
+		if (!group.NullOrEmpty() && m_groupStacks[group].Count > 0 && !m_closingPanels.Contains(m_groupStacks[group].Front()))
+		{
 			m_groupStacks[group].Front().Show();
+		}
 	}
 	// ********************************************************************
 	private IEnumerator _OpenPanel(Panel _panel, Panel _hidingPanel)
