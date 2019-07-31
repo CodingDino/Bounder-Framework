@@ -13,7 +13,6 @@ namespace Fiftytwo
     public class MailChimpSubscriber : MonoBehaviour
     {
         private const string UrlFormat = "https://{0}.api.mailchimp.com/3.0/lists/{1}/members";
-        private const string DataFormat = "{{\"email_address\":\"{0}\", \"status\":\"subscribed\"}}";
 
         [SerializeField]
         private string _apiKey = "";
@@ -41,7 +40,7 @@ namespace Fiftytwo
             }
         }
 
-        public void Subscribe ( string email )
+        public void Subscribe ( string email)
         {
             if( IsValidEmail( email ) )
             {
@@ -58,12 +57,12 @@ namespace Fiftytwo
             }
             else
             {
-                Debug.Log( "MailChimp — Invalid email" );
+                //Debug.Log( "MailChimp — Invalid email" );
                 _subscribeError.Invoke();
             }
         }
 
-        private bool IsValidEmail ( string email )
+        public bool IsValidEmail ( string email )
         {
             if( string.IsNullOrEmpty( email ) )
                 return false;
@@ -86,12 +85,12 @@ namespace Fiftytwo
 
             if( string.IsNullOrEmpty( www.error ) )
             {
-                Debug.Log( "MailChimp — Subscribe success" );
+                //Debug.Log( "MailChimp — Subscribe success" );
                 _subscribeSuccess.Invoke();
             }
             else
             {
-                Debug.Log( "MailChimp — Subscribe error: " + www.error );
+                //Debug.Log( "MailChimp — Subscribe error: " + www.error );
                 _subscribeError.Invoke();
             }
         }
@@ -100,8 +99,20 @@ namespace Fiftytwo
         {
             var headers = new Dictionary<string,string>();
             headers.Add( "Authorization", "apikey " + _apiKey );
-
-            var data = string.Format( DataFormat, email );
+            
+            string data = 
+            "{"+
+                "\"email_address\":\""+email+"\", "+
+                "\"status\":\"subscribed\", "+
+                "\"marketing_permissions\": ["+
+                    "{"+
+                        "\"marketing_permission_id\":\"5cfd1b13ae\","+
+                        "\"enabled\": true"+
+                    "}"+
+                "]"+ 
+            "}";
+            
+            //Debug.Log(data);
             var dataBytes = Encoding.ASCII.GetBytes( data );
 
             var splittedApiKey = _apiKey.Split( '-' );

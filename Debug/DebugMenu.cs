@@ -75,6 +75,8 @@ namespace Bounder.Framework
         private Text m_versionText = null;
         [SerializeField]
         private BuildConfiguration[] m_altBuildConfigs = null;
+        [SerializeField]
+        private bool m_pauseEditorOnP = true;
 
         [Header("Elements")]
         [SerializeField]
@@ -284,7 +286,7 @@ namespace Bounder.Framework
 
                 // Debug pause - editor only
 #if UNITY_EDITOR
-                if (Input.GetKey(KeyCode.P))
+                if (m_pauseEditorOnP && Input.GetKey(KeyCode.P))
                 {
                     Debug.Break();
                 }
