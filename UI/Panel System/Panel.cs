@@ -36,7 +36,7 @@ public class Panel : MonoBehaviour
 	[SerializeField]
 	private PanelState m_initialState = PanelState.HIDDEN;
 	[SerializeField]
-	private GameObject m_firstSelected = null;
+	protected Button m_firstSelected = null;
 	[SerializeField]
 	private bool m_closeOnCancel = false;
 	#endregion
@@ -183,6 +183,15 @@ public class Panel : MonoBehaviour
 		PanelManager.ClosePanel(name);
 	}
 	// ********************************************************************
+	public void SelectButton(Button _button)
+	{
+		if (_button != null)
+		{
+			_button.Select();
+			_button.OnSelect(null);
+		}
+	}
+	// ********************************************************************
 	#endregion
 	// ********************************************************************
 
@@ -220,14 +229,28 @@ public class Panel : MonoBehaviour
 		interactable = m_state == PanelState.SHOWN;
 
 		// Set initial selected object
-		if (m_state == PanelState.SHOWN && m_firstSelected != null)
+		if (m_state == PanelState.SHOWN && m_firstSelected != null && InputManager.controlScheme == ControlScheme.GAMEPAD)
 		{
-			EventSystem.current.SetSelectedGameObject(m_firstSelected);
+			SelectButton(m_firstSelected);
 		}
+
+		// Listen for control scheme changes
+		if (m_state == PanelState.SHOWN)
+        	Events.AddListener<ControlSchemeChangedEvent>(OnControlSchemeChanged);
+		else if (m_state == PanelState.HIDDEN)
+        	Events.RemoveListener<ControlSchemeChangedEvent>(OnControlSchemeChanged);
 
 		_ChangeState(_newState, oldState);
 		if (OnPanelStateChanged != null)
 			OnPanelStateChanged(name, _newState, oldState);
+	}
+	// ********************************************************************
+	private void OnControlSchemeChanged(ControlSchemeChangedEvent _event)
+	{
+		if (_event.newScheme == ControlScheme.GAMEPAD && EventSystem.current.currentSelectedGameObject == null)
+		{
+			SelectButton(m_firstSelected);
+		}
 	}
 	// ********************************************************************
 	#endregion
