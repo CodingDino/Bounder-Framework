@@ -86,7 +86,7 @@ namespace Bounder.Framework
         void UpdateControlScheme(ControlSchemeChangedEvent _event)
         {
             bool isGamepad = _event.newScheme == ControlScheme.GAMEPAD;
-            Debug.Log("Updating button gamepad mode = "+isGamepad);
+            //Debug.Log("Updating button gamepad mode = "+isGamepad);
 
             if (m_shouldOverrideNavigation)
                 m_button.navigation = isGamepad ? m_navigation : m_originalNavigation;
