@@ -443,22 +443,19 @@ namespace Bounder.Framework
                             validLinks.Add(i);
                         }
                     }
-                    LogManager.Log("Choices found for frame " + m_currentFrame.id + ": " + validLinks.Count,
-                                       LogCategory.UI,
-                                   LogSeverity.LOG,
-                                       "Dialogue",
-                                       gameObject);
+                    //Debug.Log("Choices found for frame " + m_currentFrame.id + ": " + validLinks.Count);
                     for (int i = 0; i < validLinks.Count; ++i)
                     {
                         int index = validLinks[i];
                         DialogueLink link = m_currentFrame.links[index];
-                        LogManager.Log("Creating button for " + index + " link frame: " + link.linkedFrame.name,
-                                   LogCategory.UI,
-                                       LogSeverity.LOG,
-                                   "Dialogue",
-                                   gameObject);
+                        //Debug.Log("Creating button for " + index + " link frame: " + link.linkedFrame.name);
                         GameObject choiceButton = GameObject.Instantiate(m_choiceButtonPrototype) as GameObject;
                         choiceButton.transform.SetParent(m_choiceRoot.transform);
+                        if (i == 0 && InputManager.controlScheme == ControlScheme.GAMEPAD)
+                        {
+                            m_firstSelected = choiceButton.GetComponentInChildren<Button>();
+                            SelectButton(m_firstSelected);
+                        }
 
                         // Setup button
                         ButtonSetup setup = choiceButton.GetComponent<ButtonSetup>();
@@ -528,6 +525,10 @@ namespace Bounder.Framework
         // ********************************************************************
         private IEnumerator ShowChoices(bool _show)
         {
+            for (int i = 0; i < m_choices.Count; ++i)
+            {
+                m_choices[i].GetComponentInChildren<Button>().enabled = _show;
+            }
             for (int i = 0; i < m_choices.Count; ++i)
             {
                 m_choices[i].SetBool("Show", _show);
