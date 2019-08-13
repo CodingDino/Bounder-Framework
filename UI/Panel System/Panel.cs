@@ -36,7 +36,7 @@ public class Panel : MonoBehaviour
 	[SerializeField]
 	private PanelState m_initialState = PanelState.HIDDEN;
 	[SerializeField]
-	protected Button m_firstSelected = null;
+	private Button m_firstSelected = null;
 	[SerializeField]
 	private bool m_closeOnCancel = false;
 	#endregion
@@ -82,6 +82,13 @@ public class Panel : MonoBehaviour
 		} 
 	}
 	public bool closeOnCancel { get { return m_closeOnCancel; } }
+	public Button firstSelected { 
+		get { return m_firstSelected; } 
+		set { 
+			//Debug.LogWarning("Setting first selected for panel "+name+" to button: "+value.name);
+			m_firstSelected = value; 
+		}
+	}
 	#endregion
 	// ********************************************************************
 
@@ -189,6 +196,7 @@ public class Panel : MonoBehaviour
 		{
 			_button.Select();
 			_button.OnSelect(null);
+			firstSelected = _button;
 		}
 	}
 	// ********************************************************************
@@ -229,9 +237,9 @@ public class Panel : MonoBehaviour
 		interactable = m_state == PanelState.SHOWN;
 
 		// Set initial selected object
-		if (m_state == PanelState.SHOWN && m_firstSelected != null && InputManager.controlScheme == ControlScheme.GAMEPAD)
+		if (m_state == PanelState.SHOWN && firstSelected != null && InputManager.controlScheme == ControlScheme.GAMEPAD)
 		{
-			SelectButton(m_firstSelected);
+			SelectButton(firstSelected);
 		}
 
 		// Listen for control scheme changes
@@ -249,7 +257,7 @@ public class Panel : MonoBehaviour
 	{
 		if (_event.newScheme == ControlScheme.GAMEPAD && EventSystem.current.currentSelectedGameObject == null)
 		{
-			SelectButton(m_firstSelected);
+			SelectButton(firstSelected);
 		}
 	}
 	// ********************************************************************

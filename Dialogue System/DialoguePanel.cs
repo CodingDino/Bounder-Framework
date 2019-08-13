@@ -453,8 +453,8 @@ namespace Bounder.Framework
                         choiceButton.transform.SetParent(m_choiceRoot.transform);
                         if (i == 0 && InputManager.controlScheme == ControlScheme.GAMEPAD)
                         {
-                            m_firstSelected = choiceButton.GetComponentInChildren<Button>();
-                            SelectButton(m_firstSelected);
+                            firstSelected = choiceButton.GetComponentInChildren<Button>();
+                            SelectButton(firstSelected);
                         }
 
                         // Setup button
