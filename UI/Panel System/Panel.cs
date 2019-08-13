@@ -259,6 +259,10 @@ public class Panel : MonoBehaviour
 		{
 			SelectButton(firstSelected);
 		}
+		else if (_event.newScheme != ControlScheme.GAMEPAD)
+		{
+			EventSystem.current.SetSelectedGameObject(null);
+		}
 	}
 	// ********************************************************************
 	#endregion
