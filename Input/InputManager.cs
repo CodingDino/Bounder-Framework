@@ -168,7 +168,7 @@ namespace Bounder.Framework
         {
             if (InputManager.controlScheme == ControlScheme.MOUSE_KEYBOARD && m_cursor != null)
             {
-                m_cursor.gameObject.SetActive(true);
+                m_cursor.SetBool("Active", true);
                 Vector2 currentScreenPoint = new Vector3(Input.mousePosition.x,
                                                              Input.mousePosition.y,
                                                              0);
@@ -184,7 +184,7 @@ namespace Bounder.Framework
             }
             else
             {
-                m_cursor.gameObject.SetActive(false);
+                m_cursor.SetBool("Active", false);
             }
         }
         // ********************************************************************
@@ -213,6 +213,7 @@ namespace Bounder.Framework
             ControlScheme newScheme = controlScheme;
             if (m_lastControlScheme != newScheme)
             {
+                Debug.Log("Control scheme changed from "+m_lastControlScheme+" to "+newScheme);
                 Events.Raise(new ControlSchemeChangedEvent(m_lastControlScheme, newScheme));
                 m_lastControlScheme = newScheme;
             }
