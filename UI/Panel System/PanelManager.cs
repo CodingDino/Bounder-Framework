@@ -154,6 +154,10 @@ public class PanelManager : Singleton<PanelManager>
             }
 
             newPanel.Initialise(_data);
+			if (!instance.m_activePanels.Empty())
+			{
+				instance.m_activePanels.Back().FocusChanged(false);
+			}
             instance.m_activePanels.Add(newPanel);
             if (!instance.m_groupStacks.ContainsKey(panelGroup))
                 instance.m_groupStacks[panelGroup] = new List<Panel>();
@@ -344,6 +348,7 @@ public class PanelManager : Singleton<PanelManager>
         {
             m_groupStacks[group].Front().Show();
         }
+		m_activePanels.Back().FocusChanged(true);
     }
     // ********************************************************************
     private IEnumerator _OpenPanel(Panel _panel, Panel _hidingPanel)

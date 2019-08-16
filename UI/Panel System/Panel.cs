@@ -200,6 +200,13 @@ public class Panel : MonoBehaviour
 		}
 	}
 	// ********************************************************************
+	public void FocusChanged(bool _isFocus)
+	{
+		if (_isFocus)
+			SelectButton(m_firstSelected);
+		_OnFocusChange(_isFocus);
+	}
+	// ********************************************************************
 	#endregion
 	// ********************************************************************
 
@@ -286,6 +293,8 @@ public class Panel : MonoBehaviour
 	protected virtual void _Show() {}
 	// ********************************************************************
 	protected virtual void _ChangeState(PanelState _newState, PanelState _oldState) {}
+	// ********************************************************************
+	protected virtual void _OnFocusChange(bool _isFocus) {}
 	// ********************************************************************
 	#endregion
 	// ********************************************************************
