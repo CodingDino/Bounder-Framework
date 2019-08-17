@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Bounder.Framework;
 using Rewired;
+using UnityEngine.UI;
 #endregion
 // ************************************************************************
 
@@ -314,6 +315,15 @@ public class PanelManager : Singleton<PanelManager>
     {
         return instance.m_activePanels.Back() == _panel;
     }
+	// ********************************************************************
+	public static void SelectButton(Button _button)
+	{
+		if (_button != null)
+		{
+			_button.Select();
+			_button.OnSelect(null);
+		}
+	}
     // ********************************************************************
     #endregion
     // ********************************************************************
