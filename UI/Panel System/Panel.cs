@@ -202,7 +202,7 @@ public class Panel : MonoBehaviour
 	// ********************************************************************
 	public void FocusChanged(bool _isFocus)
 	{
-		if (_isFocus)
+		if (_isFocus && InputManager.controlScheme == ControlScheme.GAMEPAD)
 			SelectButton(m_firstSelected);
 		_OnFocusChange(_isFocus);
 	}

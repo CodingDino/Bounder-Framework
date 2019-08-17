@@ -348,7 +348,10 @@ public class PanelManager : Singleton<PanelManager>
         {
             m_groupStacks[group].Front().Show();
         }
-		m_activePanels.Back().FocusChanged(true);
+		if (!m_activePanels.Empty())
+		{
+			m_activePanels.Back().FocusChanged(true);
+		}
     }
     // ********************************************************************
     private IEnumerator _OpenPanel(Panel _panel, Panel _hidingPanel)
