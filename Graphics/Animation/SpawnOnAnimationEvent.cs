@@ -50,6 +50,8 @@ public class SpawnOnAnimationEvent : MonoBehaviour
 	[SerializeField]
 	[Tooltip("Objects you want to spawn")]
 	private List<SpawnData> m_objects = new List<SpawnData>();
+    [SerializeField]
+    private bool m_matchRenderLayers = false;
 	#endregion
 	// ********************************************************************
 
@@ -115,6 +117,15 @@ public class SpawnOnAnimationEvent : MonoBehaviour
 			spawnedObject.transform.position = spawn.position.position;
 		if (spawn.parent != null)
 			spawnedObject.transform.SetParent(spawn.parent,true);
+        if (m_matchRenderLayers)
+        {
+            Renderer sourceRenderer = GetComponentInChildren<Renderer>();
+            Renderer[] renderers = spawnedObject.GetComponentsInChildren<Renderer>();
+            foreach (Renderer renderer in renderers)
+            {
+                renderer.sortingLayerID = sourceRenderer.sortingLayerID;
+            }
+        }
 	}
 	// ********************************************************************
 	#endregion
