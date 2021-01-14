@@ -74,9 +74,11 @@ namespace Bounder.Framework
             string conditionPath = propertyPath.Replace(_property.name, _attribute.conditionalSourceField);
             SerializedProperty sourcePropertyValue = _property.serializedObject.FindProperty(conditionPath);
 
+
             if (sourcePropertyValue != null)
             {
-                enabled = sourcePropertyValue.enumValueIndex == _attribute.compare;
+                //Debug.Log("ShowOnEnum name = " + _attribute.conditionalSourceField + ", compare = " + _attribute.compare + ", value = " + sourcePropertyValue.intValue);
+                enabled = sourcePropertyValue.intValue == _attribute.compare;
             }
             else
             {
