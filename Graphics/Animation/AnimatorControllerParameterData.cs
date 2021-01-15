@@ -11,8 +11,7 @@
 #region Imports
 // ************************************************************************
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+using Bounder.Framework;
 #endregion
 // ************************************************************************
 
@@ -32,13 +31,16 @@ public class AnimatorControllerParameterData : GameEvent
 	[Tooltip("Parameter you want to change.")]
 	public string parameter;
 	[Tooltip("Parameter type.")]
-	public AnimatorControllerParameterType parameterType;
+	public AnimatorControllerParameterType parameterType = AnimatorControllerParameterType.Trigger;
 	[Tooltip("Parameter value if bool")]
-	public bool parameterValueBool;
+    [ShowOnEnum("parameterType", (int)AnimatorControllerParameterType.Bool)]
+    public bool parameterValueBool;
 	[Tooltip("Parameter value if int")]
-	public int parameterValueInt;
+    [ShowOnEnum("parameterType", (int)AnimatorControllerParameterType.Int)]
+    public int parameterValueInt;
 	[Tooltip("Parameter value if float")]
-	public float parameterValueFloat;
+    [ShowOnEnum("parameterType", (int)AnimatorControllerParameterType.Float)]
+    public float parameterValueFloat;
 	#endregion
 	// ********************************************************************
 
