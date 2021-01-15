@@ -17,6 +17,21 @@ using UnityEngine;
 // ************************************************************************
 
 
+// ************************************************************************
+#region Enums 
+// ************************************************************************
+public enum ComparisonOperation
+{
+    EQUAL,
+    NOT_EQUAL,
+    LESS_THAN,
+    LESS_THAN_EQUAL_TO,
+    GREATER_THAN,
+    GREATER_THAN_EQUAL_TO
+}
+#endregion
+// ************************************************************************
+
 // ************************************************************************ 
 #region Class: MathHelper
 // ************************************************************************
@@ -36,10 +51,32 @@ public static class MathHelper
 			return _value + _upperLimit;
 		}
 		return _value;
-	}
-	// ********************************************************************
-	#endregion
-	// ********************************************************************
+    }
+    // ********************************************************************
+    public static bool RunComparison(ComparisonOperation _comparison, float _first, float _second)
+    {
+        switch (_comparison)
+        {
+            case ComparisonOperation.EQUAL:
+                return _first == _second;
+            case ComparisonOperation.NOT_EQUAL:
+                return _first != _second;
+            case ComparisonOperation.GREATER_THAN:
+                return _first > _second;
+            case ComparisonOperation.GREATER_THAN_EQUAL_TO:
+                return _first >= _second;
+            case ComparisonOperation.LESS_THAN:
+                return _first < _second;
+            case ComparisonOperation.LESS_THAN_EQUAL_TO:
+                return _first <= _second;
+            default:
+                Debug.LogError("Invalid comparison operation provided: " + _comparison);
+                return false;
+        }
+    }
+    // ********************************************************************
+    #endregion
+    // ********************************************************************
 
 }
 #endregion
