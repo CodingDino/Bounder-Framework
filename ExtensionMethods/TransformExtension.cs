@@ -92,10 +92,20 @@ public static class TransformExtension
 		_transform.localScale = new Vector3 (_globalScale.x/_transform.lossyScale.x, 
 		                                     _globalScale.y/_transform.lossyScale.y, 
 		                                     _globalScale.z/_transform.lossyScale.z);
-	}
-	// ********************************************************************
-	#endregion
-	// ********************************************************************
+    }
+    // ********************************************************************
+    public static void SetRotationAngle(this Transform _trans, float _rot)
+    {
+        _trans.eulerAngles = Vector3.forward * _rot;
+    }
+    // ********************************************************************
+    public static void SetLocalRotationAngle(this Transform _trans, float _rot)
+    {
+        _trans.localRotation = Quaternion.Euler(Vector3.forward * _rot);
+    }
+    // ********************************************************************
+    #endregion
+    // ********************************************************************
 
 }
 #endregion
