@@ -16,7 +16,8 @@ namespace Bounder.Framework
     using System.Collections;
     using System.Collections.Generic;
     using Rewired;
-
+    using TMPro;
+    using System;
     #endregion
     // ************************************************************************
 
@@ -80,6 +81,22 @@ namespace Bounder.Framework
         private GameObject m_choiceButtonPrototype = null;
         [SerializeField]
         private float m_choicePopInDelay = 0.05f;
+
+        [Header("Skip Functionality")]
+        [SerializeField]
+        private TextMeshProUGUI m_skipPrompt = null;
+        [SerializeField]
+        private string m_skipAction = "SkipCutscene";
+        [SerializeField]
+        private float m_promptDuration = 2f;
+        [SerializeField]
+        private float m_skipHoldTime = 2.0f;
+        [SerializeField]
+        private Image m_skipTimer = null;
+        [SerializeField]
+        private float m_inputMeasurementDuration = 2.0f;
+        [SerializeField]
+        private int m_inputMeasurementThreshold = 4;
         #endregion
         // ********************************************************************
 
@@ -104,6 +121,9 @@ namespace Bounder.Framework
         private string m_previousSections = "";
         private string m_previousCursor = "";
         private Player m_player;
+        private Coroutine m_showPromptRoutine = null;
+        private List<float> m_inputMeasurementStart = new List<float>();
+        private bool m_bulkSkipInProgress = false;
         #endregion
         // ********************************************************************
 
@@ -174,50 +194,49 @@ namespace Bounder.Framework
         void Update()
         {
             if (state != PanelState.SHOWN)
-                return;
+                return;            
 
             if (m_player.GetButtonDown("Confirm"))
             {
                 if (m_waitingForNextFrame)
                 {
-                    bool end = m_currentFrame.endOnThisFrame;
-                    if (!end)
-                    {
-                        // Choose next frame based on which frames we meet the requirements for
-                        for (int i = 0; i < m_currentFrame.links.Count; ++i)
-                        {
-                            if (m_currentFrame.links[i].MeetsConditions())
-                            {
-                                FollowLink(m_currentFrame.links[i].linkedFrame);
-                                return;
-                            }
-                        }
-                        // No link - go to next in list
-                        int newIndex = m_currentConversation.frames.IndexOf(m_currentFrame) + 1;
-                        end = newIndex == m_currentConversation.frames.Count;
-                        if (!end)
-                        {
-                            FollowLink(m_currentConversation.frames[newIndex]);
-                            return;
-                        }
-                    }
-
-                    if (end)
-                    {
-                        if (ProfileManager.profile != null && !ProfileManager.profile.conversationsSeen.Contains(m_currentConversation.name))
-                        {
-                            ProfileManager.profile.conversationsSeen.Add(m_currentConversation.name);
-                        }
-                        if (OnConversationSeen != null)
-                            OnConversationSeen(m_currentConversation);
-
-                        Close();
-                        return;
-                    }
+                    CompleteFrame();
                 }
                 else
                 {
                     m_shouldSkip = true;
+                }
+            }
+            
+            if (ReInput.players.GetPlayer(0).GetButtonDown(m_skipAction))
+            {
+                if (m_showPromptRoutine != null)
+                    StopCoroutine(m_showPromptRoutine);
+                StartCoroutine(StartSkip());
+            }
+            else if (ReInput.controllers.GetAnyButtonDown())
+            {
+                float currentTime = Time.time;
+
+                // Record the current input time
+                m_inputMeasurementStart.Add(currentTime);
+
+                // Check if any of the times have expired
+                for (int i = m_inputMeasurementStart.Count-1; i >= 0; --i)
+                {
+                    if (currentTime > m_inputMeasurementStart[i] + m_inputMeasurementDuration)
+                    {
+                        m_inputMeasurementStart.RemoveAt(i);
+                    }
+                }
+                
+                // If we have had enough inputs
+                if (m_inputMeasurementStart.Count > m_inputMeasurementThreshold)
+                {
+                    // Tell them how to skip
+                    if (m_showPromptRoutine != null)
+                        StopCoroutine(m_showPromptRoutine);
+                    m_showPromptRoutine = StartCoroutine(ShowPrompt());
                 }
             }
         }
@@ -256,6 +275,7 @@ namespace Bounder.Framework
         // ********************************************************************
         private IEnumerator DisplayFrame()
         {
+            Debug.Log("Dispaying frame " + m_currentFrame.id);
             LogManager.Log("DialoguePanel: Showing Frame " + m_currentFrame,
                            LogCategory.UI,
                            LogSeverity.LOG,
@@ -288,7 +308,8 @@ namespace Bounder.Framework
             {
                 side = (int)m_currentFrame.portraitSide;
 
-                yield return StartCoroutine(ChangePortraits(side, m_currentFrame.character.portrait));
+                if (!m_bulkSkipInProgress)
+                    yield return StartCoroutine(ChangePortraits(side, m_currentFrame.character.portrait));
             }
             m_portraitText.text = m_currentFrame.character.displayName;
 
@@ -299,7 +320,8 @@ namespace Bounder.Framework
                     m_portraitMovers[i].SetBool("Shown", false);
                 }
             }
-            StartCoroutine(DisplaySection());
+            if (!m_bulkSkipInProgress)
+                StartCoroutine(DisplaySection());
         }
         // ********************************************************************
         private IEnumerator ChangePortraits(int _side, Animator _portrait)
@@ -339,6 +361,8 @@ namespace Bounder.Framework
         // ********************************************************************
         private IEnumerator DisplaySection()
         {
+            Debug.Log("Dispaying section " + m_sectionIndex + " out of " + m_currentFrame.sections.Count);
+
             // Initialize stuff for new section
             m_currentSection = m_currentFrame.sections[m_sectionIndex];
             m_displayIndex = 0;
@@ -573,6 +597,150 @@ namespace Bounder.Framework
             }
         }
         // ********************************************************************
+        private IEnumerator ShowPrompt()
+        {
+            m_skipPrompt.text = String.Format(m_skipPrompt.text, InputHelper.GetDisplayNameForAction(m_skipAction));
+            m_skipPrompt.enabled = true;
+
+            yield return new WaitForSeconds(m_promptDuration);
+
+            m_skipPrompt.enabled = false;
+            m_showPromptRoutine = null;
+
+            yield break;
+        }
+        // ********************************************************************
+        private IEnumerator StartSkip()
+        {
+            float skipStart = Time.time;
+
+            // Make sure the prompt is visible
+            m_skipPrompt.text = String.Format(m_skipPrompt.text, InputHelper.GetDisplayNameForAction(m_skipAction));
+            m_skipPrompt.enabled = true;
+
+            // Loop for hold duration
+            while (Time.time < skipStart + m_skipHoldTime)
+            {
+                // If we are no longer holding the button, exit the coroutine
+                if (!ReInput.players.GetPlayer(0).GetButton(m_skipAction))
+                {
+                    // Set the timer fill back to zero
+                    m_skipTimer.fillAmount = 0;
+
+                    // Hide text
+                    m_skipPrompt.enabled = false;
+                    m_showPromptRoutine = null;
+
+                    // exit early
+                    yield break;
+                }
+                else
+                {
+                    // Update timer fill for current time
+                    m_skipTimer.fillAmount = (Time.time - skipStart) / m_skipHoldTime;
+                }
+
+                // Wait one frame
+                yield return null;
+            }
+
+            // We didn't exit early, so the button was held the whold time
+            // This means we should skip the conversation
+            SkipToEnd();
+
+
+            yield break;
+        }
+        // ********************************************************************
+        private void SkipToEnd()
+        {
+            m_bulkSkipInProgress = true;
+
+            // Complete all frames, following links, unless the frame is supposed 
+            // to display choices
+            while (m_currentFrame.allowSkip && !m_currentFrame.displayChoices && !EndOnThisFrame())
+            {
+                CompleteFrame();
+            }
+            
+            if (EndOnThisFrame())
+            {
+                CompleteFrame();
+                m_bulkSkipInProgress = false;
+            }
+            else
+            {
+                m_bulkSkipInProgress = false;
+                StartCoroutine(DisplayFrame());
+            }
+            
+            // Set the timer fill back to zero
+            m_skipTimer.fillAmount = 0;
+
+            // Hide text
+            m_skipPrompt.enabled = false;
+            m_showPromptRoutine = null;
+        }
+        // ********************************************************************
+        private bool EndOnThisFrame()
+        {
+            // marked as end frame, so end
+            if (m_currentFrame.endOnThisFrame)
+                return true;
+
+            // Choose next frame based on which frames we meet the requirements for
+            for (int i = 0; i < m_currentFrame.links.Count; ++i)
+            {
+                if (m_currentFrame.links[i].MeetsConditions())
+                {
+                    return false;
+                }
+            }
+
+
+            // No links, go to next frame
+            int newIndex = m_currentConversation.frames.IndexOf(m_currentFrame) + 1;
+            return newIndex == m_currentConversation.frames.Count;
+        }
+        // ********************************************************************
+        private void CompleteFrame()
+        {
+            bool end = m_currentFrame.endOnThisFrame;
+            if (!end)
+            {
+                // Choose next frame based on which frames we meet the requirements for
+                for (int i = 0; i < m_currentFrame.links.Count; ++i)
+                {
+                    if (m_currentFrame.links[i].MeetsConditions())
+                    {
+                        FollowLink(m_currentFrame.links[i].linkedFrame);
+                        return;
+                    }
+                }
+                // No link - go to next in list
+                int newIndex = m_currentConversation.frames.IndexOf(m_currentFrame) + 1;
+                end = newIndex == m_currentConversation.frames.Count;
+                if (!end)
+                {
+                    FollowLink(m_currentConversation.frames[newIndex]);
+                    return;
+                }
+            }
+
+            if (end)
+            {
+                if (ProfileManager.profile != null && !ProfileManager.profile.conversationsSeen.Contains(m_currentConversation.name))
+                {
+                    ProfileManager.profile.conversationsSeen.Add(m_currentConversation.name);
+                }
+                if (OnConversationSeen != null)
+                    OnConversationSeen(m_currentConversation);
+
+                Close();
+                return;
+            }
+
+        }
         #endregion
         // ********************************************************************
     }
