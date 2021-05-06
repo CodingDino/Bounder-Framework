@@ -163,12 +163,19 @@ namespace Bounder.Framework
         {
             m_waitingIcon.SetActive(false);
             m_textObject.text = "";
+
             StartCoroutine(ShowChoices(false));
             for (int i = 0; i < 2; ++i)
             {
                 m_portraitMovers[i].SetBool("Shown", false);
             }
             Events.Raise(new ChangeCursorEvent(m_previousCursor));
+
+            // Set the timer fill back to zero
+            m_skipTimer.fillAmount = 0;
+
+            // Hide text
+            m_skipPrompt.enabled = false;
         }
         // ********************************************************************
         protected override void _ChangeState(PanelState _newState, PanelState _oldState)
@@ -194,24 +201,17 @@ namespace Bounder.Framework
         void Update()
         {
             if (state != PanelState.SHOWN)
-                return;            
+                return;
 
-            if (m_player.GetButtonDown("Confirm"))
-            {
-                if (m_waitingForNextFrame)
-                {
-                    CompleteFrame();
-                }
-                else
-                {
-                    m_shouldSkip = true;
-                }
-            }
-            
+
+            // Skipping (must happen before advancing)
             if (ReInput.players.GetPlayer(0).GetButtonDown(m_skipAction))
             {
                 if (m_showPromptRoutine != null)
+                {
                     StopCoroutine(m_showPromptRoutine);
+                    m_showPromptRoutine = null;
+                }
                 StartCoroutine(StartSkip());
             }
             else if (ReInput.controllers.GetAnyButtonDown())
@@ -222,21 +222,37 @@ namespace Bounder.Framework
                 m_inputMeasurementStart.Add(currentTime);
 
                 // Check if any of the times have expired
-                for (int i = m_inputMeasurementStart.Count-1; i >= 0; --i)
+                for (int i = m_inputMeasurementStart.Count - 1; i >= 0; --i)
                 {
                     if (currentTime > m_inputMeasurementStart[i] + m_inputMeasurementDuration)
                     {
                         m_inputMeasurementStart.RemoveAt(i);
                     }
                 }
-                
+
                 // If we have had enough inputs
                 if (m_inputMeasurementStart.Count > m_inputMeasurementThreshold)
                 {
                     // Tell them how to skip
                     if (m_showPromptRoutine != null)
+                    {
                         StopCoroutine(m_showPromptRoutine);
+                        m_showPromptRoutine = null;
+                    }
                     m_showPromptRoutine = StartCoroutine(ShowPrompt());
+                }
+            }
+
+            // Advance
+            if (m_player.GetButtonDown("Confirm"))
+            {
+                if (m_waitingForNextFrame)
+                {
+                    CompleteFrame();
+                }
+                else
+                {
+                    m_shouldSkip = true;
                 }
             }
         }
