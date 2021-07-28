@@ -100,7 +100,7 @@ namespace Bounder.Framework
         // ********************************************************************
         private void SortList()
         {
-            Debug.LogWarning("SortList()");
+            //Debug.LogWarning("SortList()");
             List<SpriteYSorting> ourList = s_toBeSorted[m_id];
 
             // Sort list based on y world position of attached object
