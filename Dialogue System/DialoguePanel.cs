@@ -15,7 +15,6 @@ namespace Bounder.Framework
     using UnityEngine.UI;
     using System.Collections;
     using System.Collections.Generic;
-    using Rewired;
     using TMPro;
     using System;
     #endregion
@@ -120,7 +119,6 @@ namespace Bounder.Framework
         private Animator[] m_characterAnimator = new Animator[2];
         private string m_previousSections = "";
         private string m_previousCursor = "";
-        private Player m_player;
         private Coroutine m_showPromptRoutine = null;
         private List<float> m_inputMeasurementStart = new List<float>();
         private bool m_bulkSkipInProgress = false;
@@ -156,7 +154,6 @@ namespace Bounder.Framework
             }
             m_previousCursor = InputManager.cursor;
             Events.Raise(new ChangeCursorEvent("TalkingCursor"));
-            m_player = ReInput.players.GetPlayer(0);
         }
         // ********************************************************************
         protected override void _Hide()
@@ -205,7 +202,7 @@ namespace Bounder.Framework
 
 
             // Skipping (must happen before advancing)
-            if (ReInput.players.GetPlayer(0).GetButtonDown(m_skipAction))
+            if (InputManager.GetButtonDownForAnyPlayer(m_skipAction))
             {
                 if (m_showPromptRoutine != null)
                 {
@@ -214,7 +211,7 @@ namespace Bounder.Framework
                 }
                 StartCoroutine(StartSkip());
             }
-            else if (ReInput.controllers.GetAnyButtonDown())
+            else if (InputManager.GetAnyButtonDown())
             {
                 float currentTime = Time.time;
 
@@ -244,7 +241,7 @@ namespace Bounder.Framework
             }
 
             // Advance
-            if (m_player.GetButtonDown("Confirm"))
+            if (InputManager.GetButtonDownForFirstPlayer("Confirm"))
             {
                 if (m_waitingForNextFrame)
                 {
@@ -638,7 +635,7 @@ namespace Bounder.Framework
             while (Time.time < skipStart + m_skipHoldTime)
             {
                 // If we are no longer holding the button, exit the coroutine
-                if (!ReInput.players.GetPlayer(0).GetButton(m_skipAction))
+                if (!InputManager.GetButtonDownForFirstPlayer(m_skipAction))
                 {
                     // Set the timer fill back to zero
                     m_skipTimer.fillAmount = 0;

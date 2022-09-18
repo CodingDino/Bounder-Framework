@@ -14,7 +14,9 @@ namespace Bounder.Framework
     using System;
     using System.Collections.Generic;
     using UnityEngine;
+#if Rewired
     using Rewired;
+#endif
     #endregion
     // ************************************************************************
 
@@ -105,6 +107,9 @@ namespace Bounder.Framework
         private Vector3 m_mousePositionLastFrame = Vector3.zero;
         private float m_lastInputDetected = 0f;
         private ControlScheme m_lastControlScheme = ControlScheme.NONE;
+        #if Rewired
+            private IList<Player> m_players;
+        #endif
         #endregion
         // ********************************************************************
 
@@ -116,19 +121,27 @@ namespace Bounder.Framework
         {
             get
             {
+                #if Rewired
                 ControllerType lastUsed = ReInput.controllers.GetLastActiveControllerType();
+                #endif
 
                 // Touch
                 if (SystemInfo.deviceType == DeviceType.Handheld)
                     return ControlScheme.TOUCH;
 
                 // Mouse and keyboard
+                #if Rewired
                 if (lastUsed == ControllerType.Mouse || lastUsed == ControllerType.Keyboard)
                     return ControlScheme.MOUSE_KEYBOARD;
 
                 // Gamepad
                 if (lastUsed == ControllerType.Joystick)
                     return ControlScheme.GAMEPAD;
+                #else
+                // if no rewired, default to mouse/keyboard
+                else
+                    return ControlScheme.MOUSE_KEYBOARD;
+                #endif
 
                 // Unknown control scheme
                 return ControlScheme.NONE;
@@ -142,6 +155,84 @@ namespace Bounder.Framework
         {
             get { return Time.realtimeSinceStartup - instance.m_lastInputDetected; }
         }
+        #endregion
+        // ********************************************************************
+
+
+        // ********************************************************************
+        #region Public Static Methods 
+        // ********************************************************************
+        public static bool GetButtonDownForFirstPlayer(string buttonName)
+        {
+            return GetButtonDownForPlayer(buttonName, 0);
+        }
+        // ********************************************************************
+        public static bool GetButtonDownForPlayer(string buttonName, int playerNumber)
+        {
+            #if Rewired
+            return m_players[playerNumber].GetButtonDown(buttonName);
+            #else
+            //Debug.LogWarning("GetButtonDownForPlayer() not supported without Rewired");
+            return Input.GetButtonDown(buttonName);
+            #endif
+        }
+        // ********************************************************************
+        public static bool GetButtonDownForAnyPlayer(string buttonName)
+        {
+            #if Rewired
+            int numPlayers = 1; // TODO: Update to support multiple players
+            for (int iPlayer = 0; iPlayer < numPlayers; ++iPlayer)
+            {
+                if (GetButtonDownForPlayer(buttonName,iPlayer))
+                    return true;
+            }
+            return false;
+            #else
+            //Debug.LogWarning("GetButtonDownForAnyPlayer() not supported without Rewired");
+            return Input.GetButtonDown(buttonName);
+            #endif
+        }
+        // ********************************************************************
+        public static bool GetAnyButtonDown()
+        {
+            #if Rewired
+            return ReInput.controllers.GetAnyButtonDown();
+            #else
+            return Input.anyKey;
+            #endif
+        }
+        // ********************************************************************
+        public static float GetAxisForFirstPlayer(string axisName)
+        {
+            return GetAxisForPlayer(axisName, 0);
+        }
+        // ********************************************************************
+        public static float GetAxisForPlayer(string axisName, int playerNumber)
+        {
+            #if Rewired
+            return m_players[playerNumber].GetAxis(axisName);
+            #else
+            //Debug.LogWarning("GetAxisForPlayer() not supported without Rewired");
+            return Input.GetAxis(axisName);
+            #endif
+        }
+        // ********************************************************************
+        public static float GetAxisForAnyPlayer(string axisName)
+        {
+            #if Rewired
+            int numPlayers = 1; // TODO: Update to support multiple players
+            for (int iPlayer = 0; iPlayer < numPlayers; ++iPlayer)
+            {
+                if (GetAxisForPlayer(axisName,iPlayer))
+                    return true;
+            }
+            return false;
+            #else
+            //Debug.LogWarning("GetAxisForAnyPlayer() not supported without Rewired");
+            return Input.GetAxis(axisName);
+            #endif
+        }
+        // ********************************************************************
         #endregion
         // ********************************************************************
 
@@ -162,6 +253,13 @@ namespace Bounder.Framework
 
                 SwapCursors(m_defaultCursor);
             }
+        }
+        // ********************************************************************
+        void Start()
+        {
+            #if Rewired
+            m_players = ReInput.players.GetPlayers();
+            #endif
         }
         // ********************************************************************
         void OnGUI()
@@ -201,7 +299,7 @@ namespace Bounder.Framework
         void Update()
         {
             // Check for changed input
-            bool anyButtonPressed = ReInput.controllers.GetAnyButton();
+            bool anyButtonPressed = GetAnyButtonDown();
             bool mousePositionChanged = Input.mousePosition != m_mousePositionLastFrame;
             if (anyButtonPressed || mousePositionChanged)
                 m_lastInputDetected = Time.realtimeSinceStartup;
@@ -228,9 +326,11 @@ namespace Bounder.Framework
         // ********************************************************************
         private void OnChangeCursorEvent(ChangeCursorEvent _event)
         {
+            #if Rewired
             ControllerType lastUsed = ReInput.controllers.GetLastActiveControllerType();
             if (lastUsed != ControllerType.Mouse && lastUsed != ControllerType.Keyboard)
                 return;
+            #endif
 
             if (_event.cursorID == cursor)
                 return;

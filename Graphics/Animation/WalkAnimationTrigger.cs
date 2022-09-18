@@ -5,6 +5,8 @@
 // Author:      Sarah Herzog  
 // Copyright: 	2014 Bounder Games
 // ************************************************************************
+namespace Bounder.Framework
+{
 
 
 // ************************************************************************ 
@@ -78,4 +80,5 @@ public class WalkAnimationTrigger : MonoBehaviour {
 		m_lastCommand = Time.time;
 		m_lastX = thisX;
 	}
+}
 }

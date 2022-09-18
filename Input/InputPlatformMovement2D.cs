@@ -7,6 +7,8 @@
 // Copyright: 	2013 Bounder Games
 // ************************************************************************ 
 // TODO: Crouch, Run, Punch, Kick
+namespace Bounder.Framework
+{
 
 
 // ************************************************************************ 
@@ -88,4 +90,5 @@ public class InputPlatformMovement2D : MonoBehaviour {
 
 
 	}
+}
 }

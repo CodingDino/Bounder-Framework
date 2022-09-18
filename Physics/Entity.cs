@@ -5,6 +5,8 @@
 // Author:      Sarah Herzog  
 // Copyright: 	2013 Bounder Games
 // ************************************************************************ 
+namespace Bounder.Framework
+{
 
 
 // ************************************************************************ 
@@ -431,5 +433,7 @@ public class Entity : MonoBehaviour {
 		TurnToFaceDirectionInstant(m_facing);
 
 	}
+
+}
 
 }

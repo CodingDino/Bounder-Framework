@@ -5,6 +5,8 @@
 // Author:      Sarah Herzog  
 // Copyright: 	2013 Bounder Games
 // ************************************************************************ 
+namespace Bounder.Framework
+{
 
 
 // ************************************************************************ 
@@ -77,4 +79,5 @@ public class InputAxisMovement2D : MonoBehaviour {
 			m_entity.TurnToFaceDirection(direction);
 		}
 	}
+}
 }

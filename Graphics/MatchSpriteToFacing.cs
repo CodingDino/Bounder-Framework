@@ -5,6 +5,8 @@
 // Author:      Sarah Herzog  
 // Copyright: 	2014 Bounder Games
 // ************************************************************************
+namespace Bounder.Framework
+{
 
 
 // ************************************************************************ 
@@ -54,4 +56,6 @@ public class MatchSpriteToFacing : MonoBehaviour {
 		float scale = Mathf.Abs(m_sprite.transform.localScale.x) * (float)invert;
 		m_sprite.transform.localScale = new Vector3(scale, m_sprite.transform.localScale.y, m_sprite.transform.localScale.z);
 	}
+}
+
 }

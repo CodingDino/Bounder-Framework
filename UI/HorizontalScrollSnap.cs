@@ -15,8 +15,8 @@ namespace Bounder.Framework
     using UnityEngine;
     using UnityEngine.UI;
     using UnityEngine.EventSystems;
-    using Rewired;
     using System.Collections.Generic;
+    //using Rewired;
 
 
     // ************************************************************************ 
@@ -83,7 +83,6 @@ namespace Bounder.Framework
         private Vector2 m_touchStartPoint = Vector2.zero;
         private Vector2 m_contentsStartPoint = Vector2.zero;
         private int m_centerItem = 0;
-        private Player m_player = null;
 
 
         // ********************************************************************
@@ -114,7 +113,6 @@ namespace Bounder.Framework
         // ********************************************************************
         void Start()
         {
-            m_player = ReInput.players.GetPlayer(0);
             InitializeScreens();
         }
 
@@ -163,11 +161,11 @@ namespace Bounder.Framework
         // ********************************************************************
         void LateUpdate()
         {
-            if (!m_lerp && m_player.GetAxis(m_scrollAxis) < 0)
+            if (!m_lerp && InputManager.GetAxisForFirstPlayer(m_scrollAxis) < 0)
             {
                 PreviousScreen();
             }
-            if (!m_lerp && m_player.GetAxis(m_scrollAxis) > 0)
+            if (!m_lerp && InputManager.GetAxisForFirstPlayer(m_scrollAxis) > 0)
             {
                 NextScreen();
             }

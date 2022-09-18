@@ -14,7 +14,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Bounder.Framework;
-using Rewired;
 using UnityEngine.UI;
 #endregion
 // ************************************************************************
@@ -31,7 +30,6 @@ public class PanelManager : Singleton<PanelManager>
     private Dictionary<string, List<Panel>> m_groupStacks = new Dictionary<string, List<Panel>>();
     private List<Panel> m_activePanels = new List<Panel>();
     private List<Panel> m_closingPanels = new List<Panel>();
-    private IList<Player> m_players;
     #endregion
     // ********************************************************************
 
@@ -50,25 +48,15 @@ public class PanelManager : Singleton<PanelManager>
     // ********************************************************************
     #region MonoBehaviour Methods 
     // ********************************************************************
-    void Start()
-    {
-        m_players = ReInput.players.GetPlayers();
-    }
-    // ********************************************************************
     void Update()
     {
-        int numPlayers = 1; // TODO: Update to support multiple player UI functions
-        for (int iPlayer = 0; iPlayer < numPlayers; ++iPlayer)
+        if (InputManager.GetButtonDownForAnyPlayer("Cancel"))
         {
-            if (m_players[iPlayer].GetButtonDown("Cancel"))
+            // Attempt to close top level panel if it allows this
+            Panel topPanel = m_activePanels.Back();
+            if (topPanel != null && topPanel.closeOnCancel)
             {
-                // Attempt to close top level panel if it allows this
-                Panel topPanel = m_activePanels.Back();
-                if (topPanel != null && topPanel.closeOnCancel)
-                {
-                    ClosePanel(topPanel);
-                    break; // If multiple players are pressing cancel, don't process it twice.
-                }
+                ClosePanel(topPanel);
             }
         }
     }
