@@ -118,7 +118,7 @@ public class ObjectPool : IncrementalLoader
 	{
 		for (int i = 0; i < _numToAllocate; ++i)
 		{
-			m_available.Add(CreateObject());
+			m_available.Add(CreateObject(false));
 		}
 	}
 	// ********************************************************************
