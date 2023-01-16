@@ -30,6 +30,7 @@ public class ObjectPool : IncrementalLoader
 	private List<ObjectPoolObject> m_available = new List<ObjectPoolObject>();
 	private List<ObjectPoolObject> m_inUse = new List<ObjectPoolObject>();
 	private GameObject m_prefab;
+	private GameObject m_parent;
 	#endregion
 	// ****************************************************************
 
@@ -130,15 +131,27 @@ public class ObjectPool : IncrementalLoader
 			m_inUse[iObject].gameObject.SetActive(false);
 		}
 	}
-	// ********************************************************************
-	#endregion
-	// ********************************************************************
+    // ********************************************************************
+    #endregion
+    // ********************************************************************
 
 
-	// ********************************************************************
-	#region Private Methods 
-	// ********************************************************************
-	private ObjectPoolObject CreateObject(bool _active = true)
+    // ********************************************************************
+    #region Private Methods 
+    // ********************************************************************
+	private GameObject GetParent()
+	{
+		if (m_parent == null)
+		{
+			string parentName = "Object Pool";
+			if (m_prefab)
+				parentName += "-" + m_prefab.name;
+			m_parent = new GameObject(parentName);
+		}
+		return m_parent;
+	}
+    // ********************************************************************
+    private ObjectPoolObject CreateObject(bool _active = true)
 	{
 		GameObject newObject = null;
 		if (m_prefab == null)
@@ -151,8 +164,9 @@ public class ObjectPool : IncrementalLoader
 			m_prefab.SetActive(false);
 			newObject = GameObject.Instantiate<GameObject>(m_prefab);
 			m_prefab.SetActive(wasEnabled);
-		}
-		ObjectPoolObject objectPoolObject = newObject.AddComponent<ObjectPoolObject>();
+        }
+        newObject.transform.SetParent(GetParent().transform);
+        ObjectPoolObject objectPoolObject = newObject.AddComponent<ObjectPoolObject>();
 		objectPoolObject.pool = this;
 		newObject.SetActive(_active);
 		return objectPoolObject;
