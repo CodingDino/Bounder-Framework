@@ -12,6 +12,7 @@
 // ************************************************************************
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 #endregion
 // ************************************************************************
@@ -76,9 +77,16 @@ public static class ListExtension
 		List<T> copy = new List<T>();
 		copy.AddRange(_self);
 		return copy;
-	}
-	// ********************************************************************
-	public static bool Contains<T>(this List<T> _self, List<T> _other)
+    }
+    // ********************************************************************
+    public static List<T> Copy<T>(this List<T> _self, int _numToCopy)
+    {
+        List<T> copy = new List<T>();
+        copy.AddRange(_self.Take(_numToCopy));
+        return copy;
+    }
+    // ********************************************************************
+    public static bool Contains<T>(this List<T> _self, List<T> _other)
 	{
 		for (int i = 0; i < _other.Count; ++i)
 		{
