@@ -24,6 +24,8 @@ public static class ParticleExtension
             }
 
             fadeTime += Time.deltaTime;
+
+            _self.SetParticles(particles);
             yield return null;
         }
         yield break;
