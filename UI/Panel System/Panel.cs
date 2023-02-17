@@ -23,13 +23,14 @@ using Bounder.Framework;
 // ************************************************************************ 
 #region Class: Panel
 // ************************************************************************
-[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(CanvasGroup))]
 public class Panel : MonoBehaviour 
 {
-	// ********************************************************************
-	#region Exposed Data Members 
-	// ********************************************************************
-	[SerializeField]
+    // ********************************************************************
+    #region Exposed Data Members 
+    // ********************************************************************
+    [Header("General Panel Settings")]
+    [SerializeField]
 	private string m_group = "";
 	[SerializeField]
 	private bool m_initOnStart = false;
@@ -47,16 +48,22 @@ public class Panel : MonoBehaviour
 	#region Private Data Members 
 	// ********************************************************************
 	private PanelState m_state = PanelState.HIDDEN;
-	private List<Button> m_disabledButtons = new List<Button>();
-	private GraphicRaycaster m_raycaster = null;
-	#endregion
-	// ********************************************************************
+    #endregion
+    // ********************************************************************
+
+    // ********************************************************************
+    #region Protected Data Members 
+    // ********************************************************************
+    protected CanvasGroup m_canvasGroup = null;
+    protected Animator m_animator = null; // Deprecated, do not use!
+    #endregion
+    // ********************************************************************
 
 
-	// ********************************************************************
-	#region  Events 
-	// ********************************************************************
-	public delegate void PanelStateChanged(string _panelName, PanelState _newState, PanelState _oldState);
+    // ********************************************************************
+    #region  Events 
+    // ********************************************************************
+    public delegate void PanelStateChanged(string _panelName, PanelState _newState, PanelState _oldState);
 	public static event PanelStateChanged OnPanelStateChanged;
 	#endregion
 	// ********************************************************************
@@ -70,15 +77,18 @@ public class Panel : MonoBehaviour
 	public bool interactable { 
 		set 
 		{ 
-			if (m_raycaster != null) 
-				m_raycaster.enabled = value; 
+			if (m_canvasGroup)
+            {
+                m_canvasGroup.interactable = value;
+                m_canvasGroup.blocksRaycasts = value;
+            }
 		} 
-		get 
-		{ 
-			if (m_raycaster != null) 
-				return m_raycaster.enabled; 
-			else 
-				return false; 
+		get
+        {
+			if (m_canvasGroup)
+				return m_canvasGroup.interactable;
+			else
+				return false;
 		} 
 	}
 	public bool closeOnCancel { get { return m_closeOnCancel; } }
@@ -127,10 +137,11 @@ public class Panel : MonoBehaviour
 		return PanelState.VISIBLE.Contains(m_state); 
 	}
 	// ********************************************************************
-	public void Initialise (PanelData _data = null)  
-	{ 
-		m_raycaster = GetComponent<GraphicRaycaster>();
-		PanelState startingState = _data != null ? _data.startingState : m_initialState;
+	public void Initialise (PanelData _data = null)
+    {
+        m_canvasGroup = GetComponent<CanvasGroup>();
+		m_animator = GetComponent<Animator>();
+        PanelState startingState = _data != null ? _data.startingState : m_initialState;
 		ChangeState(startingState, true, true);
 		_Initialise(_data);
 	}
@@ -146,18 +157,7 @@ public class Panel : MonoBehaviour
 			return;
 		
 		ChangeState(PanelState.HIDING);
-		StartCoroutine(UpdateState());
-
-		// Diable buttons
-		Button[] allButtons = GetComponentsInChildren<Button>();
-		for (int i = 0; i < allButtons.Length; ++i)
-		{
-			if (allButtons[i].enabled)
-			{
-				allButtons[i].enabled = false;
-				m_disabledButtons.Add(allButtons[i]);
-			}
-		}
+		StartCoroutine(Hide_CR());
 
 		_Hide();
 	}
@@ -168,13 +168,7 @@ public class Panel : MonoBehaviour
 			return;
 
 		ChangeState(PanelState.SHOWING);
-		StartCoroutine(UpdateState());
-
-		for (int i = 0; i < m_disabledButtons.Count; ++i)
-		{
-			m_disabledButtons[i].enabled = true;
-		}
-		m_disabledButtons.Clear();
+		StartCoroutine(Show_CR());
 
 		_Show();
 	}
@@ -214,18 +208,21 @@ public class Panel : MonoBehaviour
 	// ********************************************************************
 	#region Private Methods 
 	// ********************************************************************
-	private IEnumerator UpdateState()
-	{
-		while (IsTransitioning())
-		{
-			PanelState nextState = (PanelState)((int)m_state << 1);
-			if (GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName(nextState.ToString()))
-				ChangeState(nextState);
-			else yield return null;
-		}
-	}
-	// ********************************************************************
-	private void ChangeState (PanelState _newState, bool _forceApply = false, bool _instant = false)
+	private IEnumerator Show_CR()
+    {
+        PanelState nextState = (PanelState)((int)m_state << 1);
+		yield return StartCoroutine(_Show_CR());
+		ChangeState(nextState);
+    }
+    // ********************************************************************
+    private IEnumerator Hide_CR()
+    {
+        PanelState nextState = (PanelState)((int)m_state << 1);
+        yield return StartCoroutine(_Hide_CR());
+        ChangeState(nextState);
+    }
+    // ********************************************************************
+    private void ChangeState (PanelState _newState, bool _forceApply = false, bool _instant = false)
 	{
 		if (_newState == m_state && !_forceApply)
 			return;
@@ -237,9 +234,10 @@ public class Panel : MonoBehaviour
 		PanelState oldState = m_state;
 		m_state = _newState;
 		gameObject.SetActive(true);
-		GetComponent<Animator>().SetInteger("PanelState",(int)m_state);
-		if (_instant)
-			GetComponent<Animator>().SetTrigger("InstantChange");
+		if (m_animator)
+            m_animator.SetInteger("PanelState",(int)m_state);
+		if (_instant && m_animator)
+            m_animator.SetTrigger("InstantChange");
 		gameObject.SetActive(IsVisible());
 		interactable = m_state == PanelState.SHOWN;
 
@@ -290,9 +288,41 @@ public class Panel : MonoBehaviour
 	// ********************************************************************
 	protected virtual void _Hide() {}
 	// ********************************************************************
-	protected virtual void _Show() {}
-	// ********************************************************************
-	protected virtual void _ChangeState(PanelState _newState, PanelState _oldState) {}
+	protected virtual void _Show() { }
+    // ********************************************************************
+    protected virtual IEnumerator _Show_CR()
+    {
+        // Deprecated behaviour, remove!
+        if (m_animator)
+        {
+            PanelState nextState = (PanelState)((int)m_state << 1);
+            while (!m_animator.GetCurrentAnimatorStateInfo(0).IsName(nextState.ToString()))
+                yield return null;
+        }
+
+        // Default show/hide behaviour just instantly shows, to be overriden by child classes
+        m_canvasGroup.alpha = 1.0f;
+
+        yield break;
+    }
+    // ********************************************************************
+    protected virtual IEnumerator _Hide_CR()
+    {
+        // Deprecated behaviour, remove!
+        if (m_animator)
+        {
+            PanelState nextState = (PanelState)((int)m_state << 1);
+            while (!m_animator.GetCurrentAnimatorStateInfo(0).IsName(nextState.ToString()))
+                yield return null;
+        }
+
+        // Default show/hide behaviour just instantly hides, to be overriden by child classes
+        m_canvasGroup.alpha = 0.0f;
+
+        yield break;
+    }
+    // ********************************************************************
+    protected virtual void _ChangeState(PanelState _newState, PanelState _oldState) {}
 	// ********************************************************************
 	protected virtual void _OnFocusChange(bool _isFocus) {}
 	// ********************************************************************
