@@ -31,9 +31,9 @@ namespace Bounder.Framework
         INVALID = -1,
         // ---
         COVERING_SCREEN = 0,
+        CLOSING_PANELS,
         OPENING_LOADING_SCREEN,
         REVEALING_LOADING_SCREEN,
-        CLOSING_PANELS,
         UNLOADING_OLD_SCENE,
         UNLOADING_ASSETS,
         SAVING_GAME,
@@ -68,11 +68,13 @@ namespace Bounder.Framework
         [SerializeField]
         private string m_saveTextObjectName = "";
         [SerializeField]
-        private FadeSprite m_blackness = null;
-        [SerializeField]
         private float m_minDuration = 1.5f;
         [SerializeField]
         private float m_saveDisplayDuration = 1.0f;
+        [SerializeField]
+        private CanvasGroup m_screenCover;
+        [SerializeField]
+        private float m_screenCoverFadeTime = 0.2f;
         #endregion
         // ********************************************************************
 
@@ -166,7 +168,20 @@ namespace Bounder.Framework
                     OnStateChanged(LoadingState.COVERING_SCREEN, _newScene, oldScene);
 
                 // Fade to black
-                yield return m_blackness.FadeIn();
+                m_screenCover.blocksRaycasts = true;
+                LeanTween.alphaCanvas(m_screenCover, 1.0f, m_screenCoverFadeTime);
+                yield return new WaitForSeconds(m_screenCoverFadeTime);
+            }
+
+            // CLOSING_PANELS
+            {
+                //Debug.Log("Loading Scene state: " + LoadingState.CLOSING_PANELS);
+                if (OnStateChanged != null)
+                    OnStateChanged(LoadingState.CLOSING_PANELS, _newScene, oldScene);
+
+                PanelManager.CloseAllPanels();
+                while (PanelManager.NumPanelsOpen() > 0)
+                    yield return null;
             }
 
             // OPENING_LOADING_SCREEN
@@ -193,18 +208,9 @@ namespace Bounder.Framework
                     OnStateChanged(LoadingState.REVEALING_LOADING_SCREEN, _newScene, oldScene);
 
                 // Fade to loading screen
-                yield return m_blackness.FadeOut();
-            }
-
-            // CLOSING_PANELS
-            {
-                //Debug.Log("Loading Scene state: " + LoadingState.CLOSING_PANELS);
-                if (OnStateChanged != null)
-                    OnStateChanged(LoadingState.CLOSING_PANELS, _newScene, oldScene);
-
-                PanelManager.CloseAllPanels();
-                while (PanelManager.NumPanelsOpen() > 0)
-                    yield return null;
+                LeanTween.alphaCanvas(m_screenCover, 0.0f, m_screenCoverFadeTime);
+                yield return new WaitForSeconds(m_screenCoverFadeTime);
+                m_screenCover.blocksRaycasts = false;
             }
 
             // UNLOADING_OLD_SCENE
@@ -308,7 +314,9 @@ namespace Bounder.Framework
                     OnStateChanged(LoadingState.HIDING_LOADING_SCREEN, _newScene, oldScene);
 
                 // Fade to black
-                yield return m_blackness.FadeIn();
+                m_screenCover.blocksRaycasts = true;
+                LeanTween.alphaCanvas(m_screenCover, 1.0f, m_screenCoverFadeTime);
+                yield return new WaitForSeconds(m_screenCoverFadeTime);
             }
 
             // UNLOADING_LOADING_SCREEN
@@ -328,7 +336,9 @@ namespace Bounder.Framework
                     OnStateChanged(LoadingState.REVEALING_NEW_SCENE, _newScene, oldScene);
 
                 // Fade to new screen
-                yield return m_blackness.FadeOut();
+                LeanTween.alphaCanvas(m_screenCover, 0.0f, m_screenCoverFadeTime);
+                yield return new WaitForSeconds(m_screenCoverFadeTime);
+                m_screenCover.blocksRaycasts = false;
             }
 
             // LOADING_COMPLETE
