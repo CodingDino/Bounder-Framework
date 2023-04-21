@@ -170,7 +170,7 @@ namespace Bounder.Framework
                 // Fade to black
                 m_screenCover.blocksRaycasts = true;
                 LeanTween.alphaCanvas(m_screenCover, 1.0f, m_screenCoverFadeTime);
-                yield return new WaitForSeconds(m_screenCoverFadeTime);
+                yield return new WaitForSecondsRealtime(m_screenCoverFadeTime);
             }
 
             // CLOSING_PANELS
@@ -209,7 +209,7 @@ namespace Bounder.Framework
 
                 // Fade to loading screen
                 LeanTween.alphaCanvas(m_screenCover, 0.0f, m_screenCoverFadeTime);
-                yield return new WaitForSeconds(m_screenCoverFadeTime);
+                yield return new WaitForSecondsRealtime(m_screenCoverFadeTime);
                 m_screenCover.blocksRaycasts = false;
             }
 
@@ -241,13 +241,13 @@ namespace Bounder.Framework
                     OnStateChanged(LoadingState.SAVING_GAME, _newScene, oldScene);
 
                 // Figure out how long to wait
-                float saveEndTime = Time.time + m_saveDisplayDuration;
+                float saveEndTime = Time.realtimeSinceStartup + m_saveDisplayDuration;
 
                 // Triggering save
                 ProfileManager.Save();
 
                 // Wait a minimum time for player to see message
-                while (Time.time < saveEndTime)
+                while (Time.realtimeSinceStartup < saveEndTime)
                     yield return null;
             }
 
@@ -263,7 +263,7 @@ namespace Bounder.Framework
                 saveText.text = "Game saved!";
 
                 // Wait a minimum time for player to see message
-                yield return new WaitForSeconds(m_saveDisplayDuration);
+                yield return new WaitForSecondsRealtime(m_saveDisplayDuration);
             }
 
             float endTime = Time.time + m_minDuration;
@@ -316,7 +316,7 @@ namespace Bounder.Framework
                 // Fade to black
                 m_screenCover.blocksRaycasts = true;
                 LeanTween.alphaCanvas(m_screenCover, 1.0f, m_screenCoverFadeTime);
-                yield return new WaitForSeconds(m_screenCoverFadeTime);
+                yield return new WaitForSecondsRealtime(m_screenCoverFadeTime);
             }
 
             // UNLOADING_LOADING_SCREEN
@@ -337,7 +337,7 @@ namespace Bounder.Framework
 
                 // Fade to new screen
                 LeanTween.alphaCanvas(m_screenCover, 0.0f, m_screenCoverFadeTime);
-                yield return new WaitForSeconds(m_screenCoverFadeTime);
+                yield return new WaitForSecondsRealtime(m_screenCoverFadeTime);
                 m_screenCover.blocksRaycasts = false;
             }
 
