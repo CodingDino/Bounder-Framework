@@ -169,7 +169,7 @@ namespace Bounder.Framework
 
                 // Fade to black
                 m_screenCover.blocksRaycasts = true;
-                LeanTween.alphaCanvas(m_screenCover, 1.0f, m_screenCoverFadeTime);
+                LeanTween.alphaCanvas(m_screenCover, 1.0f, m_screenCoverFadeTime).setIgnoreTimeScale(true);
                 yield return new WaitForSecondsRealtime(m_screenCoverFadeTime);
             }
 
@@ -208,7 +208,7 @@ namespace Bounder.Framework
                     OnStateChanged(LoadingState.REVEALING_LOADING_SCREEN, _newScene, oldScene);
 
                 // Fade to loading screen
-                LeanTween.alphaCanvas(m_screenCover, 0.0f, m_screenCoverFadeTime);
+                LeanTween.alphaCanvas(m_screenCover, 0.0f, m_screenCoverFadeTime).setIgnoreTimeScale(true);
                 yield return new WaitForSecondsRealtime(m_screenCoverFadeTime);
                 m_screenCover.blocksRaycasts = false;
             }
@@ -315,7 +315,7 @@ namespace Bounder.Framework
 
                 // Fade to black
                 m_screenCover.blocksRaycasts = true;
-                LeanTween.alphaCanvas(m_screenCover, 1.0f, m_screenCoverFadeTime);
+                LeanTween.alphaCanvas(m_screenCover, 1.0f, m_screenCoverFadeTime).setIgnoreTimeScale(true);
                 yield return new WaitForSecondsRealtime(m_screenCoverFadeTime);
             }
 
@@ -336,7 +336,7 @@ namespace Bounder.Framework
                     OnStateChanged(LoadingState.REVEALING_NEW_SCENE, _newScene, oldScene);
 
                 // Fade to new screen
-                LeanTween.alphaCanvas(m_screenCover, 0.0f, m_screenCoverFadeTime);
+                LeanTween.alphaCanvas(m_screenCover, 0.0f, m_screenCoverFadeTime).setIgnoreTimeScale(true);
                 yield return new WaitForSecondsRealtime(m_screenCoverFadeTime);
                 m_screenCover.blocksRaycasts = false;
             }
