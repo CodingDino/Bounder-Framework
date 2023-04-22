@@ -31,6 +31,7 @@ public class ObjectPool : IncrementalLoader
 	private List<ObjectPoolObject> m_inUse = new List<ObjectPoolObject>();
 	private GameObject m_prefab;
 	private GameObject m_parent;
+	private int m_runningCount = 0;
 	#endregion
 	// ****************************************************************
 
@@ -89,16 +90,12 @@ public class ObjectPool : IncrementalLoader
 	public GameObject RequestObject()
 	{
 		ObjectPoolObject toReturn;
-		if (m_available.Count > 0)
+
+		if (m_available.Count <= 0)
 		{
-			toReturn = m_available[0];
-//			Debug.Log ("returning available object: "+toReturn.name);
+			AllocateImmediate(1);
 		}
-		else
-		{
-			toReturn = CreateObject();
-//			Debug.Log ("creating new object: "+toReturn.name);
-		}
+		toReturn = m_available[0];
 		toReturn.gameObject.SetActive(true); // Will mark it as unavailable
 		return toReturn.gameObject;
 	}
@@ -163,8 +160,9 @@ public class ObjectPool : IncrementalLoader
 			bool wasEnabled = m_prefab.activeSelf;
 			m_prefab.SetActive(false);
 			newObject = GameObject.Instantiate<GameObject>(m_prefab);
-			m_prefab.SetActive(wasEnabled);
+            m_prefab.SetActive(wasEnabled);
         }
+		newObject.name += "-" + m_runningCount++;
         newObject.transform.SetParent(GetParent().transform);
         ObjectPoolObject objectPoolObject = newObject.AddComponent<ObjectPoolObject>();
 		objectPoolObject.pool = this;
