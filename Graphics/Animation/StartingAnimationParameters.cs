@@ -1,7 +1,7 @@
 ﻿// ************************************************************************ 
 // File Name:   StartingAnimationParameters.cs 
-// Purpose:    	
-// Project:		
+// Purpose:    	Set animation parameters when an object starts or is enabled
+// Project:		Framework
 // Author:      Sarah Herzog  
 // Copyright: 	2017 Bounder Games
 // ************************************************************************ 
@@ -29,6 +29,8 @@ public class StartingAnimationParameters : MonoBehaviour
 	[SerializeField]
 	[Tooltip("Parameters you want to set.")]
 	private List<AnimatorControllerParameterData> m_parameters = new List<AnimatorControllerParameterData>();
+	[SerializeField]
+	private bool m_callOnEnable = false;
 	#endregion
 	// ********************************************************************
 
@@ -45,29 +47,47 @@ public class StartingAnimationParameters : MonoBehaviour
 	// ********************************************************************
 	void Start () 
 	{
-		for (int i = 0; i < m_parameters.Count; ++i)
-		{
-			AnimatorControllerParameterData param = m_parameters[i];
-			switch(param.parameterType)
-			{
-			case AnimatorControllerParameterType.Trigger:
-				param.animator.SetTrigger(param.parameter);
-				break;
-			case AnimatorControllerParameterType.Bool:
-				param.animator.SetBool(param.parameter, param.parameterValueBool);
-				break;
-			case AnimatorControllerParameterType.Int:
-				param.animator.SetInteger(param.parameter, param.parameterValueInt);
-				break;
-			case AnimatorControllerParameterType.Float:
-				param.animator.SetFloat(param.parameter, param.parameterValueFloat);
-				break;
-			}
-		}
-	}
+        SetParameters();
+    }
 	// ********************************************************************
-	#endregion
-	// ********************************************************************
+	private void OnEnable()
+	{
+        if (m_callOnEnable)
+            SetParameters();
+    }
+    // ********************************************************************
+    #endregion
+    // ********************************************************************
+
+
+    // ********************************************************************
+    #region Private Methods 
+    // ********************************************************************
+	private void SetParameters()
+    {
+        for (int i = 0; i < m_parameters.Count; ++i)
+        {
+            AnimatorControllerParameterData param = m_parameters[i];
+            switch (param.parameterType)
+            {
+                case AnimatorControllerParameterType.Trigger:
+                    param.animator.SetTrigger(param.parameter);
+                    break;
+                case AnimatorControllerParameterType.Bool:
+                    param.animator.SetBool(param.parameter, param.parameterValueBool);
+                    break;
+                case AnimatorControllerParameterType.Int:
+                    param.animator.SetInteger(param.parameter, param.parameterValueInt);
+                    break;
+                case AnimatorControllerParameterType.Float:
+                    param.animator.SetFloat(param.parameter, param.parameterValueFloat);
+                    break;
+            }
+        }
+    }
+    // ********************************************************************
+    #endregion
+    // ********************************************************************
 
 }
 #endregion
