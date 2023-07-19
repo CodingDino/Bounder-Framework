@@ -37,9 +37,17 @@ public static class TransformExtension
 		{
 			GameObject.Destroy (_trans.GetChild(i).gameObject);
 		}
-	}
-	// ********************************************************************
-	public static void SetPosX(this Transform _trans, float _pos)
+    }
+    // ********************************************************************
+    public static void DestroyChildrenImmediate(this Transform _trans)
+    {
+        for (int i = 0; i < _trans.childCount; ++i)
+        {
+            GameObject.DestroyImmediate(_trans.GetChild(i).gameObject);
+        }
+    }
+    // ********************************************************************
+    public static void SetPosX(this Transform _trans, float _pos)
 	{
 		_trans.position = new Vector3(_pos,
 		                              _trans.position.y,
