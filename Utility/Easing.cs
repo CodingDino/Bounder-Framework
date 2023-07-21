@@ -99,14 +99,18 @@ public static class Easing
 	public static float Apply(EasingFunction function,float t, float b, float c, float d)
 	{
 		return GetFunc(function)(t,b,c,d);
-	}
-	
-	/// <summary>
-	/// Converts an EasingFunction enum to the corresponding function.
-	/// </summary>
-	/// <param name="function">The EasingFunction enum.</param>
-	/// <returns>The actual easing function.</returns>
-	public static Func<float, float, float, float, float> GetFunc(EasingFunction function)
+    }
+    public static float ApplyFinal(EasingFunction function, float t, float b, float f, float d)
+    {
+        return GetFunc(function)(t, b, f-b, d);
+    }
+
+    /// <summary>
+    /// Converts an EasingFunction enum to the corresponding function.
+    /// </summary>
+    /// <param name="function">The EasingFunction enum.</param>
+    /// <returns>The actual easing function.</returns>
+    public static Func<float, float, float, float, float> GetFunc(EasingFunction function)
 	{
 		switch (function)
 		{
