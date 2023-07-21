@@ -25,6 +25,8 @@ public static class RendererExtension
     // ********************************************************************
     public static void SetAlpha(this Renderer renderer, float val)
     {
+        // NOTE: Will not work for sprites, if needed, write separate function for sprites
+        // Avoid checking if this renderer is a SpriteRenderer to avoid unneeded dynamic cast to slow down execution
         // Set this object's alpha
         foreach (Material mat in renderer.materials)
         {
@@ -59,6 +61,31 @@ public static class RendererExtension
         }
     }
     // ********************************************************************
+    public static void SetColour(this Renderer renderer, Color _color)
+    {
+        // NOTE: Will not work for sprites, if needed, write separate function for sprites
+        // Avoid checking if this renderer is a SpriteRenderer to avoid unneeded dynamic cast to slow down execution
+        foreach (Material mat in renderer.materials)
+        {
+            mat.color = _color;
+        }
+    }
+    // ********************************************************************
+    public static void SetColourRecursive(this Renderer renderer, Color _color)
+    {
+        // NOTE: Will not work for sprites, if needed, write separate function for sprites
+        // Avoid checking if this renderer is a SpriteRenderer to avoid unneeded dynamic cast to slow down execution
+        renderer.SetColour(_color);
+
+        if (renderer.transform.childCount > 0)
+        {
+            foreach (Transform child in renderer.transform)
+            {
+                Renderer childRenderer = child.GetComponent<Renderer>();
+                childRenderer?.SetColourRecursive(_color);
+            }
+        }
+    }
     #endregion
     // ********************************************************************
 }
