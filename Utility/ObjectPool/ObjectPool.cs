@@ -11,9 +11,9 @@
 // ************************************************************************ 
 #region Imports
 // ************************************************************************ 
-using UnityEngine;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 #endregion
 // ************************************************************************
 
@@ -24,32 +24,80 @@ using System.Collections;
 [System.Serializable]
 public class ObjectPool : IncrementalLoader
 {
-	// ********************************************************************
-	#region Private Data Members 
-	// ********************************************************************
-	private List<ObjectPoolObject> m_available = new List<ObjectPoolObject>();
+    // ********************************************************************
+    #region Static Generic Object Pools
+    // ********************************************************************
+	private static Dictionary<GameObject, ObjectPool> genericPools = new Dictionary<GameObject, ObjectPool>();
+    // ********************************************************************
+    public static ObjectPool GetGenericObjectPool(GameObject _prefab)
+    {
+        if (!genericPools.ContainsKey(_prefab))
+        {
+            genericPools[_prefab] = new ObjectPool(_prefab);
+        }
+        return genericPools[_prefab];
+    }
+    // ********************************************************************
+    public static GameObject RequestGenericObject(GameObject _prefab)
+    {
+        return GetGenericObjectPool(_prefab).RequestObject();
+    }
+    // ********************************************************************
+    public static void PreAllocateGenericObjectsImmediate(GameObject _prefab, int _numToAllocate)
+    {
+        GetGenericObjectPool(_prefab).AllocateImmediate(_numToAllocate);
+    }
+    // ********************************************************************
+    public static ObjectPool GetGenericObjectPool<T>(T _prefab) where T : MonoBehaviour
+    {
+        if (!genericPools.ContainsKey(_prefab.gameObject))
+        {
+            genericPools[_prefab.gameObject] = new ObjectPool(_prefab.gameObject);
+        }
+        return genericPools[_prefab.gameObject];
+    }
+    // ********************************************************************
+    public static T RequestGenericObject<T>(T _prefab, Transform _parent = null) where T : MonoBehaviour
+    {
+        return GetGenericObjectPool(_prefab.gameObject).RequestObject(_parent).GetComponent<T>();
+    }
+    // ********************************************************************
+    public static void PreAllocateGenericObjectsImmediate<T>(T _prefab, int _numToAllocate, Transform _parent = null) where T : MonoBehaviour
+    {
+        GetGenericObjectPool(_prefab.gameObject).AllocateImmediate(_numToAllocate, _parent);
+    }
+    // ********************************************************************
+    #endregion
+    // ********************************************************************
+
+
+
+    // ********************************************************************
+    #region Private Data Members 
+    // ********************************************************************
+    private List<ObjectPoolObject> m_available = new List<ObjectPoolObject>();
 	private List<ObjectPoolObject> m_inUse = new List<ObjectPoolObject>();
 	private GameObject m_prefab;
-	private GameObject m_parent;
-	private int m_runningCount = 0;
-	#endregion
-	// ****************************************************************
+	private int m_allocationCount = 0;
+    #endregion
+    // ********************************************************************
 
 
-	// ****************************************************************
-	#region Properties
-	// ****************************************************************
-	public int Count { get { return m_inUse.Count; } }
+    // ********************************************************************
+    #region Properties
+    // ********************************************************************
+    public int Count { get { return m_inUse.Count; } }
 	public ObjectPoolObject FirstActive { get { return Count > 0 ? m_inUse[0] : null; } }
 	public List<ObjectPoolObject> activeObjects { get { return m_inUse; } }
-	#endregion
-	// ****************************************************************
+	public GameObject parent { get; set; } = null;
+    #endregion
+    // ********************************************************************
 
 
-	// ********************************************************************
-	#region IncrementalLoader Methods
-	// ********************************************************************
-	private float m_progress;
+    // ********************************************************************
+    #region IncrementalLoader Methods
+    // ********************************************************************
+    private float m_progress;
 	public float GetProgress() { return m_progress; }
 	public string GetCurrentAction() { return "Allocating objects"; }
 	// ********************************************************************
@@ -87,36 +135,38 @@ public class ObjectPool : IncrementalLoader
 		m_inUse.Remove(_object);
 	}
 	// ********************************************************************
-	public GameObject RequestObject()
+	public GameObject RequestObject(Transform _parent = null)
 	{
 		ObjectPoolObject toReturn;
 
 		if (m_available.Count <= 0)
 		{
-			AllocateImmediate(1);
+			AllocateImmediate(1, _parent);
 		}
 		toReturn = m_available[0];
-		toReturn.gameObject.SetActive(true); // Will mark it as unavailable
+		if (_parent)
+			toReturn.transform.SetParent(_parent);
+        toReturn.gameObject.SetActive(true); // Will mark it as unavailable
 		return toReturn.gameObject;
 	}
 	// ********************************************************************
-	public IEnumerator Allocate (int _numToAllocate) 
+	public IEnumerator Allocate (int _numToAllocate, Transform _parent = null) 
 	{
 		m_progress = 0.0f;
 		for (int i = 0; i < _numToAllocate; ++i)
 		{
 			m_progress = ((float)i)/((float)_numToAllocate);
-			m_available.Add(CreateObject());
+			m_available.Add(CreateObject(_parent));
 			yield return null;
 		}
 		m_progress = 1.0f;
 	}
 	// ********************************************************************
-	public void AllocateImmediate (int _numToAllocate) 
+	public void AllocateImmediate (int _numToAllocate, Transform _parent = null) 
 	{
 		for (int i = 0; i < _numToAllocate; ++i)
 		{
-			m_available.Add(CreateObject(false));
+			m_available.Add(CreateObject(false, _parent));
 		}
 	}
 	// ********************************************************************
@@ -138,32 +188,32 @@ public class ObjectPool : IncrementalLoader
     // ********************************************************************
 	private GameObject GetParent()
 	{
-		if (m_parent == null)
+		if (parent == null)
 		{
 			string parentName = "Object Pool";
 			if (m_prefab)
 				parentName += "-" + m_prefab.name;
-			m_parent = new GameObject(parentName);
+			parent = new GameObject(parentName);
 		}
-		return m_parent;
+		return parent;
 	}
     // ********************************************************************
-    private ObjectPoolObject CreateObject(bool _active = true)
+    private ObjectPoolObject CreateObject(bool _active = true, Transform _parent = null)
 	{
 		GameObject newObject = null;
 		if (m_prefab == null)
 		{
 			newObject = new GameObject("ObjectPool Object");
-		}
+            newObject.transform.SetParent(_parent ? _parent : GetParent().transform);
+        }
 		else
 		{
 			bool wasEnabled = m_prefab.activeSelf;
 			m_prefab.SetActive(false);
-			newObject = GameObject.Instantiate<GameObject>(m_prefab);
+			newObject = GameObject.Instantiate<GameObject>(m_prefab, _parent ? _parent : GetParent().transform);
             m_prefab.SetActive(wasEnabled);
         }
-		newObject.name += "-" + m_runningCount++;
-        newObject.transform.SetParent(GetParent().transform);
+		newObject.name += "-" + m_allocationCount++;
         ObjectPoolObject objectPoolObject = newObject.AddComponent<ObjectPoolObject>();
 		objectPoolObject.pool = this;
 		newObject.SetActive(_active);
