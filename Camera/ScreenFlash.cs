@@ -11,8 +11,8 @@
 #region Imports
 // ************************************************************************
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 #endregion
 // ************************************************************************
 
@@ -26,16 +26,18 @@ public class ScreenFlashEvent : GameEvent
 	#region Public Data Members 
 	// ********************************************************************
 	public float duration = 0.5f;
-	#endregion
-	// ********************************************************************
+    public float maxAlpha = 1.0f;
+    #endregion
+    // ********************************************************************
 
 
-	// ********************************************************************
-	#region Constructors 
-	// ********************************************************************
-	public ScreenFlashEvent (float _duration = 0.5f) 
+    // ********************************************************************
+    #region Constructors 
+    // ********************************************************************
+    public ScreenFlashEvent (float _duration = 0.5f, float _maxAlpha = 1.0f) 
 	{
 		duration = _duration;
+		maxAlpha = _maxAlpha;
 	}
 	// ********************************************************************
 	#endregion
@@ -49,13 +51,48 @@ public class ScreenFlashEvent : GameEvent
 // ************************************************************************ 
 #region Class: ScreenFlash
 // ************************************************************************
-[RequireComponent(typeof(FadeSprite))]
-public class ScreenFlash : MonoBehaviour 
+public class ScreenFlash : MonoBehaviour
 {
-	// ********************************************************************
-	#region MonoBehaviour Methods 
-	// ********************************************************************
-	void OnEnable () 
+    // ********************************************************************
+    #region Private Data 
+    // ********************************************************************
+    [SerializeField]
+	private AnimationCurve flashAlphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
+    // ********************************************************************
+    #endregion
+    // ********************************************************************
+
+
+    // ********************************************************************
+    #region Private Data 
+    // ********************************************************************
+    private SpriteRenderer sprite = null;
+	private Image image = null;
+    // ********************************************************************
+    #endregion
+    // ********************************************************************
+
+
+    // ********************************************************************
+    #region MonoBehaviour Methods 
+    // ********************************************************************
+    private void Awake()
+    {
+		sprite = GetComponent<SpriteRenderer>();
+		if (!sprite)
+			image = GetComponent<Image>();
+
+        if (sprite)
+        {
+            sprite.enabled = false;
+        }
+        if (image)
+        {
+            image.enabled = false;
+        }
+    }
+    // ********************************************************************
+    void OnEnable () 
 	{
 		Events.AddListener<ScreenFlashEvent>(OnScreenFlashEvent);
 	}
@@ -72,24 +109,56 @@ public class ScreenFlash : MonoBehaviour
 	// ********************************************************************
 	#region Public Methods 
 	// ********************************************************************
-	public void ApplyScreenFlash(float _duration)
+	public void ApplyScreenFlash(float _duration = 0.5f, float _maxAlpha = 1.0f)
 	{
-		FadeSprite fader = GetComponent<FadeSprite>();
-		fader.SetVisible(true);
-		fader.duration = _duration;
-		fader.FadeOut();
+		StartCoroutine(ApplyScreenFlash_CR(_duration, _maxAlpha));
 	}
-	// ********************************************************************
-	#endregion
-	// ********************************************************************
+    // ********************************************************************
+    #endregion
+    // ********************************************************************
 
 
-	// ********************************************************************
-	#region Private Methods 
-	// ********************************************************************
-	private void OnScreenFlashEvent (ScreenFlashEvent _event) 
+    // ********************************************************************
+    #region Private Methods 
+    // ********************************************************************
+	private IEnumerator ApplyScreenFlash_CR(float _duration = 0.5f, float _maxAlpha = 1.0f)
 	{
-		ApplyScreenFlash(_event.duration);
+		float startTime = Time.time;
+		Color color = Color.white;
+		if (sprite)
+        {
+            color = sprite.color;
+			sprite.enabled = true;
+        }
+		if (image)
+        {
+            color = image.color;
+            image.enabled = true;
+        }
+		while (Time.time < startTime+ _duration)
+        {
+            color.a = _maxAlpha * flashAlphaCurve.Evaluate((Time.time - startTime) / _duration);
+
+			if (sprite)
+				sprite.color = color;
+			if (image)
+				image.color = color;
+
+			yield return null;
+        }
+        if (sprite)
+        {
+            sprite.enabled = false;
+        }
+        if (image)
+        {
+            image.enabled = false;
+        }
+    }
+    // ********************************************************************
+    private void OnScreenFlashEvent (ScreenFlashEvent _event) 
+	{
+		ApplyScreenFlash(_event.duration, _event.maxAlpha);
 	}
 	// ********************************************************************
 	#endregion
