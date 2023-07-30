@@ -23,6 +23,28 @@ public static class RendererExtension
     // ********************************************************************
     #region Extension Methods 
     // ********************************************************************
+    public static float GetAlpha(this Renderer renderer)
+    {
+        // NOTE: Will not work for sprites, if needed, write separate function for sprites
+        // Avoid checking if this renderer is a SpriteRenderer to avoid unneeded dynamic cast to slow down execution
+        // Set this object's alpha
+        foreach (Material mat in renderer.materials)
+        {
+            if (mat.HasProperty("_Color"))
+            {
+                return mat.color.a;
+            }
+            else if (mat.HasProperty("_TintColor"))
+            {
+                Color col = mat.GetColor("_TintColor");
+                return col.a;
+            }
+        }
+
+        // Default to 1.0f;
+        return 1.0f;
+    }
+    // ********************************************************************
     public static void SetAlpha(this Renderer renderer, float val)
     {
         // NOTE: Will not work for sprites, if needed, write separate function for sprites
