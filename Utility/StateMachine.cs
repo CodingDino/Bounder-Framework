@@ -95,6 +95,15 @@ namespace Bounder.Framework
             if (currentState != null && currentState.Update != null)
                 currentState.Update();
         }
+        // ********************************************************************
+        protected virtual void OnDisable()
+        {
+            if (activeCoroutine != null)
+            {
+                StopCoroutine(activeCoroutine);
+                activeCoroutine = null;
+            }
+        }
         // ****************************************************************
         #endregion
         // ****************************************************************
