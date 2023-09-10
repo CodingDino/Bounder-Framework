@@ -98,11 +98,7 @@ namespace Bounder.Framework
         // ********************************************************************
         protected virtual void OnDisable()
         {
-            if (activeCoroutine != null)
-            {
-                StopCoroutine(activeCoroutine);
-                activeCoroutine = null;
-            }
+            ChangeState(0);
         }
         // ****************************************************************
         #endregion
@@ -139,7 +135,7 @@ namespace Bounder.Framework
             if (currentState == null || _index != currentState.stateIndex)
             {
                 // exit the old state
-                if (currentState != null && currentState.Exit != null)
+                if (currentState != null)
                 {
                     //Debug.Log("Now exiting state: " + currentState.stateIndex);
                     if (activeCoroutine != null)
@@ -147,7 +143,10 @@ namespace Bounder.Framework
                         StopCoroutine(activeCoroutine);
                         activeCoroutine = null;
                     }
-                    currentState.Exit();
+                    if (currentState.Exit != null)
+                    {
+                        currentState.Exit();
+                    }
                 }
 
                 // Update the current state
