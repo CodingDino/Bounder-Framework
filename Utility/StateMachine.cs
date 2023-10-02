@@ -163,7 +163,8 @@ namespace Bounder.Framework
                 if (currentState != null && currentState.UpdateCR != null)
                 {
                     //Debug.Log("Now entering state: " + currentState.stateIndex);
-                    activeCoroutine = StartCoroutine(currentState.UpdateCR());
+                    if (gameObject.activeInHierarchy)
+                        activeCoroutine = StartCoroutine(currentState.UpdateCR());
                 }
             }
         }
