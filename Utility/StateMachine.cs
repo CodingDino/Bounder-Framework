@@ -88,7 +88,7 @@ namespace Bounder.Framework
         // ****************************************************************
         #region MonoBehaviour Methods
         // ****************************************************************
-        public virtual void Update()
+        protected virtual void Update()
         {
             // Call update on the current state
             timeInState += Time.deltaTime;
