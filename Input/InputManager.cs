@@ -5,22 +5,22 @@
 // Author:      Sarah Herzog  
 // Copyright: 	2017 Bounder Games
 // ************************************************************************ 
-namespace Bounder.Framework
-{
 
-    // ************************************************************************ 
-    #region Imports
-    // ************************************************************************
-    using System;
-    using System.Collections.Generic;
-    using UnityEngine;
-#if Rewired
+// ************************************************************************ 
+#region Imports
+// ************************************************************************
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+#if USE_REWIRED
     using Rewired;
 #endif
-    #endregion
-    // ************************************************************************
+#endregion
+// ************************************************************************
 
-
+namespace Bounder.Framework
+{
     // ************************************************************************ 
     #region Enum: ControlScheme
     // ************************************************************************
@@ -29,9 +29,11 @@ namespace Bounder.Framework
     {
         NONE = 0,
         TOUCH = 1 << 0,
-        MOUSE_KEYBOARD = 1 << 1,
+        MOUSE = 1 << 1,
         GAMEPAD = 1 << 2,
-        ALL = TOUCH | MOUSE_KEYBOARD | GAMEPAD
+        KEYBOARD = 1 << 3,
+        MOUSE_KEYBOARD = MOUSE | KEYBOARD,
+        ALL = TOUCH | MOUSE | KEYBOARD | GAMEPAD
     }
     // ************************************************************************
     #endregion
@@ -107,9 +109,9 @@ namespace Bounder.Framework
         private Vector3 m_mousePositionLastFrame = Vector3.zero;
         private float m_lastInputDetected = 0f;
         private ControlScheme m_lastControlScheme = ControlScheme.NONE;
-        #if Rewired
+#if USE_REWIRED
             private IList<Player> m_players;
-        #endif
+#endif
         #endregion
         // ********************************************************************
 
@@ -121,27 +123,29 @@ namespace Bounder.Framework
         {
             get
             {
-                #if Rewired
+#if USE_REWIRED
                 ControllerType lastUsed = ReInput.controllers.GetLastActiveControllerType();
-                #endif
+#endif
 
                 // Touch
                 if (SystemInfo.deviceType == DeviceType.Handheld)
                     return ControlScheme.TOUCH;
 
                 // Mouse and keyboard
-                #if Rewired
-                if (lastUsed == ControllerType.Mouse || lastUsed == ControllerType.Keyboard)
-                    return ControlScheme.MOUSE_KEYBOARD;
+#if USE_REWIRED
+                if (lastUsed == ControllerType.Mouse)
+                    return ControlScheme.MOUSE;
+                if (lastUsed == ControllerType.Keyboard)
+                    return ControlScheme.KEYBOARD;
 
                 // Gamepad
                 if (lastUsed == ControllerType.Joystick)
                     return ControlScheme.GAMEPAD;
-                #else
+#else
                 // if no rewired, default to mouse/keyboard
                 else
                     return ControlScheme.MOUSE_KEYBOARD;
-                #endif
+#endif
 
                 // Unknown control scheme
                 return ControlScheme.NONE;
@@ -169,25 +173,25 @@ namespace Bounder.Framework
         // ********************************************************************
         public static bool GetButtonDownForPlayer(string buttonName, int playerNumber)
         {
-            #if Rewired
-            return m_players[playerNumber].GetButtonDown(buttonName);
-            #else
+#if USE_REWIRED
+            return instance.m_players[playerNumber].GetButtonDown(buttonName);
+#else
             //Debug.LogWarning("GetButtonDownForPlayer() not supported without Rewired");
             return Input.GetButtonDown(buttonName);
-            #endif
+#endif
         }
         // ********************************************************************
         public static bool GetButtonDownForAnyPlayer(string buttonName)
         {
-            #if Rewired
-            int numPlayers = 1; // TODO: Update to support multiple players
+#if USE_REWIRED
+            int numPlayers = instance.m_players.Count; // could allow less players than the rewired number?
             for (int iPlayer = 0; iPlayer < numPlayers; ++iPlayer)
             {
                 if (GetButtonDownForPlayer(buttonName,iPlayer))
                     return true;
             }
             return false;
-            #else
+#else
             //Debug.LogWarning("GetButtonDownForAnyPlayer() not supported without Rewired");
             return Input.GetButtonDown(buttonName);
             #endif
@@ -195,11 +199,11 @@ namespace Bounder.Framework
         // ********************************************************************
         public static bool GetAnyButtonDown()
         {
-            #if Rewired
+#if USE_REWIRED
             return ReInput.controllers.GetAnyButtonDown();
-            #else
+#else
             return Input.anyKey;
-            #endif
+#endif
         }
         // ********************************************************************
         public static float GetAxisForFirstPlayer(string axisName)
@@ -209,28 +213,29 @@ namespace Bounder.Framework
         // ********************************************************************
         public static float GetAxisForPlayer(string axisName, int playerNumber)
         {
-            #if Rewired
-            return m_players[playerNumber].GetAxis(axisName);
-            #else
+#if USE_REWIRED
+            return instance.m_players[playerNumber].GetAxis(axisName);
+#else
             //Debug.LogWarning("GetAxisForPlayer() not supported without Rewired");
             return Input.GetAxis(axisName);
-            #endif
+#endif
         }
         // ********************************************************************
         public static float GetAxisForAnyPlayer(string axisName)
         {
-            #if Rewired
-            int numPlayers = 1; // TODO: Update to support multiple players
+#if USE_REWIRED
+            int numPlayers = instance.m_players.Count; // could allow less players than the rewired number?
             for (int iPlayer = 0; iPlayer < numPlayers; ++iPlayer)
             {
-                if (GetAxisForPlayer(axisName,iPlayer))
-                    return true;
+                float axisVal = GetAxisForPlayer(axisName, iPlayer);
+                if (axisVal != 0)
+                    return axisVal;
             }
-            return false;
-            #else
+            return 0; // default if there were no player input.
+#else
             //Debug.LogWarning("GetAxisForAnyPlayer() not supported without Rewired");
             return Input.GetAxis(axisName);
-            #endif
+#endif
         }
         // ********************************************************************
         #endregion
@@ -257,9 +262,9 @@ namespace Bounder.Framework
         // ********************************************************************
         void Start()
         {
-            #if Rewired
+#if USE_REWIRED
             m_players = ReInput.players.GetPlayers();
-            #endif
+#endif
         }
         // ********************************************************************
         void OnGUI()
@@ -280,7 +285,7 @@ namespace Bounder.Framework
 
                 Cursor.visible = false;
             }
-            else
+            else if (m_cursor != null)
             {
                 m_cursor.SetBool("Active", false);
             }
@@ -326,11 +331,11 @@ namespace Bounder.Framework
         // ********************************************************************
         private void OnChangeCursorEvent(ChangeCursorEvent _event)
         {
-            #if Rewired
+#if USE_REWIRED
             ControllerType lastUsed = ReInput.controllers.GetLastActiveControllerType();
             if (lastUsed != ControllerType.Mouse && lastUsed != ControllerType.Keyboard)
                 return;
-            #endif
+#endif
 
             if (_event.cursorID == cursor)
                 return;
