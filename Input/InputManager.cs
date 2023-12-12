@@ -151,6 +151,16 @@ namespace Bounder.Framework
                 return ControlScheme.NONE;
             }
         }
+
+        public static bool useDirectionalUINavigation 
+        {
+            get
+            {
+                ControlScheme controls = controlScheme;
+                return controls == ControlScheme.GAMEPAD || controls == ControlScheme.KEYBOARD;
+            }
+        }
+
         public static string cursor
         {
             get { return instance.m_cursor == null ? "" : instance.m_cursor.name; }

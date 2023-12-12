@@ -196,7 +196,7 @@ public class Panel : MonoBehaviour
 	// ********************************************************************
 	public void FocusChanged(bool _isFocus)
 	{
-		if (_isFocus && InputManager.controlScheme == ControlScheme.GAMEPAD)
+		if (_isFocus && InputManager.useDirectionalUINavigation)
 			SelectButton(m_firstSelected);
 		_OnFocusChange(_isFocus);
 	}
@@ -242,7 +242,7 @@ public class Panel : MonoBehaviour
 		interactable = m_state == PanelState.SHOWN;
 
 		// Set initial selected object
-		if (m_state == PanelState.SHOWN && firstSelected != null && InputManager.controlScheme == ControlScheme.GAMEPAD)
+		if (m_state == PanelState.SHOWN && firstSelected != null && InputManager.useDirectionalUINavigation)
 		{
 			SelectButton(firstSelected);
 		}
@@ -260,11 +260,11 @@ public class Panel : MonoBehaviour
 	// ********************************************************************
 	private void OnControlSchemeChanged(ControlSchemeChangedEvent _event)
 	{
-		if (_event.newScheme == ControlScheme.GAMEPAD && EventSystem.current.currentSelectedGameObject == null)
+		if (InputManager.useDirectionalUINavigation && EventSystem.current.currentSelectedGameObject == null)
 		{
 			SelectButton(firstSelected);
 		}
-		else if (_event.newScheme != ControlScheme.GAMEPAD)
+		else if (!InputManager.useDirectionalUINavigation)
 		{
 			EventSystem.current.SetSelectedGameObject(null);
 		}
