@@ -98,7 +98,8 @@ namespace Bounder.Framework
         // ********************************************************************
         protected virtual void OnDisable()
         {
-            ChangeState(0);
+            // TODO: Disabling this to avoid error spam when stopping play in editor. Not sure if this is necessary?
+            //ChangeState(0);
         }
         // ****************************************************************
         #endregion

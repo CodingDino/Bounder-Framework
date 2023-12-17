@@ -326,7 +326,7 @@ namespace Bounder.Framework
             ControlScheme newScheme = controlScheme;
             if (m_lastControlScheme != newScheme)
             {
-                Debug.Log("Control scheme changed from "+m_lastControlScheme+" to "+newScheme);
+                //Debug.Log("Control scheme changed from "+m_lastControlScheme+" to "+newScheme);
                 Events.Raise(new ControlSchemeChangedEvent(m_lastControlScheme, newScheme));
                 m_lastControlScheme = newScheme;
             }
