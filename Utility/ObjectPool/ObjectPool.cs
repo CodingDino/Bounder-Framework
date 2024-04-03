@@ -11,6 +11,7 @@
 // ************************************************************************ 
 #region Imports
 // ************************************************************************ 
+using Bounder.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -112,6 +113,7 @@ public class ObjectPool : IncrementalLoader
 	{
 		m_prefab = _prefab;
 		AllocateImmediate(_toAllocate);
+		LoadingSceneManager.OnStateChanged += OnLoadingSceneStateChange;
 	}
 	// ********************************************************************
 	public void ObjectBecameAvailable (ObjectPoolObject _object) 
@@ -186,7 +188,18 @@ public class ObjectPool : IncrementalLoader
     // ********************************************************************
     #region Private Methods 
     // ********************************************************************
-	private GameObject GetParent()
+    private void OnLoadingSceneStateChange(LoadingState _state, string _newScene, string _oldScene)
+	{
+		if (_state == LoadingState.LOADING_NEW_SCENE)
+		{
+			// Old scene has unloaded, new one about to be loaded
+			// Clear out objects
+			m_inUse.Clear();
+			m_available.Clear();
+		}
+	}
+    // ********************************************************************
+    private GameObject GetParent()
 	{
 		if (parent == null)
 		{
