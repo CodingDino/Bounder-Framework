@@ -11,6 +11,7 @@
 #region Imports
 // ************************************************************************
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 #endregion
 // ************************************************************************
 
@@ -48,10 +49,15 @@ public static class GameObjectExtension
 		{
 			_object.transform.GetChild(i).gameObject.SetLayerRecursive(_layer);
 		}
-	}
+    }
 	// ********************************************************************
-	#endregion
-	// ********************************************************************
+	public static bool IsInLayermask(this GameObject _object, LayerMask _layerMask)
+    {
+		return (_layerMask == (_layerMask | (1 << _object.layer)));
+    }
+    // ********************************************************************
+    #endregion
+    // ********************************************************************
 
 }
 #endregion
