@@ -220,8 +220,7 @@ namespace Bounder.Framework
             AudioObject audioObject = audioGameObject.GetComponent<AudioObject>();
             audioObject.audioInfo = _info;
 
-            audioObject.Apply();
-            audioObject.audioSource.Play();
+            audioObject.Play();
 
             if (_info.fadeDuration != 0)
             {

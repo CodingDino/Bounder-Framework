@@ -111,12 +111,7 @@ namespace Bounder.Framework
         {
             if (m_playOnEnable && !m_hasPlayed)
             {
-                if (AudioManager.initialized)
-                {
-                    Apply();
-                    m_audioSource.Play();
-                    m_hasPlayed = true;
-                }
+                Play();
             }
             else if (!m_audioSource.isPlaying && m_usingObjectPool && !AudioListener.pause && !m_paused)
                 gameObject.SetActive(false); // Triggers object pool to recycle
@@ -144,6 +139,16 @@ namespace Bounder.Framework
 
         // ********************************************************************
         #region Public Methods
+        // ********************************************************************
+        public void Play()
+        {
+            if (AudioManager.initialized)
+            {
+                Apply();
+                m_audioSource.Play();
+                m_hasPlayed = true;
+            }
+        }
         // ********************************************************************
         public void Apply()
         {
