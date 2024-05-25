@@ -5,6 +5,13 @@ using UnityEngine;
 
 public class AnalyticsHelper
 {
+    public enum ProgressStatus
+    {
+        START,
+        COMPLETE,
+        FAIL
+    }
+
     public static string ConstructDesignEvent(string str1, string str2 = "", string str3 = "", string str4 = "", string str5 = "")
     {
         string output = str1;
@@ -25,6 +32,65 @@ public class AnalyticsHelper
             output += ":" + str5;
         }
         return output;
+    }
+
+    public static void SendProgressEvent(ProgressStatus status, int score, string str1, string str2 = "", string str3 = "")
+    {
+        GAProgressionStatus gaStatus = GAProgressionStatus.Undefined;
+        switch (status)
+        {
+            case ProgressStatus.START:
+                gaStatus = GAProgressionStatus.Start;
+                break;
+            case ProgressStatus.COMPLETE:
+                gaStatus = GAProgressionStatus.Complete;
+                break;
+            case ProgressStatus.FAIL:
+                gaStatus = GAProgressionStatus.Fail;
+                break;
+        }
+
+        if (!str3.NullOrEmpty())
+        {
+            GameAnalytics.NewProgressionEvent(gaStatus, str1, str2, str3, score);
+        }
+        else if (!str2.NullOrEmpty())
+        {
+            GameAnalytics.NewProgressionEvent(gaStatus, str1, str2, score);
+        }
+        else
+        {
+            GameAnalytics.NewProgressionEvent(gaStatus, str1, score);
+        }
+    }
+    public static void SendProgressEvent(ProgressStatus status, string str1, string str2 = "", string str3 = "")
+    {
+        GAProgressionStatus gaStatus = GAProgressionStatus.Undefined;
+        switch (status)
+        {
+            case ProgressStatus.START:
+                gaStatus = GAProgressionStatus.Start;
+                break;
+            case ProgressStatus.COMPLETE:
+                gaStatus = GAProgressionStatus.Complete;
+                break;
+            case ProgressStatus.FAIL:
+                gaStatus = GAProgressionStatus.Fail;
+                break;
+        }
+
+        if (!str3.NullOrEmpty())
+        {
+            GameAnalytics.NewProgressionEvent(gaStatus, str1, str2, str3);
+        }
+        else if (!str2.NullOrEmpty())
+        {
+            GameAnalytics.NewProgressionEvent(gaStatus, str1, str2);
+        }
+        else
+        {
+            GameAnalytics.NewProgressionEvent(gaStatus, str1);
+        }
     }
 
     public static void SendResourceEvent(string currency, float amount, string itemType, string itemID)
