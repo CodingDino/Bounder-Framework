@@ -30,6 +30,7 @@ namespace Bounder.Framework
         EFFECTS,
         MUSIC,
         DIALOGUE,
+        STINGER,
         // ---
         NUM
     }
