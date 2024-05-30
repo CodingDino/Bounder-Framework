@@ -11,6 +11,7 @@
 #region Imports
 // ************************************************************************
 using UnityEngine;
+using UnityEngine.UI;
 using Bounder.Framework;
 using UnityEngine.EventSystems;
 using System;
@@ -21,6 +22,7 @@ using System;
 // ************************************************************************ 
 #region Class: ButtonPlaySFX
 // ************************************************************************
+[RequireComponent(typeof(Button))]
 public class ButtonPlaySFX : MonoBehaviour, IPointerEnterHandler, IPointerDownHandler, IPointerClickHandler, ISelectHandler, ISubmitHandler
 {
 
@@ -52,6 +54,16 @@ public class ButtonPlaySFX : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
     // ********************************************************************
     [SerializeField]
     private ButtonSFXInfo[] buttonSFXInfo;
+    [SerializeField]
+    private bool playWhenButtonDisabled = false;
+    #endregion
+    // ********************************************************************
+
+
+    // ********************************************************************
+    #region Private Data Members 
+    // ********************************************************************
+    private Button button = null;
     #endregion
     // ********************************************************************
 
@@ -59,61 +71,82 @@ public class ButtonPlaySFX : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
     // ********************************************************************
     #region Public Methods 
     // ********************************************************************
+    public void Awake()
+    {
+        button = GetComponent<Button>();
+    }
+    // ********************************************************************
     public void OnPointerEnter(PointerEventData ped)
     {
         Debug.Log("OnPointerEnter");
-        for (int i = 0; i < buttonSFXInfo.Length; ++i)
+        if (playWhenButtonDisabled || (button!= null && button.enabled && button.interactable) )
         {
-            if (buttonSFXInfo[i].type.Contains(EffectType.HIGHLIGHT))
+            for (int i = 0; i < buttonSFXInfo.Length; ++i)
             {
-                AudioManager.Play(buttonSFXInfo[i].info);
+                if (buttonSFXInfo[i].type.Contains(EffectType.HIGHLIGHT))
+                {
+                    AudioManager.Play(buttonSFXInfo[i].info);
+                }
             }
         }
     }
-
+    // ********************************************************************
     public void OnPointerDown(PointerEventData ped)
     {
         Debug.Log("OnPointerDown");
-        for (int i = 0; i < buttonSFXInfo.Length; ++i)
+        if (playWhenButtonDisabled || (button != null && button.enabled && button.interactable))
         {
-            if (buttonSFXInfo[i].type.Contains(EffectType.PRESS_DOWN))
+            for (int i = 0; i < buttonSFXInfo.Length; ++i)
             {
-                AudioManager.Play(buttonSFXInfo[i].info);
+                if (buttonSFXInfo[i].type.Contains(EffectType.PRESS_DOWN))
+                {
+                    AudioManager.Play(buttonSFXInfo[i].info);
+                }
             }
         }
     }
+    // ********************************************************************
     public void OnPointerClick(PointerEventData pointerEventData)
     {
         Debug.Log("OnPointerClick");
-        for (int i = 0; i < buttonSFXInfo.Length; ++i)
+        if (playWhenButtonDisabled || (button != null && button.enabled && button.interactable))
         {
-            if (buttonSFXInfo[i].type.Contains(EffectType.CLICK))
+            for (int i = 0; i < buttonSFXInfo.Length; ++i)
             {
-                AudioManager.Play(buttonSFXInfo[i].info);
+                if (buttonSFXInfo[i].type.Contains(EffectType.CLICK))
+                {
+                    AudioManager.Play(buttonSFXInfo[i].info);
+                }
             }
         }
     }
-
+    // ********************************************************************
     public void OnSelect(BaseEventData eventData)
     {
         Debug.Log("OnSelect");
-        for (int i = 0; i < buttonSFXInfo.Length; ++i)
+        if (playWhenButtonDisabled || (button != null && button.enabled && button.interactable))
         {
-            if (buttonSFXInfo[i].type.Contains(EffectType.SELECT) && InputManager.useDirectionalUINavigation)
+            for (int i = 0; i < buttonSFXInfo.Length; ++i)
             {
-                AudioManager.Play(buttonSFXInfo[i].info);
+                if (buttonSFXInfo[i].type.Contains(EffectType.SELECT) && InputManager.useDirectionalUINavigation)
+                {
+                    AudioManager.Play(buttonSFXInfo[i].info);
+                }
             }
         }
     }
-
+    // ********************************************************************
     public void OnSubmit(BaseEventData eventData)
     {
         Debug.Log("OnSubmit");
-        for (int i = 0; i < buttonSFXInfo.Length; ++i)
+        if (playWhenButtonDisabled || (button != null && button.enabled && button.interactable))
         {
-            if (buttonSFXInfo[i].type.Contains(EffectType.SUBMIT))
+            for (int i = 0; i < buttonSFXInfo.Length; ++i)
             {
-                AudioManager.Play(buttonSFXInfo[i].info);
+                if (buttonSFXInfo[i].type.Contains(EffectType.SUBMIT))
+                {
+                    AudioManager.Play(buttonSFXInfo[i].info);
+                }
             }
         }
     }
