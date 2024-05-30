@@ -30,6 +30,8 @@ namespace Bounder.Framework
         // ********************************************************************
         public string id = "";
         public AudioClip clip = null;
+        public bool chooseRandomClip = false;
+        public AudioClip[] potentialClips;
         public AudioCategory category = AudioCategory.EFFECTS;
         public AudioChannelOverride overrideChannelLimit = AudioChannelOverride.NONE;
         public float volume = 1.0f;
@@ -52,6 +54,15 @@ namespace Bounder.Framework
         public AudioInfo(AudioClip _clip)
         {
             clip = _clip;
+        }
+        // ********************************************************************
+        public void RandomiseClip()
+        {
+            if (chooseRandomClip)
+            {
+                int randIndex = Random.Range(0, potentialClips.Length);
+                clip = potentialClips[randIndex];
+            }
         }
         // ********************************************************************
         public AudioInfo(AudioCategory _category)

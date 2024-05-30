@@ -49,6 +49,8 @@ MonoBehaviour:
   m_audioInfo:
     id: 
     clip: {fileID: 0}
+    chooseRandomClip: 0
+    potentialClips: []
     category: 1
     overrideChannelLimit: 0
     volume: 1

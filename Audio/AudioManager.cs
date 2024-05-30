@@ -171,6 +171,8 @@ namespace Bounder.Framework
         // ********************************************************************
         public static AudioObject Play(AudioInfo _info)
         {
+            _info.RandomiseClip();
+
             if (_info.clip == null)
             {
                 Debug.LogWarning("Attempt to play null audio clip");
@@ -221,7 +223,7 @@ namespace Bounder.Framework
             AudioObject audioObject = audioGameObject.GetComponent<AudioObject>();
             audioObject.audioInfo = _info;
 
-            audioObject.Play();
+            audioObject.Play(false);
 
             if (_info.fadeDuration != 0)
             {

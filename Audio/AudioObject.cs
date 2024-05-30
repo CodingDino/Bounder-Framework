@@ -140,8 +140,14 @@ namespace Bounder.Framework
         // ********************************************************************
         #region Public Methods
         // ********************************************************************
-        public void Play()
+        public void Play(bool randomise = true)
         {
+            // Choose a random clip before doing anything, if applicable
+            if (randomise)
+            {
+                m_audioInfo.RandomiseClip();
+            }
+
             if (AudioManager.initialized)
             {
                 Apply();
