@@ -90,7 +90,8 @@ public class ScreenShake : MonoBehaviour
 		for (int i = 0; i < numShakes; ++i)
 		{
 			// shake to
-			Vector2 direction = Vector2.one.Randomise();
+			Vector2 direction = Vector2.one;
+			direction.Randomise();
 			Vector3 target = m_startingPoint;
 			target.x += direction.x * distance;
 			target.y += direction.y * distance;

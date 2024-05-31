@@ -25,7 +25,7 @@ public static class VectorExtension
 	// ********************************************************************
 	#region Extension Methods 
 	// ********************************************************************
-	public static Vector2 Randomise(this Vector2 _this)
+	public static Vector2 Randomise(this ref Vector2 _this)
 	{
 		_this.x = Random.Range(-1.0f,1.0f);
 		_this.y = Random.Range(-1.0f,1.0f);
@@ -35,7 +35,7 @@ public static class VectorExtension
 		return _this;
 	}
 	// ********************************************************************
-	public static Vector3 Randomise(this Vector3 _this)
+	public static Vector3 Randomise(this ref Vector3 _this)
 	{
 		_this.x = Random.Range(-1.0f,1.0f);
 		_this.y = Random.Range(-1.0f,1.0f);
@@ -44,9 +44,30 @@ public static class VectorExtension
 		_this.Normalize();
 
 		return _this;
-	}
-	// ********************************************************************
-	public static Vector2 Convolve(this Vector2 _this, Vector2 _other)
+    }
+    // ********************************************************************
+    public static Vector2 Randomised(this Vector2 _this)
+    {
+        _this.x = Random.Range(-1.0f, 1.0f);
+        _this.y = Random.Range(-1.0f, 1.0f);
+
+        _this.Normalize();
+
+        return _this;
+    }
+    // ********************************************************************
+    public static Vector3 Randomised(this Vector3 _this)
+    {
+        _this.x = Random.Range(-1.0f, 1.0f);
+        _this.y = Random.Range(-1.0f, 1.0f);
+        _this.z = Random.Range(-1.0f, 1.0f);
+
+        _this.Normalize();
+
+        return _this;
+    }
+    // ********************************************************************
+    public static Vector2 Convolve(this Vector2 _this, Vector2 _other)
 	{
 		_this.x *= _other.x;
 		_this.y *= _other.y;
