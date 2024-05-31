@@ -78,7 +78,7 @@ public class ButtonPlaySFX : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
     // ********************************************************************
     public void OnPointerEnter(PointerEventData ped)
     {
-        Debug.Log("OnPointerEnter");
+        //Debug.Log("OnPointerEnter");
         if (playWhenButtonDisabled || (button!= null && button.enabled && button.interactable) )
         {
             for (int i = 0; i < buttonSFXInfo.Length; ++i)
@@ -93,7 +93,7 @@ public class ButtonPlaySFX : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
     // ********************************************************************
     public void OnPointerDown(PointerEventData ped)
     {
-        Debug.Log("OnPointerDown");
+        //Debug.Log("OnPointerDown");
         if (playWhenButtonDisabled || (button != null && button.enabled && button.interactable))
         {
             for (int i = 0; i < buttonSFXInfo.Length; ++i)
@@ -108,7 +108,7 @@ public class ButtonPlaySFX : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
     // ********************************************************************
     public void OnPointerClick(PointerEventData pointerEventData)
     {
-        Debug.Log("OnPointerClick");
+        //Debug.Log("OnPointerClick");
         if (playWhenButtonDisabled || (button != null && button.enabled && button.interactable))
         {
             for (int i = 0; i < buttonSFXInfo.Length; ++i)
@@ -123,7 +123,7 @@ public class ButtonPlaySFX : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
     // ********************************************************************
     public void OnSelect(BaseEventData eventData)
     {
-        Debug.Log("OnSelect");
+        //Debug.Log("OnSelect");
         if (playWhenButtonDisabled || (button != null && button.enabled && button.interactable))
         {
             for (int i = 0; i < buttonSFXInfo.Length; ++i)
@@ -138,7 +138,7 @@ public class ButtonPlaySFX : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
     // ********************************************************************
     public void OnSubmit(BaseEventData eventData)
     {
-        Debug.Log("OnSubmit");
+        //Debug.Log("OnSubmit");
         if (playWhenButtonDisabled || (button != null && button.enabled && button.interactable))
         {
             for (int i = 0; i < buttonSFXInfo.Length; ++i)
