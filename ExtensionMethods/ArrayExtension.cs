@@ -33,6 +33,13 @@ public static class ArrayExtension
         return array[Random.Range(0, array.Length)];
     }
     // ********************************************************************
+    public static int MaxIndex<T>(this T[] array)
+    {
+        if (array == null || array.Length == 0)
+            return -1;
+        return array.Length - 1;
+    }
+    // ********************************************************************
     #endregion
     // ********************************************************************
 
