@@ -75,6 +75,16 @@ namespace Bounder.Framework
         {
             get { return m_fading; }
         }
+        // ********************************************************************
+        public bool hasPlayed
+        {
+            get { return m_hasPlayed; }
+        }
+        // ********************************************************************
+        public bool isPlaying
+        {
+            get { return m_audioSource.isPlaying; }
+        }
         #endregion
         // ********************************************************************
 
