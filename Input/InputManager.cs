@@ -279,6 +279,17 @@ namespace Bounder.Framework
         // ********************************************************************
         void OnGUI()
         {
+            // TEMP: Mouse movement stuff, to be replaced with cursor overhaul
+            if (!Cursor.visible && (Input.GetAxis("Mouse X") != 0 || Input.GetAxis("Mouse Y") != 0))
+            {
+                Cursor.visible = true;
+            }
+            if (Cursor.visible && (Input.anyKeyDown && !(Input.GetMouseButtonDown(0)
+            || Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2))))
+            {
+                Cursor.visible = false;
+            }
+
             if (InputManager.controlScheme == ControlScheme.MOUSE_KEYBOARD && m_cursor != null)
             {
                 m_cursor.SetBool("Active", true);
@@ -313,6 +324,7 @@ namespace Bounder.Framework
         // ********************************************************************
         void Update()
         {
+
             // Check for changed input
             bool anyButtonPressed = GetAnyButtonDown();
             bool mousePositionChanged = Input.mousePosition != m_mousePositionLastFrame;
