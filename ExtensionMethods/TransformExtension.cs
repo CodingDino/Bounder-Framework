@@ -21,10 +21,20 @@ using UnityEngine;
 public static class TransformExtension 
 {
 
-	// ********************************************************************
-	#region Extension Methods 
-	// ********************************************************************
-	public static void ResetTransform(this Transform _trans)
+    // ********************************************************************
+    #region Extension Methods 
+    // ********************************************************************
+    public static float SqrDistanceTo(this Transform _trans, Transform _other)
+    {
+		return (_other.position - _trans.position).sqrMagnitude;
+    }
+    // ********************************************************************
+    public static float DistanceTo(this Transform _trans, Transform _other)
+    {
+        return (_other.position - _trans.position).magnitude;
+    }
+    // ********************************************************************
+    public static void ResetTransform(this Transform _trans)
 	{
 		_trans.position = Vector3.zero;
 		_trans.localRotation = Quaternion.identity;
