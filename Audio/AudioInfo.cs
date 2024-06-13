@@ -22,13 +22,12 @@ namespace Bounder.Framework
     #region Class: AudioInfo
     // ************************************************************************
     [System.Serializable]
-    public class AudioInfo
+    public class AudioInfo : AudioInfoBase
     {
 
         // ********************************************************************
         #region Public Data Members
         // ********************************************************************
-        public string id = "";
         public AudioClip clip = null;
         public bool chooseRandomClip = false;
         public AudioClip[] potentialClips;
@@ -40,7 +39,6 @@ namespace Bounder.Framework
         public float pitchFuzz = 0.0f;
         public bool loop = false;
         public float fadeDuration = 0.0f;
-        public Transform parent = null;
         public int allowedDuplicates = 3;
         #endregion
         // ********************************************************************
@@ -88,7 +86,7 @@ namespace Bounder.Framework
             }
         }
         // ********************************************************************
-        public string GetID()
+        public override string GetID()
         {
             return id.NullOrEmpty() ? clip.name : id;
         }
