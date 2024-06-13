@@ -45,7 +45,7 @@ public class ButtonPlaySFX : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
 	public class ButtonSFXInfo
 	{
 		public EffectType type = EffectType.NONE;
-		public AudioInfo info = new AudioInfo();
+		public AudioInfoFM info = new AudioInfoFM();
 	}
 
 
@@ -85,7 +85,7 @@ public class ButtonPlaySFX : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
             {
                 if (buttonSFXInfo[i].type.Contains(EffectType.HIGHLIGHT))
                 {
-                    AudioManager.Play(buttonSFXInfo[i].info);
+                    AudioManagerFM.PlayAsOneShot(buttonSFXInfo[i].info);
                 }
             }
         }
@@ -100,7 +100,7 @@ public class ButtonPlaySFX : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
             {
                 if (buttonSFXInfo[i].type.Contains(EffectType.PRESS_DOWN))
                 {
-                    AudioManager.Play(buttonSFXInfo[i].info);
+                    AudioManagerFM.PlayAsOneShot(buttonSFXInfo[i].info);
                 }
             }
         }
@@ -115,7 +115,7 @@ public class ButtonPlaySFX : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
             {
                 if (buttonSFXInfo[i].type.Contains(EffectType.CLICK))
                 {
-                    AudioManager.Play(buttonSFXInfo[i].info);
+                    AudioManagerFM.PlayAsOneShot(buttonSFXInfo[i].info);
                 }
             }
         }
@@ -130,7 +130,7 @@ public class ButtonPlaySFX : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
             {
                 if (buttonSFXInfo[i].type.Contains(EffectType.SELECT) && InputManager.useDirectionalUINavigation)
                 {
-                    AudioManager.Play(buttonSFXInfo[i].info);
+                    AudioManagerFM.PlayAsOneShot(buttonSFXInfo[i].info);
                 }
             }
         }
@@ -145,7 +145,7 @@ public class ButtonPlaySFX : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
             {
                 if (buttonSFXInfo[i].type.Contains(EffectType.SUBMIT))
                 {
-                    AudioManager.Play(buttonSFXInfo[i].info);
+                    AudioManagerFM.PlayAsOneShot(buttonSFXInfo[i].info);
                 }
             }
         }
