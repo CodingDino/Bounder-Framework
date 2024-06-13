@@ -85,7 +85,7 @@ public class ButtonPlaySFX : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
             {
                 if (buttonSFXInfo[i].type.Contains(EffectType.HIGHLIGHT))
                 {
-                    AudioManagerFM.PlayAsOneShot(buttonSFXInfo[i].info);
+                    AudioManagerFM.PlayOneShot(buttonSFXInfo[i].info);
                 }
             }
         }
@@ -100,7 +100,7 @@ public class ButtonPlaySFX : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
             {
                 if (buttonSFXInfo[i].type.Contains(EffectType.PRESS_DOWN))
                 {
-                    AudioManagerFM.PlayAsOneShot(buttonSFXInfo[i].info);
+                    AudioManagerFM.PlayOneShot(buttonSFXInfo[i].info);
                 }
             }
         }
@@ -115,7 +115,7 @@ public class ButtonPlaySFX : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
             {
                 if (buttonSFXInfo[i].type.Contains(EffectType.CLICK))
                 {
-                    AudioManagerFM.PlayAsOneShot(buttonSFXInfo[i].info);
+                    AudioManagerFM.PlayOneShot(buttonSFXInfo[i].info);
                 }
             }
         }
@@ -130,7 +130,7 @@ public class ButtonPlaySFX : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
             {
                 if (buttonSFXInfo[i].type.Contains(EffectType.SELECT) && InputManager.useDirectionalUINavigation)
                 {
-                    AudioManagerFM.PlayAsOneShot(buttonSFXInfo[i].info);
+                    AudioManagerFM.PlayOneShot(buttonSFXInfo[i].info);
                 }
             }
         }
@@ -145,7 +145,7 @@ public class ButtonPlaySFX : MonoBehaviour, IPointerEnterHandler, IPointerDownHa
             {
                 if (buttonSFXInfo[i].type.Contains(EffectType.SUBMIT))
                 {
-                    AudioManagerFM.PlayAsOneShot(buttonSFXInfo[i].info);
+                    AudioManagerFM.PlayOneShot(buttonSFXInfo[i].info);
                 }
             }
         }

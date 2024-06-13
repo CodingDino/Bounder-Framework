@@ -49,7 +49,7 @@ namespace Bounder.Framework
         // ********************************************************************
         #region Public Methods
         // ********************************************************************
-        public static void PlayAsOneShot(AudioInfoFM audioInfo, Transform parent = null)
+        public static void PlayOneShot(AudioInfoFM audioInfo, Transform parent = null)
         {
             if (parent == null)
                 RuntimeManager.PlayOneShot(audioInfo.eventRef);
@@ -57,7 +57,7 @@ namespace Bounder.Framework
                 RuntimeManager.PlayOneShotAttached(audioInfo.eventRef, parent.gameObject);
         }
         // ********************************************************************
-        public static void PlayAsOneShotAtLocation(AudioInfoFM audioInfo, Vector3 location)
+        public static void PlayOneShotAtLocation(AudioInfoFM audioInfo, Vector3 location)
         {
             RuntimeManager.PlayOneShot(audioInfo.eventRef, location);
         }
