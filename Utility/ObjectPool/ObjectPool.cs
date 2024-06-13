@@ -158,7 +158,7 @@ public class ObjectPool : IncrementalLoader
 		for (int i = 0; i < _numToAllocate; ++i)
 		{
 			m_progress = ((float)i)/((float)_numToAllocate);
-			m_available.Add(CreateObject(_parent));
+			m_available.Add(CreateObject(false, _parent));
 			yield return null;
 		}
 		m_progress = 1.0f;
