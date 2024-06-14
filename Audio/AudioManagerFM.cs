@@ -86,7 +86,7 @@ namespace Bounder.Framework
             return emitter;
         }
         // ********************************************************************
-        public static void PlayAsMusic(AudioInfoFM audioInfo)
+        public static void PlayMusic(AudioInfoFM audioInfo)
         {
             
             instance.m_targetMusic = audioInfo;
