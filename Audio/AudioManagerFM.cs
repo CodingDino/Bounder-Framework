@@ -51,6 +51,9 @@ namespace Bounder.Framework
         // ********************************************************************
         public static void PlayOneShot(AudioInfoFM audioInfo, Transform parent = null)
         {
+            if (audioInfo.eventRef.IsNull)
+                return;
+
             if (parent == null)
                 RuntimeManager.PlayOneShot(audioInfo.eventRef);
             else
@@ -59,11 +62,17 @@ namespace Bounder.Framework
         // ********************************************************************
         public static void PlayOneShotAtLocation(AudioInfoFM audioInfo, Vector3 location)
         {
+            if (audioInfo.eventRef.IsNull)
+                return;
+
             RuntimeManager.PlayOneShot(audioInfo.eventRef, location);
         }
         // ********************************************************************
         public static StudioEventEmitter CreateAndPlayEmitter(AudioInfoFM audioInfo, Transform parent = null)
         {
+            if (audioInfo.eventRef.IsNull)
+                return null;
+
             if (!instance.m_objectPools.ContainsKey(audioInfo.eventRef))
             {
                 instance.m_objectPools[audioInfo.eventRef] = new ObjectPool(instance.m_emitterPrefab.gameObject);
@@ -81,6 +90,9 @@ namespace Bounder.Framework
         // ********************************************************************
         public static StudioEventEmitter CreateAndPlayEmitterAtLocation(AudioInfoFM audioInfo, Vector3 location, Transform parent = null)
         {
+            if (audioInfo.eventRef.IsNull)
+                return null;
+
             StudioEventEmitter emitter = CreateAndPlayEmitter(audioInfo, parent);
             emitter.transform.position = location;
             return emitter;
@@ -88,7 +100,9 @@ namespace Bounder.Framework
         // ********************************************************************
         public static void PlayMusic(AudioInfoFM audioInfo)
         {
-            
+            if (audioInfo.eventRef.IsNull)
+                return;
+
             instance.m_targetMusic = audioInfo;
 
             if (instance.m_swapMusicCR == null)
