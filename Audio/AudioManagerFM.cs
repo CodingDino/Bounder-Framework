@@ -40,8 +40,6 @@ namespace Bounder.Framework
         // ********************************************************************
         private Dictionary<EventReference, ObjectPool> m_objectPools = new();
         private StudioEventEmitter m_currentMusic = null;
-        private AudioInfoFM m_targetMusic = null;
-        private Coroutine m_swapMusicCR = null;
         #endregion
         // ********************************************************************
 
@@ -103,12 +101,16 @@ namespace Bounder.Framework
             if (audioInfo.eventRef.IsNull)
                 return;
 
-            instance.m_targetMusic = audioInfo;
-
-            if (instance.m_swapMusicCR == null)
+            // Fade out existing music
+            if (instance.m_currentMusic != null)
             {
-                instance.m_swapMusicCR = instance.StartCoroutine(instance.SwapMusicCR());
+                instance.m_currentMusic.Stop(); // Music should all have a fade out / fade in as appropriate, not need for waiting for fade out.
+
+                instance.m_currentMusic.gameObject.SetActive(false);
             }
+
+            // New music
+            instance.m_currentMusic = CreateAndPlayEmitter(audioInfo);
         }
         // ********************************************************************
         public static StudioEventEmitter GetMusic()
@@ -132,35 +134,6 @@ namespace Bounder.Framework
         {
             if (instance.m_currentMusic != null)
                 instance.m_currentMusic.Stop();
-        }
-        #endregion
-        // ********************************************************************
-
-
-        // ********************************************************************
-        #region Private Methods
-        // ********************************************************************
-        private IEnumerator SwapMusicCR()
-        {
-            // Fade out existing music
-            if (m_currentMusic != null)
-            {
-                m_currentMusic.Stop();
-
-                // Wait for music to fade out
-                yield return new WaitForSeconds(m_musicSwapWaitTime);
-
-                m_currentMusic.gameObject.SetActive(false);
-            }
-
-            // New music
-            m_currentMusic = CreateAndPlayEmitter(m_targetMusic);
-
-            // All done, clear coroutine and cleanup target music
-            m_swapMusicCR = null;
-            m_targetMusic = null;
-
-            yield break;
         }
         #endregion
         // ********************************************************************
