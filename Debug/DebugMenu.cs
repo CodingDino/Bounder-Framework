@@ -18,6 +18,7 @@ namespace Bounder.Framework
     using System.Collections;
     using System.Collections.Generic;
     using System.Text;
+    using TMPro;
 
     // ************************************************************************ 
     // Class: DebugMenu
@@ -72,7 +73,7 @@ namespace Bounder.Framework
         [SerializeField]
         private int m_numLogsKept = 100;
         [SerializeField]
-        private Text m_versionText = null;
+        private TMP_Text m_versionText = null;
         [SerializeField]
         private BuildConfiguration[] m_altBuildConfigs = null;
         [SerializeField]
@@ -82,7 +83,7 @@ namespace Bounder.Framework
         [SerializeField]
         private GameObject m_visibleElements = null;
         [SerializeField]
-        private Text m_consoleTextBox = null;
+        private TMP_Text m_consoleTextBox = null;
         [SerializeField]
         private Scrollbar m_scrollbar = null;
         [SerializeField]
@@ -308,7 +309,7 @@ namespace Bounder.Framework
             GameObject newButton = GameObject.Instantiate(prototype, instance.m_buttonGrid) as GameObject;
             newButton.transform.localScale = Vector3.one;
             newButton.name = _id;
-            newButton.GetComponentInChildren<Text>().text = _name;
+            newButton.GetComponentInChildren<TMP_Text>().text = _name;
             newButton.GetComponent<Button>().onClick.AddListener(delegate { ButtonPressed(_id); });
             instance.m_debugButtons.Add(newButton);
             instance.m_debugButtonCallbacks.Add(_callback);
