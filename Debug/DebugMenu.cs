@@ -26,6 +26,9 @@ namespace Bounder.Framework
     public class DebugMenu : Singleton<DebugMenu>
     {
 
+        public class CloseEvent : GameEvent
+        {
+        }
 
         // ********************************************************************
         // Struct: Log 
@@ -234,6 +237,7 @@ namespace Bounder.Framework
         // ********************************************************************
         void OnEnable()
         {
+            Events.AddListener<CloseEvent>(OnCloseEvent);
             if (!m_callbackRegistered)
             {
                 m_callbackRegistered = true;
@@ -248,8 +252,15 @@ namespace Bounder.Framework
         // ********************************************************************
         void OnDisable()
         {
+            Events.RemoveListener<CloseEvent>(OnCloseEvent);
             m_callbackRegistered = false;
             Application.logMessageReceived -= HandleLog;
+        }
+
+        private void OnCloseEvent(CloseEvent _event)
+        {
+            if (m_visibleElements.activeSelf)
+                ToggleVisibility();
         }
 
 
