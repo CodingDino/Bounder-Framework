@@ -29,8 +29,6 @@ namespace Bounder.Framework
         // ********************************************************************
         [SerializeField]
         private StudioEventEmitter m_emitterPrefab = null;
-        [SerializeField]
-        private float m_musicSwapWaitTime = 1.0f;
         #endregion
         // ********************************************************************
 
