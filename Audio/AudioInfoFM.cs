@@ -36,11 +36,13 @@ namespace Bounder.Framework
         // ********************************************************************
         public override string GetID()
         {
+#if UNITY_EDITOR
             if (id.NullOrEmpty() && !eventRef.IsNull)
             {
                 string[] words = eventRef.Path.Split('/');
                 return words[words.Length-1];
             }
+#endif
             return id;
         }
         // ********************************************************************
