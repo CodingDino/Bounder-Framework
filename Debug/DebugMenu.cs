@@ -114,7 +114,6 @@ namespace Bounder.Framework
         private bool m_showWarnings = true;
         private bool m_showLogs = true;
         private bool m_jumpToBottom = true;
-        private float m_timeScale = 0;
         private List<GameObject> m_debugButtons = new List<GameObject>();
         private List<DebugButtonCallback> m_debugButtonCallbacks = new List<DebugButtonCallback>();
         private float m_last4FingerTouch = 0;
@@ -484,13 +483,16 @@ namespace Bounder.Framework
         // ********************************************************************
         public void ToggleVisibility()
         {
-            m_visibleElements.SetActive(!m_visibleElements.activeSelf);
+            bool newVisible = !m_visibleElements.activeSelf;
+            m_visibleElements.SetActive(newVisible);
             UpdateTextBox();
 
-            float oldTimeScale = m_timeScale;
-            m_timeScale = Time.timeScale;
-            Time.timeScale = oldTimeScale;
-            AudioListener.pause = Time.timeScale == 0;
+            if (newVisible)
+                TimeScaleLock.SetTimeScale(this, 0f);
+            else
+                TimeScaleLock.ReleaseTimeScale(this);
+
+            AudioListener.pause = newVisible;
         }
 
         public static void Show(bool _show)
@@ -498,12 +500,11 @@ namespace Bounder.Framework
             instance.m_visibleElements.SetActive(_show);
             instance.UpdateTextBox();
 
-            if ((instance.m_timeScale == 0 && _show) || (instance.m_timeScale != 0 && !_show))
-            {
-                float oldTimeScale = instance.m_timeScale;
-                instance.m_timeScale = Time.timeScale;
-                Time.timeScale = oldTimeScale;
-            }
+            if (_show)
+                TimeScaleLock.SetTimeScale(instance, 0f);
+            else
+                TimeScaleLock.ReleaseTimeScale(instance);
+
             AudioListener.pause = _show;
         }
         public static bool Shown()
