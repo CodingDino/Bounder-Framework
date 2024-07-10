@@ -16,9 +16,20 @@ namespace Bounder.Framework
 
 
     // ************************************************************************ 
-    #region Class: SingletonSO
+    // Interface: ISingletonSO
+    // ************************************************************************
+    public interface ISingletonSO
+    {
+        void ActivateInstance();
+    }
+    // ************************************************************************
+
+
     // ************************************************************************ 
-    public class SingletonSO<T> : ScriptableObject where T : ScriptableObject
+    #region Class: SingletonSO
+    // ************************************************************************
+    [System.Serializable]
+    public class SingletonSO<T> : ScriptableObject, ISingletonSO where T : ScriptableObject
     {
         // ********************************************************************
         #region Static Data Members
@@ -48,18 +59,30 @@ namespace Bounder.Framework
 
 
         // ********************************************************************
-        #region Unity Methods
+        #region Public Methods
         // ********************************************************************
-        protected void Awake()
+        public void ActivateInstance()
         {
             if (s_instance != null)
             {
-                Debug.LogError("Second copy of singleton found. New copy: "+name+". Original: "+s_instance.name);
+                Debug.LogError("Second copy of singleton found. New copy: " + name + ". Original: " + s_instance.name);
             }
             else
             {
                 s_instance = this as T;
             }
+        }
+        // ********************************************************************
+        #endregion
+        // ********************************************************************
+
+
+        // ********************************************************************
+        #region Unity Methods
+        // ********************************************************************
+        protected void Awake()
+        {
+            ActivateInstance();
         }
         // ********************************************************************
         #endregion
