@@ -70,9 +70,21 @@ public static class ListExtension
 			_self.Insert(0,_toAdd);
 		else
 			_self.Add(_toAdd);
-	}
-	// ********************************************************************
-	public static List<T> Copy<T>(this List<T> _self)
+    }
+    // ********************************************************************
+    public static void RemoveFront<T>(this List<T> _self)
+    {
+        if (_self != null && _self.Count > 0)
+            _self.RemoveAt(0);
+    }
+    // ********************************************************************
+    public static void RemoveBack<T>(this List<T> _self)
+    {
+		if (_self != null && _self.Count > 0)
+			_self.RemoveAt(_self.Count - 1);
+    }
+    // ********************************************************************
+    public static List<T> Copy<T>(this List<T> _self)
 	{
 		List<T> copy = new List<T>();
 		copy.AddRange(_self);
