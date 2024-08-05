@@ -20,10 +20,36 @@ using UnityEngine;
 // ************************************************************************
 public static class AnimatorExtension 
 {
-	// ********************************************************************
-	#region MonoBehaviour Methods 
-	// ********************************************************************
-	public static bool HasParameterOfType(this Animator _self, string _name, AnimatorControllerParameterType _type)
+    // ********************************************************************
+    #region MonoBehaviour Methods 
+    // ********************************************************************
+    public static AnimatorControllerParameterType GetParameterType(this Animator _self, string _name)
+    {
+        var parameters = _self.parameters;
+        for (int i = 0; i < parameters.Length; ++i)
+        {
+            if (parameters[i].name == _name)
+            {
+                return parameters[i].type;
+            }
+        }
+        return (AnimatorControllerParameterType)0; // INVALID
+    }
+    // ********************************************************************
+    public static bool HasParameter(this Animator _self, string _name)
+    {
+        var parameters = _self.parameters;
+        for (int i = 0; i < parameters.Length; ++i)
+        {
+            if (parameters[i].name == _name)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    // ********************************************************************
+    public static bool HasParameterOfType(this Animator _self, string _name, AnimatorControllerParameterType _type)
 	{
 		var parameters = _self.parameters;
 		for (int i = 0; i < parameters.Length; ++i)
