@@ -51,9 +51,10 @@ public static class TransformExtension
     // ********************************************************************
     public static void DestroyChildrenImmediate(this Transform _trans)
     {
-        for (int i = 0; i < _trans.childCount; ++i)
+        while (_trans.childCount > 0)
         {
-            GameObject.DestroyImmediate(_trans.GetChild(i).gameObject);
+			// Always destroy first child because they are getting instantly destroyed, so just destroy first one until there are no more!
+            GameObject.DestroyImmediate(_trans.GetChild(0).gameObject);
         }
     }
     // ********************************************************************
