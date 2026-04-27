@@ -13,7 +13,7 @@ namespace Bounder.Framework
             position.width = EditorGUIUtility.labelWidth;
             EditorGUI.PrefixLabel(position, label);
 
-            var areaNames = GameObjectUtility.GetNavMeshAreaNames();
+            var areaNames = UnityEngine.AI.NavMesh.GetAreaNames();
             var mask = serializedProperty.intValue;
             position.x += EditorGUIUtility.labelWidth;
             position.width = width - EditorGUIUtility.labelWidth;
