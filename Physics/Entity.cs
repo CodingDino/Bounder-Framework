@@ -188,12 +188,12 @@ public class Entity : MonoBehaviour {
 		if (m_useRigidBodyVelocity && GetComponent<Rigidbody2D>() != null && !GetComponent<Rigidbody2D>().isKinematic)
 		{
 			// Update the rigidbody's velocity
-			GetComponent<Rigidbody2D>().velocity = velocity;
+			GetComponent<Rigidbody2D>().linearVelocity = velocity;
 		}
 		else if (m_useRigidBodyVelocity && GetComponent<Rigidbody>() != null && !GetComponent<Rigidbody>().isKinematic)
 		{
 			// Update the rigidbody's velocity
-			GetComponent<Rigidbody>().velocity = velocity;
+			GetComponent<Rigidbody>().linearVelocity = velocity;
 		}
 		else
 		{
@@ -226,9 +226,9 @@ public class Entity : MonoBehaviour {
 		if (m_useRigidBodyVelocity && GetComponent<Rigidbody2D>() != null && !GetComponent<Rigidbody2D>().isKinematic)
 		{
 			// Update the rigidbody's velocity
-			GetComponent<Rigidbody2D>().velocity = new Vector2(
+			GetComponent<Rigidbody2D>().linearVelocity = new Vector2(
 				velocity,
-				GetComponent<Rigidbody2D>().velocity.y );
+				GetComponent<Rigidbody2D>().linearVelocity.y );
 		}
 		else
 		{
@@ -264,8 +264,8 @@ public class Entity : MonoBehaviour {
 		if (m_useRigidBodyVelocity && GetComponent<Rigidbody2D>() != null && !GetComponent<Rigidbody2D>().isKinematic)
 		{
 			// Update the rigidbody's velocity
-			GetComponent<Rigidbody2D>().velocity = new Vector2(
-				GetComponent<Rigidbody2D>().velocity.x,
+			GetComponent<Rigidbody2D>().linearVelocity = new Vector2(
+				GetComponent<Rigidbody2D>().linearVelocity.x,
 				velocity );
 		}
 		else
