@@ -47,8 +47,20 @@ namespace Bounder.Framework
 
 
         // ********************************************************************
-        #region MonoBehaviour Methods
+        #region Public Methods
         // ********************************************************************
+        public void SetColor(Color _newColor)
+        {
+            targetColor = _newColor;
+            ApplyTint();
+        }
+        // ********************************************************************
+        #endregion
+        // ********************************************************************
+
+
+        // ********************************************************************
+        #region MonoBehaviour Methods
         // ********************************************************************
         private void OnEnable()
         {
@@ -57,6 +69,12 @@ namespace Bounder.Framework
         // ********************************************************************
         private void OnValidate()
         {
+#if UNITY_EDITOR
+            if (Application.isPlaying)
+            {
+                return;
+            }
+#endif
             ApplyTint();
         }
         // ********************************************************************
