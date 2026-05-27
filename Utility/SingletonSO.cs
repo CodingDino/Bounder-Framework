@@ -35,32 +35,30 @@ namespace Bounder.Framework
         {
             get
             {
-                if (s_instance == null)
-                    Debug.LogError("Attempt to access null singleton - did you forget to create an asset in the project?");
+                if (s_instance != null)
+                {
+                    return s_instance;
+                }
+
+                T[] results = Resources.LoadAll<T>("");
+
+                if (results.Length == 0)
+                {
+                    Debug.LogError($"No {typeof(T).Name} found in Resources.");
+                    return null;
+                }
+
+                if (results.Length > 1)
+                {
+                    Debug.LogError($"Multiple {typeof(T).Name} found in Resources.");
+                }
+
+                s_instance = results[0];
                 return s_instance;
             }
         }
         // ********************************************************************
         public static bool initialized { get { return instance != null; } }
-        // ********************************************************************
-        #endregion
-        // ********************************************************************
-
-
-        // ********************************************************************
-        #region Unity Methods
-        // ********************************************************************
-        protected void Awake()
-        {
-            if (s_instance != null)
-            {
-                Debug.LogError("Second copy of singleton found. New copy: "+name+". Original: "+s_instance.name);
-            }
-            else
-            {
-                s_instance = this as T;
-            }
-        }
         // ********************************************************************
         #endregion
         // ********************************************************************
