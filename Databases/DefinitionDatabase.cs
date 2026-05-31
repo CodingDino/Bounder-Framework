@@ -1,6 +1,6 @@
 // ************************************************************************ 
 // File Name:   DefinitionDatabase.cs 
-// Purpose:    	Database base class to be used to hold definition files
+// Purpose:    	Database class to be used to hold definition files, can auto-grab from asset folder
 // Project:		Framework
 // Author:      Sarah Herzog  
 // Copyright: 	2016 Bounder Games
@@ -9,78 +9,23 @@ namespace Bounder.Framework
 {
     // ************************************************************************ 
     #region Imports
-    using NaughtyAttributes;
-    using System.Collections.Generic;
-    using UnityEditor;
     // ************************************************************************
-    using UnityEngine;
+    using NaughtyAttributes;
+#if UNITY_EDITOR
+    using UnityEditor;
+#endif
     #endregion
     // ************************************************************************
 
 
     // ************************************************************************
-    public class DefinitionDatabase<T> : SingletonSO<DefinitionDatabase<T>> where T : Definition
+    public class DefinitionDatabase<T> : BaseDefinitionDatabase<T> where T : DefinitionSO
     // ************************************************************************
     {
         // ********************************************************************
-        #region Exposed Data Members
-        // ********************************************************************
-        [SerializeField]
-        [ReadOnly]
-        protected List<T> m_listData = new();
-        #endregion
-        // ********************************************************************
-
-
-        // ********************************************************************
-        #region Internal Data Members
-        // ********************************************************************
-        protected Dictionary<int, T> m_data = new();
-        #endregion
-        // ********************************************************************
-
-
-        // ********************************************************************
-        #region Monobehavior Methods
-        // ********************************************************************
-        protected virtual void OnEnable()
-        {
-            PopulateDictionary();
-        }
-        // ********************************************************************
-        #endregion
-        // ********************************************************************
-
-
-
-        // ********************************************************************
-        #region Public Methods
-        // ********************************************************************
-        public static bool HasData(int _id)
-        {
-            return instance.m_data.ContainsKey(_id);
-        }
-        // ********************************************************************
-        public static T GetData(int _id)
-        {
-            if (instance.m_data.ContainsKey(_id))
-            {
-                return instance.m_data[_id];
-            }
-            else
-            {
-                Debug.LogError("Database.GetData(" + _id + "): Database does not contain key.");
-                return default(T);
-            }
-        }
-        // ********************************************************************
-        #endregion
-        // ********************************************************************
-
-
-        // ********************************************************************
         #region Private Methods
         // ********************************************************************
+#if UNITY_EDITOR
         [Button]
         private void GetDefinitionsFromProject()
         {
@@ -101,24 +46,13 @@ namespace Bounder.Framework
             EditorUtility.SetDirty(this);
             AssetDatabase.SaveAssets();
         }
-        // ********************************************************************
-        private void PopulateDictionary()
-        {
-            Debug.Log($"Populating dictionary...");
-            m_data.Clear();
-            for (int i = 0; i < m_listData.Count; ++i)
-            {
-                Debug.Log($"Adding item {m_listData[i]} to the databse dictionary");
-                Debug.Log($"Adding item {m_listData[i].ID} to the databse dictionary");
-                m_data[m_listData[i].ID] = m_listData[i];
-            }
-        }
-        // ********************************************************************
-        #endregion
-        // ********************************************************************
+#endif
 
     }
-    // ************************************************************************
+    // ********************************************************************
+    #endregion
+    // ********************************************************************
+
 
 }
 // ************************************************************************

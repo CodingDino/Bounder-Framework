@@ -1,6 +1,6 @@
 // ************************************************************************ 
-// File Name:   Definition.cs 
-// Purpose:    	Non-scriptable object definition class for use in databases
+// File Name:   DefinitionSO.cs 
+// Purpose:    	Scriptable object definition class for use in databases
 // Project:		Framework
 // Author:      Sarah Herzog  
 // Copyright: 	2026 Bounder Games
@@ -21,8 +21,7 @@ namespace Bounder.Framework
 
 
     // ********************************************************************
-    [System.Serializable]
-    public class Definition : IDefinition
+    public class DefinitionSO : ScriptableObject, IDefinition
     // ********************************************************************
     {
         // ****************************************************************
@@ -31,15 +30,46 @@ namespace Bounder.Framework
         public int ID
         {
             get => _ID;
-            protected set => _ID = value;
+            private set => _ID = value;
         }
         [SerializeField]
-        [ReadOnly] // May need to change later but fine for now
+        [Tooltip("Auto-generated. Don't mess with this unless you know what you're doing!")]
         private int _ID = -1;
+
         // ****************************************************************
         #endregion
         // ****************************************************************
 
+#if UNITY_EDITOR
+        private void OnEnable()
+        {
+            if (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                if (_ID < 0)
+                {
+                    string[] guids = AssetDatabase.FindAssets("t:Object");
+
+                    _ID = 1;
+
+                    foreach (string guid in guids)
+                    {
+                        string path = AssetDatabase.GUIDToAssetPath(guid);
+                        DefinitionSO asset = AssetDatabase.LoadAssetAtPath(path, this.GetType()) as DefinitionSO;
+
+                        if (asset != null && asset != this)
+                        {
+                            _ID = Mathf.Max(_ID, asset._ID + 1);
+                        }
+                    }
+
+                    EditorUtility.SetDirty(this);
+                    AssetDatabase.SaveAssets();
+
+                    UnityEngine.Debug.Log($"Assigned ItemID {_ID} to {name}");
+                }
+            }
+        }
+#endif
     }
     // ********************************************************************
 }
