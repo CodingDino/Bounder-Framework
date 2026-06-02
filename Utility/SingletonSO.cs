@@ -54,6 +54,10 @@ namespace Bounder.Framework
                 }
 
                 s_instance = results[0];
+                if (s_instance != null && s_instance is SingletonSO<T>)
+                {
+                    (s_instance as SingletonSO<T>).Initialize();
+                }
                 return s_instance;
             }
         }
@@ -63,6 +67,10 @@ namespace Bounder.Framework
         #endregion
         // ********************************************************************
 
+        public virtual void Initialize()
+        {
+            // Blank
+        }
     }
     #endregion
     // ************************************************************************ 
