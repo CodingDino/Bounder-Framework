@@ -35,7 +35,7 @@ namespace Bounder.Framework
         {
             get
             {
-                if (s_instance != null)
+                if (s_instance != null && s_instance)
                 {
                     return s_instance;
                 }

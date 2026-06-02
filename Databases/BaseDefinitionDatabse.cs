@@ -41,7 +41,7 @@ namespace Bounder.Framework
         // ********************************************************************
         #region Monobehavior Methods
         // ********************************************************************
-        protected virtual void OnEnable()
+        protected virtual void Awake()
         {
             PopulateDictionary();
         }
